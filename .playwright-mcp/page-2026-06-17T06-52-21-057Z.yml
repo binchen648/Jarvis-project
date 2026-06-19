@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - img [ref=e10]
+            - text: Dashboard
+          - link "Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - img [ref=e13]
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - img [ref=e16]
+            - text: Goals
+          - link "Wellness" [ref=e18] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - img [ref=e19]
+            - text: Wellness
+        - generic [ref=e22]:
+          - link "Content" [ref=e23] [cursor=pointer]:
+            - /url: /content/feed/
+            - img [ref=e24]
+            - text: Content
+          - link "Trajectory" [ref=e26] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - img [ref=e27]
+            - text: Trajectory
+        - link "Settings" [ref=e31] [cursor=pointer]:
+          - /url: /profile/
+          - img [ref=e32]
+          - text: Settings
+      - link "A admin Personal AI OS" [ref=e36] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e37]: A
+        - generic [ref=e38]:
+          - generic [ref=e39]: admin
+          - generic [ref=e40]: Personal AI OS
+    - generic [ref=e41]:
+      - banner [ref=e42]:
+        - heading "Memory Timeline" [level=1] [ref=e44]
+        - generic [ref=e45]:
+          - generic [ref=e46] [cursor=pointer]:
+            - generic [ref=e47]: Search
+            - generic [ref=e48]: ⌘K
+          - img [ref=e50] [cursor=pointer]
+          - generic "Jarvis AI Core | v1.0" [ref=e53] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e57]:
+              - generic [ref=e58]: "+0"
+              - generic [ref=e59]: 本周新增
+            - generic [ref=e60]:
+              - generic [ref=e61]: "0"
+              - generic [ref=e62]: 总计
+            - generic [ref=e63]:
+              - generic [ref=e64]: "学习: 0"
+              - generic [ref=e65]: "成就: 0"
+              - generic [ref=e66]: "反思: 0"
+              - generic [ref=e67]: "里程碑: 0"
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - textbox "搜索记忆..." [ref=e70]
+              - button "搜索" [ref=e71] [cursor=pointer]:
+                - img [ref=e72]
+                - text: 搜索
+            - generic [ref=e74]:
+              - link "全部" [ref=e75] [cursor=pointer]:
+                - /url: /memory/timeline/
+              - link "🧠 学习" [ref=e76] [cursor=pointer]:
+                - /url: /memory/timeline/?type=learning
+              - link "🎯 成就" [ref=e77] [cursor=pointer]:
+                - /url: /memory/timeline/?type=achievement
+              - link "💬 反思" [ref=e78] [cursor=pointer]:
+                - /url: /memory/timeline/?type=reflection
+              - link "📝 里程碑" [ref=e79] [cursor=pointer]:
+                - /url: /memory/timeline/?type=milestone
+          - generic [ref=e81]:
+            - img [ref=e83]
+            - generic [ref=e85]:
+              - text: 还没有记忆记录
+              - text: Jarvis 会在你学习和使用过程中自动记录重要的事件和进展
+  - generic [ref=e86]:
+    - generic:
+      - generic:
+        - generic:
+          - generic: Morning Briefing
+        - button "Dismiss":
+          - img
+      - generic:
+        - generic:
+          - heading "Good morning ✦" [level=4]
+          - paragraph: You have 3 goals active today. LeetCode streak is at 12 days — keep it going.
+      - generic:
+        - img
+        - generic: Today · 08:00
+      - generic:
+        - button "Later"
+        - button "View Goals"
+    - button "Jarvis AI Surface" [ref=e87] [cursor=pointer]:
+      - img [ref=e88]

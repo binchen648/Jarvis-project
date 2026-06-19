@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}学习目标 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="goals-page">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-xl font-bold">学习目标</h1>
+        <div class="flex gap-2">
+            <a href="{% url 'goals:log_session' %}" class="btn btn-ghost btn-sm">记录学习</a>
+            <a href="{% url 'goals:goal_create' %}" class="btn btn-primary btn-sm">新建目标</a>
+        </div>
+    </div>
+
+    {% if goal_data %}
+        <div class="goal-list">
+        {% for item in goal_data %}
+            {% with goal=item.goal %}
+            <div class="card card-body bg-base-100 border border-base-300 shadow-sm mb-3 p-4">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h3 class="font-bold mb-1">
+                            <a href="{% url 'goals:goal_detail' goal.pk %}" class="text-base-content no-underline hover:underline">
+                                {{ goal.title }}
+                            </a>
+                        </h3>
+                        <div class="flex gap-2 flex-wrap text-xs text-base-content/60 mb-1.5">
+                            <span>{{ goal.get_goal_type_display }}</span>
+                            {% if goal.target_value %}
+                                <span>目标: {{ goal.target_value }}{{ goal.target_unit }}</span>
+                            {% endif %}
+                            <span>{{ goal.get_category_display }}</span>
+                            {% if goal.is_recurring %}
+                                <span class="text-info">循环</span>
+                            {% endif %}
+                            {% if goal.deadline %}
+                                <span>截止: {{ goal.deadline|date:"m/d" }}</span>
+                            {% endif %}
+                        </div>
+                        {% if goal.description %}
+                            <p class="text-sm text-base-content/60 mt-1">{{ goal.description|truncatewords:25 }}</p>
+                        {% endif %}
+                        <div class="flex gap-4 text-xs text-base-content/60 mt-1.5">
+                            <span>累计学习: {{ item.total_minutes }} 分钟</span>
+                            {% if item.latest_progress %}
+                                <span>进度: {{ item.latest_progress.progress_percent|floatformat:0 }}%</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5 ml-3 shrink-0">
+                        {# Status badge — HTMX toggle target #}
+                        <div id="status-badge-{{ goal.pk }}">
+                            {% include "goals/_status_badge.html" %}
+                        </div>
+                        <div class="flex gap-1">
+                            <a href="{% url 'goals:goal_edit' goal.pk %}" class="btn btn-ghost text-xs py-0 px-2">编辑</a>
+                            <form method="post" action="{% url 'goals:update_status' goal.pk %}"
+                                  hx-post="{% url 'goals:update_status' goal.pk %}"
+                                  hx-target="#status-badge-{{ goal.pk }}"
+                                  hx-swap="innerHTML"
+                                  class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost text-xs py-0 px-2">切换状态</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info shadow-sm">
+            还没有学习目标。<a href="{% url 'goals:goal_create' %}">创建第一个目标</a>，开始你的学习旅程吧！
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

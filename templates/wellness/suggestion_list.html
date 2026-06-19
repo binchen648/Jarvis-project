@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}健康建议 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-semibold">健康建议</h1>
+
+    {% if suggestions %}
+        <div class="space-y-3 mt-4">
+        {% for suggestion in suggestions %}
+            <div class="suggestion-card border border-base-300 rounded-lg p-4 mb-3 border-l-4
+                        {% if suggestion.suggestion_type == 'break' %}border-l-warning
+                        {% elif suggestion.suggestion_type == 'eye' %}border-l-success
+                        {% elif suggestion.suggestion_type == 'posture' %}border-l-secondary
+                        {% elif suggestion.suggestion_type == 'exercise' %}border-l-primary
+                        {% elif suggestion.suggestion_type == 'sleep' %}border-l-secondary
+                        {% else %}border-l-base-300{% endif %}"
+                 id="suggestion-{{ suggestion.id }}">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="inline-block px-2 py-0.5 rounded text-xs font-medium
+                                     {% if suggestion.suggestion_type == 'break' %}bg-warning/20 text-warning-content
+                                     {% elif suggestion.suggestion_type == 'eye' %}bg-success/20 text-success-content
+                                     {% elif suggestion.suggestion_type == 'posture' %}bg-secondary/20 text-secondary-content
+                                     {% elif suggestion.suggestion_type == 'exercise' %}bg-primary/20 text-primary-content
+                                     {% elif suggestion.suggestion_type == 'sleep' %}bg-secondary/20 text-secondary-content
+                                     {% else %}bg-base-200 text-base-content/70{% endif %}">
+                            {{ suggestion.get_suggestion_type_display }}
+                        </span>
+                        <span class="text-xs text-base-content/50 ml-2">
+                            {{ suggestion.created_at|date:"H:i" }}
+                        </span>
+                    </div>
+                    <button class="btn btn-ghost btn-xs dismiss-btn"
+                            hx-post="{% url 'wellness:dismiss_suggestion' suggestion.id %}"
+                            hx-target="#suggestion-{{ suggestion.id }}"
+                            hx-swap="outerHTML">
+                        关闭 ✕
+                    </button>
+                </div>
+                <p class="mt-2.5 text-sm leading-relaxed text-base-content">
+                    {{ suggestion.content }}
+                </p>
+                <p class="mt-1.5 text-xs text-base-content/50">
+                    原因：{{ suggestion.trigger_reason }}
+                </p>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12 px-4 text-base-content/50">
+            <p class="text-lg">暂无健康建议</p>
+            <p class="text-sm mt-2">继续保持良好的学习习惯！</p>
+        </div>
+    {% endif %}
+
+    <div class="mt-6">
+        <a href="{% url 'wellness:record_create' %}" class="btn btn-primary">记录身心健康</a>
+    </div>
+</div>
+{% endblock %}

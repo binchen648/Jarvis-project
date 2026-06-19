@@ -1,0 +1,290 @@
+import os
+os.chdir(r"D:\Jarvis project")
+
+content = """<!DOCTYPE html>
+<html lang="zh-CN" data-theme="jarvis">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Jarvis OS - Dashboard</title>
+    <style>
+        :root {
+            --surface-bg: #08080D;
+            --surface-card: rgba(20, 20, 30, 0.65);
+            --primary: #8B5CF6;
+            --secondary: #4F8CFF;
+            --accent: #06B6D4;
+            --text-main: #F1F1F6;
+            --text-secondary: #9191A8;
+        }
+        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
+
+        body { background: var(--surface-bg); color: var(--text-main); font-family: Inter, system-ui, sans-serif; overflow-x: hidden; margin:0; }
+
+        body::before {
+            content: ""; position: fixed; top: -30%; left: -30%; width: 160%; height: 160%; pointer-events: none;
+            background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 25%, transparent), transparent 30%),
+                        radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+                        radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 40%);
+            filter: blur(120px); animation: aurora-drift 35s ease-in-out infinite; z-index: -3;
+        }
+        body::after {
+            content: ""; position: fixed; inset: 0; pointer-events: none;
+            background: radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 30%),
+                        radial-gradient(circle at 30% 70%, color-mix(in srgb, var(--secondary) 10%, transparent), transparent 35%);
+            filter: blur(150px); animation: aurora-reverse 60s ease-in-out infinite; z-index: -2;
+        }
+
+        @keyframes aurora-drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5%,-5%) scale(1.1); } }
+        @keyframes aurora-reverse { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(6%,5%) scale(1.2); } }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+            backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.25);
+            transition: all .3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--primary) 40%, rgba(255,255,255,.05));
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 15%, transparent), 0 15px 40px color-mix(in srgb, var(--primary) 8%, transparent);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <aside class="w-64 bg-black/20 backdrop-blur-2xl border-r border-white/5 flex flex-col z-10">
+        <div class="p-8">
+            <h1 class="text-2xl font-bold tracking-tighter italic text-white">JARVIS</h1>
+        </div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 text-white"><i class="bi bi-grid-fill" style="color: var(--secondary)"></i> Dashboard</a>
+            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
+        </nav>
+        <div class="p-6">
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-900 border border-white/10"></div>
+                <div>
+                    <p class="text-sm font-bold">{{ user.username|default:'Alex' }}</p>
+                    <p class="text-[10px] text-white/40">v2.0 Aurora</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col z-10">
+        
+        <header class="h-20 flex items-center justify-between px-10" style="background: rgba(8,8,13,0.6); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(255,255,255,.06);">
+            <div class="flex flex-col">
+                <h2 class="text-xs font-medium uppercase tracking-widest text-[#9191A8]">System Status</h2>
+                <p class="text-[10px] text-emerald-400">\u25cf Operational / Optimal</p>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-palette2 text-xs text-white/40"></i>
+                    <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition cursor-pointer">
+                        <option value="jarvis">Jarvis</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="forest">Forest</option>
+                        <option value="rose">Rose</option>
+                    </select>
+                </div>
+                <div class="h-8 w-px bg-white/10 mx-2"></div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[var(--secondary)] animate-spin" style="animation-duration: 8s;"></div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+            <div class="max-w-6xl mx-auto space-y-10 pt-4">
+                
+                <!-- Welcome Section -->
+                <section>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-morning hidden">Good Morning, {{ user.username }}.</h1>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-afternoon hidden">Good Afternoon, {{ user.username }}.</h1>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-evening hidden">Good Evening, {{ user.username }}.</h1>
+                            {% if top_goal %}
+                            <p class="text-sm text-[#9191A8] mt-2 italic">Jarvis \u5efa\u8bae\uff1a{{ ai_suggestion }}</p>
+                            {% else %}
+                            <p class="text-sm text-[#9191A8] mt-2 italic">今天还没有目标，去创建一个吧 🎯</p>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs font-mono text-white/30">{{ today|date:'M d, Y'|upper }}</span>
+                    </div>
+                </section>
+
+                <!-- KPI Grid -->
+                <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Today Focus</p>
+                        <p class="text-3xl font-bold mt-2">{{ focus_pct }}% <span class="text-[10px] text-emerald-400 ml-1 font-normal">\u25b2 5%</span></p>
+                    </div>
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Goal Health</p>
+                        <p class="text-3xl font-bold mt-2">{{ goal_health_normal }} <span class="text-sm font-normal text-emerald-400">\u6b63\u5e38</span></p>
+                        {% if goal_health_risk > 0 %}
+                        <p class="text-[10px] text-red-400 mt-1">{{ goal_health_risk }} \u98ce\u9669</p>
+                        {% endif %}
+                    </div>
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Memory Growth</p>
+                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] text-[#9191A8] ml-1 font-normal">\u6761</span></p>
+                    </div>
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">AI Confidence</p>
+                        <p class="text-3xl font-bold mt-2">{{ ai_confidence_pct }}%</p>
+                    </div>
+                </section>
+
+                <!-- Main Grid -->
+                <section class="grid grid-cols-12 gap-8">
+                    <!-- Today's Plan -->
+                    <div class="col-span-12 lg:col-span-8 space-y-4">
+                        <div class="flex justify-between items-center ml-2">
+                            <h3 class="text-lg font-semibold">Today's Plan</h3>
+                            {% if today_plan_items %}
+                            <span class="text-xs text-[#9191A8]">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>
+                            {% endif %}
+                        </div>
+                        <div class="glass-card rounded-[2.5rem] overflow-hidden">
+                            {% if today_plan_items %}
+                                {% for item in today_plan_items %}
+                                <a href="{{ item.link }}"
+                                   class="p-8 flex items-center justify-between group {% if not forloop.last %}border-b border-white/5{% endif %} no-underline text-[inherit] transition hover:bg-white/[0.02] cursor-pointer">
+                                    <div class="flex items-center gap-6">
+                                        {% if item.done %}
+                                        <div class="w-12 h-12 rounded-2xl bg-[var(--primary)] flex items-center justify-center text-white shadow-lg">
+                                            <i class="bi bi-check-lg text-xl"></i>
+                                        </div>
+                                        {% else %}
+                                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
+                                        {% endif %}
+                                        <div>
+                                            <p class="font-bold {% if item.done %}line-through text-[#9191A8]{% else %}text-white{% endif %}">{{ item.title }}</p>
+                                            <p class="text-xs text-[#9191A8] mt-0.5">{{ item.desc }} &middot; {{ item.minutes }}min</p>
+                                        </div>
+                                    </div>
+                                    {% if not item.done %}
+                                    <i class="bi bi-chevron-right text-white/20 group-hover:text-[var(--primary)] transition"></i>
+                                    {% endif %}
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-10 text-[#9191A8]">
+                                    <div class="text-3xl mb-3 opacity-40">\ud83e\udd16</div>
+                                    <p class="text-sm">Jarvis \u6b63\u5728\u5206\u6790\u4f60\u7684\u76ee\u6807\uff0c\u7a0d\u540e\u4e3a\u4f60\u751f\u6210\u8ba1\u5212</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Progress & Timeline -->
+                    <div class="col-span-12 lg:col-span-4 space-y-8">
+                        <div class="glass-card p-8 rounded-[2.5rem]">
+                            <h3 class="text-sm font-semibold mb-6">Goal Progress</h3>
+                            {% if goal_progress_list %}
+                            <div class="space-y-6">
+                                {% for item in goal_progress_list %}
+                                <div>
+                                    <div class="flex justify-between text-xs mb-2">
+                                        <span class="text-[#9191A8]">{{ item.title }}</span>
+                                        <span class="text-white">{{ item.pct }}%</span>
+                                    </div>
+                                    <div class="h-1 w-full bg-white/5 rounded-full">
+                                        <div class="h-full rounded-full transition-all duration-1000" style="width: {{ item.pct }}%; background: {% if item.pct < 30 %}var(--color-error){% else %}var(--primary){% endif %}; box-shadow: {% if item.pct >= 80 %}0 0 10px var(--primary){% else %}none{% endif %};"></div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-6 text-[#9191A8]">
+                                <div class="text-2xl mb-2 opacity-40">\ud83d\udcca</div>
+                                <p class="text-xs">\u8fd8\u6ca1\u6709\u76ee\u6807\u8fdb\u5ea6\u6570\u636e</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
+                            <div class="absolute -right-10 -top-10 w-32 h-32 bg-[var(--accent)] opacity-10 blur-3xl group-hover:opacity-20 transition"></div>
+                            
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold">Memory Timeline</h3>
+                                <a href="/memory/timeline/" class="text-[10px] text-[var(--accent)] hover:underline">\u67e5\u770b\u5168\u90e8 \u2192</a>
+                            </div>
+                            {% if memory_recent_items %}
+                            <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
+                                {% for item in memory_recent_items %}
+                                <a href="/memory/timeline/" class="block relative no-underline text-[inherit] group/mem">
+                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-[var(--accent)] group-hover/mem:shadow-[0_0_10px_var(--accent)]"></div>
+                                    <p class="text-xs">{{ item.title }}</p>
+                                    <p class="text-[10px] text-[#9191A8] mt-px">{{ item.description|truncatechars:60 }}</p>
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
+                                <div class="relative">
+                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-white/10"></div>
+                                    <p class="text-xs text-[#9191A8]">\u8fd8\u6ca1\u6709\u8bb0\u5fc6\u8f68\u8ff9</p>
+                                    <p class="text-[10px] text-[#5C5C72]">\u5f00\u59cb\u5b66\u4e60\u540e\uff0cJarvis \u4f1a\u8bb0\u5f55\u4f60\u7684\u6210\u957f\u8f68\u8ff9</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-8 right-8 z-50">
+        <div class="w-14 h-14 bg-[var(--primary)] rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(0,0,0,0.5)] cursor-pointer hover:scale-110 transition shadow-glow relative">
+            <div class="absolute inset-0 rounded-full bg-[var(--primary)] opacity-20 animate-ping"></div>
+            <i class="bi bi-stars text-xl"></i>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var hour = new Date().getHours();
+            var el;
+            if (hour >= 6 && hour < 12) { el = document.querySelector('.greeting-morning'); }
+            else if (hour >= 12 && hour < 18) { el = document.querySelector('.greeting-afternoon'); }
+            else { el = document.querySelector('.greeting-evening'); }
+            if (el) el.classList.remove('hidden');
+        })();
+
+        var switcher = document.getElementById('themeSwitcher');
+        if (switcher) {
+            switcher.addEventListener('change', function(e) {
+                var theme = e.target.value;
+                document.documentElement.setAttribute('data-theme', theme);
+                try { localStorage.setItem('jarvis-theme', theme); } catch(e2) {}
+            });
+            var saved = null;
+            try { saved = localStorage.getItem('jarvis-theme'); } catch(e3) {}
+            if (saved) { document.documentElement.setAttribute('data-theme', saved); switcher.value = saved; }
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Write file
+with open(r"D:\Jarvis project\templates\dashboard\home.html", "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("Written successfully")

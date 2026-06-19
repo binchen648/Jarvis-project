@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+    - generic [ref=e15]:
+      - paragraph [ref=e16]: admin
+      - paragraph [ref=e17]: v2.0 Aurora
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - heading "System Status" [level=2] [ref=e21]
+        - paragraph [ref=e22]: ● Operational / Optimal
+      - generic [ref=e24]:
+        - generic [ref=e25]: 
+        - combobox [ref=e26] [cursor=pointer]:
+          - option "Jarvis" [selected]
+          - option "Ocean"
+          - option "Sunset"
+          - option "Forest"
+          - option "Rose"
+    - generic [ref=e30]:
+      - generic [ref=e33]:
+        - heading "Good Morning, admin." [level=1] [ref=e34]
+        - paragraph [ref=e35]: Jarvis 建议：18:30 开始学习，今日精力高峰
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - paragraph [ref=e38]: Today Focus
+          - paragraph [ref=e39]: 0% ▲ 5%
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: Goal Health
+          - paragraph [ref=e42]: 0 正常
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: Memory Growth
+          - paragraph [ref=e45]: +0 条
+        - generic [ref=e46]:
+          - paragraph [ref=e47]: AI Confidence
+          - paragraph [ref=e48]: 70%
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - heading "Today's Plan" [level=3] [ref=e52]
+          - generic [ref=e53]: 3/3 tasks
+        - generic [ref=e54]:
+          - link "1 LeetCode 92 难度 Medium · 今日必完成 · 35min " [ref=e55] [cursor=pointer]:
+            - /url: /goals/
+            - generic [ref=e56]:
+              - generic [ref=e57]: "1"
+              - generic [ref=e58]:
+                - paragraph [ref=e59]: LeetCode 92
+                - paragraph [ref=e60]: 难度 Medium · 今日必完成 · 35min
+            - generic [ref=e61]: 
+          - link "2 阅读 ReAct Agent 笔记 上次 3天前 · 需要复习 · 20min " [ref=e62] [cursor=pointer]:
+            - /url: /memory/
+            - generic [ref=e63]:
+              - generic [ref=e64]: "2"
+              - generic [ref=e65]:
+                - paragraph [ref=e66]: 阅读 ReAct Agent 笔记
+                - paragraph [ref=e67]: 上次 3天前 · 需要复习 · 20min
+            - generic [ref=e68]: 
+          - link "3 更新 Wellness 记录 · 5min " [ref=e69] [cursor=pointer]:
+            - /url: /wellness/record
+            - generic [ref=e70]:
+              - generic [ref=e71]: "3"
+              - generic [ref=e72]:
+                - paragraph [ref=e73]: 更新 Wellness 记录
+                - paragraph [ref=e74]: · 5min
+            - generic [ref=e75]: 
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - heading "Goal Progress" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - generic [ref=e80]: 📊
+              - paragraph [ref=e81]: 还没有目标进度数据
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - heading "Memory Timeline" [level=3] [ref=e84]
+              - link "查看全部 →" [ref=e85] [cursor=pointer]:
+                - /url: /memory/timeline/
+            - generic [ref=e87]:
+              - paragraph [ref=e89]: 还没有记忆轨迹
+              - paragraph [ref=e90]: 开始学习后，Jarvis 会记录你的成长轨迹
+  - generic [ref=e94] [cursor=pointer]: 

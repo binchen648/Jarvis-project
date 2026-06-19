@@ -1,0 +1,1302 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - heading "TemplateSyntaxError at /memory/timeline/" [level=1] [ref=e3]
+    - generic [ref=e4]: "Variables and attributes may not begin with underscores: 'event._mockup_color'"
+    - table [ref=e5]:
+      - rowgroup [ref=e6]:
+        - 'row "Request Method: GET" [ref=e7]':
+          - rowheader "Request Method:" [ref=e8]
+          - cell "GET" [ref=e9]
+        - 'row "Request URL: http://localhost:8001/memory/timeline/" [ref=e10]':
+          - rowheader "Request URL:" [ref=e11]
+          - cell "http://localhost:8001/memory/timeline/" [ref=e12]
+        - 'row "Django Version: 5.0.14" [ref=e13]':
+          - rowheader "Django Version:" [ref=e14]
+          - cell "5.0.14" [ref=e15]
+        - 'row "Exception Type: TemplateSyntaxError" [ref=e16]':
+          - rowheader "Exception Type:" [ref=e17]
+          - cell "TemplateSyntaxError" [ref=e18]
+        - 'row "Exception Value: Variables and attributes may not begin with underscores: ''event._mockup_color''" [ref=e19]':
+          - rowheader "Exception Value:" [ref=e20]
+          - 'cell "Variables and attributes may not begin with underscores: ''event._mockup_color''" [ref=e21]':
+            - generic [ref=e22]: "Variables and attributes may not begin with underscores: 'event._mockup_color'"
+        - 'row "Exception Location: D:\\Jarvis project\\.venv\\Lib\\site-packages\\django\\template\\base.py, line 832, in __init__" [ref=e23]':
+          - rowheader "Exception Location:" [ref=e24]
+          - cell "D:\\Jarvis project\\.venv\\Lib\\site-packages\\django\\template\\base.py, line 832, in __init__" [ref=e25]
+        - 'row "Raised during: apps.memory.views.timeline_view" [ref=e26]':
+          - rowheader "Raised during:" [ref=e27]
+          - cell "apps.memory.views.timeline_view" [ref=e28]
+        - 'row "Python Executable: D:\\Jarvis project\\.venv\\Scripts\\python.exe" [ref=e29]':
+          - rowheader "Python Executable:" [ref=e30]
+          - cell "D:\\Jarvis project\\.venv\\Scripts\\python.exe" [ref=e31]
+        - 'row "Python Version: 3.12.4" [ref=e32]':
+          - rowheader "Python Version:" [ref=e33]
+          - cell "3.12.4" [ref=e34]
+        - 'row "Python Path: [''D:\\\\Jarvis project'', ''.'', ''D:\\\\Jarvis project'', ''D:\\\\python\\\\download\\\\python312.zip'', ''D:\\\\python\\\\download\\\\DLLs'', ''D:\\\\python\\\\download\\\\Lib'', ''D:\\\\python\\\\download'', ''D:\\\\Jarvis project\\\\.venv'', ''D:\\\\Jarvis project\\\\.venv\\\\Lib\\\\site-packages'']" [ref=e35]':
+          - rowheader "Python Path:" [ref=e36]
+          - cell "['D:\\\\Jarvis project', '.', 'D:\\\\Jarvis project', 'D:\\\\python\\\\download\\\\python312.zip', 'D:\\\\python\\\\download\\\\DLLs', 'D:\\\\python\\\\download\\\\Lib', 'D:\\\\python\\\\download', 'D:\\\\Jarvis project\\\\.venv', 'D:\\\\Jarvis project\\\\.venv\\\\Lib\\\\site-packages']" [ref=e37]:
+            - generic [ref=e38]: "['D:\\\\Jarvis project', '.', 'D:\\\\Jarvis project', 'D:\\\\python\\\\download\\\\python312.zip', 'D:\\\\python\\\\download\\\\DLLs', 'D:\\\\python\\\\download\\\\Lib', 'D:\\\\python\\\\download', 'D:\\\\Jarvis project\\\\.venv', 'D:\\\\Jarvis project\\\\.venv\\\\Lib\\\\site-packages']"
+        - 'row "Server time: Wed, 17 Jun 2026 16:21:43 +0800" [ref=e39]':
+          - rowheader "Server time:" [ref=e40]
+          - cell "Wed, 17 Jun 2026 16:21:43 +0800" [ref=e41]
+  - generic [ref=e42]:
+    - heading "Error during template rendering" [level=2] [ref=e43]
+    - paragraph [ref=e44]:
+      - text: In template
+      - code [ref=e45]: D:\Jarvis project\templates\memory\timeline.html
+      - text: ", error at line"
+      - strong [ref=e46]: "409"
+    - 'heading "Variables and attributes may not begin with underscores: ''event._mockup_color''" [level=3] [ref=e47]'
+    - table [ref=e48]:
+      - rowgroup [ref=e49]:
+        - 'row "399 {# Day Divider (mockup §3) #}" [ref=e50]':
+          - rowheader "399" [ref=e51]
+          - 'cell "{# Day Divider (mockup §3) #}" [ref=e52]'
+        - row "400 <div class=\"memory-day-divider\">" [ref=e53]:
+          - rowheader "400" [ref=e54]
+          - cell "<div class=\"memory-day-divider\">" [ref=e55]
+        - 'row "401 <span class=\"memory-day-divider-label\">{{ group.date_label }}</span>" [ref=e56]':
+          - rowheader "401" [ref=e57]
+          - 'cell "<span class=\"memory-day-divider-label\">{{ group.date_label }}</span>" [ref=e58]'
+        - row "402 <div class=\"memory-day-divider-line\"></div>" [ref=e59]:
+          - rowheader "402" [ref=e60]
+          - cell "<div class=\"memory-day-divider-line\"></div>" [ref=e61]
+        - row "403 </div>" [ref=e62]:
+          - rowheader "403" [ref=e63]
+          - cell "</div>" [ref=e64]
+        - row "404" [ref=e65]:
+          - columnheader "404" [ref=e66]
+          - cell [ref=e67]
+        - 'row "405 {# Events for this date #}" [ref=e68]':
+          - rowheader "405" [ref=e69]
+          - 'cell "{# Events for this date #}" [ref=e70]'
+        - 'row "406 {% for event in group.events %}" [ref=e71]':
+          - rowheader "406" [ref=e72]
+          - 'cell "{% for event in group.events %}" [ref=e73]'
+        - 'row "407 <a href=\"{% url ''memory:timeline'' %}?filter={{ current_filter }}{% if query %}&q={{ query }}{% endif %}{% if current_page > 1 %}&page={{ current_page }}{% endif %}\"" [ref=e74]':
+          - rowheader "407" [ref=e75]
+          - 'cell "<a href=\"{% url ''memory:timeline'' %}?filter={{ current_filter }}{% if query %}&q={{ query }}{% endif %}{% if current_page > 1 %}&page={{ current_page }}{% endif %}\"" [ref=e76]'
+        - row "408 class=\"memory-event-card\"" [ref=e77]:
+          - rowheader "408" [ref=e78]
+          - cell "class=\"memory-event-card\"" [ref=e79]
+        - 'row "409 style=\"border-left-color: {{ event._mockup_color }};\">" [ref=e80]':
+          - rowheader "409" [ref=e81]
+          - 'cell "style=\"border-left-color: {{ event._mockup_color }};\">" [ref=e82]'
+        - row "410 <div class=\"memory-event-card-header\">" [ref=e83]:
+          - rowheader "410" [ref=e84]
+          - cell "<div class=\"memory-event-card-header\">" [ref=e85]
+        - row "411 <span class=\"memory-event-card-title\">" [ref=e86]:
+          - rowheader "411" [ref=e87]
+          - cell "<span class=\"memory-event-card-title\">" [ref=e88]
+        - 'row "412 <span class=\"memory-event-card-icon\">{{ event._mockup_icon }}</span>" [ref=e89]':
+          - rowheader "412" [ref=e90]
+          - 'cell "<span class=\"memory-event-card-icon\">{{ event._mockup_icon }}</span>" [ref=e91]'
+        - 'row "413 {{ event.title }}" [ref=e92]':
+          - rowheader "413" [ref=e93]
+          - 'cell "{{ event.title }}" [ref=e94]'
+        - row "414 </span>" [ref=e95]:
+          - rowheader "414" [ref=e96]
+          - cell "</span>" [ref=e97]
+        - 'row "415 <span class=\"memory-event-card-time\">{{ event.happened_at|time:\"H:i\" }}</span>" [ref=e98]':
+          - rowheader "415" [ref=e99]
+          - 'cell "<span class=\"memory-event-card-time\">{{ event.happened_at|time:\"H:i\" }}</span>" [ref=e100]'
+        - row "416 </div>" [ref=e101]:
+          - rowheader "416" [ref=e102]
+          - cell "</div>" [ref=e103]
+        - row "417 <div class=\"memory-event-card-meta\">" [ref=e104]:
+          - rowheader "417" [ref=e105]
+          - cell "<div class=\"memory-event-card-meta\">" [ref=e106]
+        - 'row "418 <span class=\"memory-event-card-type\">{{ event._mockup_label }}</span>" [ref=e107]':
+          - rowheader "418" [ref=e108]
+          - 'cell "<span class=\"memory-event-card-type\">{{ event._mockup_label }}</span>" [ref=e109]'
+        - 'row "419 {% if event.description %}" [ref=e110]':
+          - rowheader "419" [ref=e111]
+          - 'cell "{% if event.description %}" [ref=e112]'
+  - generic [ref=e113]:
+    - heading "Traceback Switch to copy-and-paste view" [level=2] [ref=e114]:
+      - text: Traceback
+      - link "Switch to copy-and-paste view" [ref=e116] [cursor=pointer]:
+        - /url: "#"
+    - list [ref=e118]:
+      - listitem [ref=e119]:
+        - code [ref=e120]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 811, in __init__"
+        - list [ref=e122]:
+          - listitem [ref=e123] [cursor=pointer]:
+            - text: self.literal = float(var) ^^^^^^^^^^
+            - generic [ref=e124]: …
+        - group [ref=e125]:
+          - generic "Local vars" [ref=e126] [cursor=pointer]
+      - listitem [ref=e127]:
+        - 'heading "During handling of the above exception (could not convert string to float: ''event._mockup_color''), another exception occurred:" [level=3] [ref=e128]'
+      - listitem [ref=e129]:
+        - code [ref=e130]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 827, in __init__"
+        - list [ref=e132]:
+          - listitem [ref=e133] [cursor=pointer]:
+            - text: self.literal = mark_safe(unescape_string_literal(var)) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e134]: …
+        - group [ref=e135]:
+          - generic "Local vars" [ref=e136] [cursor=pointer]
+      - listitem [ref=e137]:
+        - code [ref=e138]: D:\Jarvis project\.venv\Lib\site-packages\django\utils\functional.py
+        - text: ", line 231, in wrapper"
+        - list [ref=e140]:
+          - listitem [ref=e141] [cursor=pointer]:
+            - text: return func(*args, **kwargs) ^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e142]: …
+        - group [ref=e143]:
+          - generic "Local vars" [ref=e144] [cursor=pointer]
+      - listitem [ref=e145]:
+        - code [ref=e146]: D:\Jarvis project\.venv\Lib\site-packages\django\utils\text.py
+        - text: ", line 475, in unescape_string_literal"
+        - list [ref=e148]:
+          - listitem [ref=e149] [cursor=pointer]:
+            - text: "raise ValueError(\"Not a string literal: %r\" % s) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+            - generic [ref=e150]: …
+        - group [ref=e151]:
+          - generic "Local vars" [ref=e152] [cursor=pointer]
+      - listitem [ref=e153]:
+        - 'heading "During handling of the above exception (Not a string literal: ''event._mockup_color''), another exception occurred:" [level=3] [ref=e154]'
+      - listitem [ref=e155]:
+        - code [ref=e156]: D:\Jarvis project\.venv\Lib\site-packages\django\core\handlers\exception.py
+        - text: ", line 42, in inner"
+        - list [ref=e158]:
+          - listitem [ref=e159] [cursor=pointer]:
+            - text: response = await get_response(request) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e160]: …
+        - group [ref=e161]:
+          - generic "Local vars" [ref=e162] [cursor=pointer]
+      - listitem [ref=e163]:
+        - code [ref=e164]: D:\Jarvis project\.venv\Lib\site-packages\django\core\handlers\base.py
+        - text: ", line 253, in _get_response_async"
+        - list [ref=e166]:
+          - listitem [ref=e167] [cursor=pointer]:
+            - text: response = await wrapped_callback(
+            - generic [ref=e168]: …
+        - group [ref=e169]:
+          - generic "Local vars" [ref=e170] [cursor=pointer]
+      - listitem [ref=e171]:
+        - code [ref=e172]: D:\Jarvis project\.venv\Lib\site-packages\django\contrib\auth\decorators.py
+        - text: ", line 23, in _wrapper_view"
+        - list [ref=e174]:
+          - listitem [ref=e175] [cursor=pointer]:
+            - text: return view_func(request, *args, **kwargs) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e176]: …
+        - group [ref=e177]:
+          - generic "Local vars" [ref=e178] [cursor=pointer]
+      - listitem [ref=e179]:
+        - code [ref=e180]: D:\Jarvis project\apps\memory\views.py
+        - text: ", line 156, in timeline_view"
+        - list [ref=e182]:
+          - listitem [ref=e183] [cursor=pointer]:
+            - text: "return render(request, 'memory/timeline.html', {"
+            - generic [ref=e184]: …
+        - group [ref=e185]:
+          - generic "Local vars" [ref=e186] [cursor=pointer]
+      - listitem [ref=e187]:
+        - code [ref=e188]: D:\Jarvis project\.venv\Lib\site-packages\django\shortcuts.py
+        - text: ", line 25, in render"
+        - list [ref=e190]:
+          - listitem [ref=e191] [cursor=pointer]:
+            - text: content = loader.render_to_string(template_name, context, request, using=using) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e192]: …
+        - group [ref=e193]:
+          - generic "Local vars" [ref=e194] [cursor=pointer]
+      - listitem [ref=e195]:
+        - code [ref=e196]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loader.py
+        - text: ", line 61, in render_to_string"
+        - list [ref=e198]:
+          - listitem [ref=e199] [cursor=pointer]:
+            - text: template = get_template(template_name, using=using) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e200]: …
+        - group [ref=e201]:
+          - generic "Local vars" [ref=e202] [cursor=pointer]
+      - listitem [ref=e203]:
+        - code [ref=e204]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loader.py
+        - text: ", line 15, in get_template"
+        - list [ref=e206]:
+          - listitem [ref=e207] [cursor=pointer]:
+            - text: return engine.get_template(template_name) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e208]: …
+        - group [ref=e209]:
+          - generic "Local vars" [ref=e210] [cursor=pointer]
+      - listitem [ref=e211]:
+        - code [ref=e212]: D:\Jarvis project\.venv\Lib\site-packages\django\template\backends\django.py
+        - text: ", line 33, in get_template"
+        - list [ref=e214]:
+          - listitem [ref=e215] [cursor=pointer]:
+            - text: return Template(self.engine.get_template(template_name), self) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e216]: …
+        - group [ref=e217]:
+          - generic "Local vars" [ref=e218] [cursor=pointer]
+      - listitem [ref=e219]:
+        - code [ref=e220]: D:\Jarvis project\.venv\Lib\site-packages\django\template\engine.py
+        - text: ", line 177, in get_template"
+        - list [ref=e222]:
+          - listitem [ref=e223] [cursor=pointer]:
+            - text: template, origin = self.find_template(template_name) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e224]: …
+        - group [ref=e225]:
+          - generic "Local vars" [ref=e226] [cursor=pointer]
+      - listitem [ref=e227]:
+        - code [ref=e228]: D:\Jarvis project\.venv\Lib\site-packages\django\template\engine.py
+        - text: ", line 159, in find_template"
+        - list [ref=e230]:
+          - listitem [ref=e231] [cursor=pointer]:
+            - text: template = loader.get_template(name, skip=skip) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e232]: …
+        - group [ref=e233]:
+          - generic "Local vars" [ref=e234] [cursor=pointer]
+      - listitem [ref=e235]:
+        - code [ref=e236]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loaders\cached.py
+        - text: ", line 57, in get_template"
+        - list [ref=e238]:
+          - listitem [ref=e239] [cursor=pointer]:
+            - text: template = super().get_template(template_name, skip) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e240]: …
+        - group [ref=e241]:
+          - generic "Local vars" [ref=e242] [cursor=pointer]
+      - listitem [ref=e243]:
+        - code [ref=e244]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loaders\base.py
+        - text: ", line 28, in get_template"
+        - list [ref=e246]:
+          - listitem [ref=e247] [cursor=pointer]:
+            - text: return Template(
+            - generic [ref=e248]: …
+        - group [ref=e249]:
+          - generic "Local vars" [ref=e250] [cursor=pointer]
+      - listitem [ref=e251]:
+        - code [ref=e252]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 154, in __init__"
+        - list [ref=e254]:
+          - listitem [ref=e255] [cursor=pointer]:
+            - text: self.nodelist = self.compile_nodelist() ^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e256]: …
+        - group [ref=e257]:
+          - generic "Local vars" [ref=e258] [cursor=pointer]
+      - listitem [ref=e259]:
+        - code [ref=e260]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 196, in compile_nodelist"
+        - list [ref=e262]:
+          - listitem [ref=e263] [cursor=pointer]:
+            - text: return parser.parse() ^^^^^^^^^^^^^^
+            - generic [ref=e264]: …
+        - group [ref=e265]:
+          - generic "Local vars" [ref=e266] [cursor=pointer]
+      - listitem [ref=e267]:
+        - code [ref=e268]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 510, in parse"
+        - list [ref=e270]:
+          - listitem [ref=e271] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e272]: …
+        - group [ref=e273]:
+          - generic "Local vars" [ref=e274] [cursor=pointer]
+      - listitem [ref=e275]:
+        - code [ref=e276]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 508, in parse"
+        - list [ref=e278]:
+          - listitem [ref=e279] [cursor=pointer]:
+            - text: compiled_result = compile_func(self, token) ^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e280]: …
+        - group [ref=e281]:
+          - generic "Local vars" [ref=e282] [cursor=pointer]
+      - listitem [ref=e283]:
+        - code [ref=e284]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loader_tags.py
+        - text: ", line 295, in do_extends"
+        - list [ref=e286]:
+          - listitem [ref=e287] [cursor=pointer]:
+            - text: nodelist = parser.parse() ^^^^^^^^^^^^^^
+            - generic [ref=e288]: …
+        - group [ref=e289]:
+          - generic "Local vars" [ref=e290] [cursor=pointer]
+      - listitem [ref=e291]:
+        - code [ref=e292]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 510, in parse"
+        - list [ref=e294]:
+          - listitem [ref=e295] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e296]: …
+        - group [ref=e297]:
+          - generic "Local vars" [ref=e298] [cursor=pointer]
+      - listitem [ref=e299]:
+        - code [ref=e300]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 508, in parse"
+        - list [ref=e302]:
+          - listitem [ref=e303] [cursor=pointer]:
+            - text: compiled_result = compile_func(self, token) ^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e304]: …
+        - group [ref=e305]:
+          - generic "Local vars" [ref=e306] [cursor=pointer]
+      - listitem [ref=e307]:
+        - code [ref=e308]: D:\Jarvis project\.venv\Lib\site-packages\django\template\loader_tags.py
+        - text: ", line 234, in do_block"
+        - list [ref=e310]:
+          - listitem [ref=e311] [cursor=pointer]:
+            - text: nodelist = parser.parse(("endblock",)) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e312]: …
+        - group [ref=e313]:
+          - generic "Local vars" [ref=e314] [cursor=pointer]
+      - listitem [ref=e315]:
+        - code [ref=e316]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 510, in parse"
+        - list [ref=e318]:
+          - listitem [ref=e319] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e320]: …
+        - group [ref=e321]:
+          - generic "Local vars" [ref=e322] [cursor=pointer]
+      - listitem [ref=e323]:
+        - code [ref=e324]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 508, in parse"
+        - list [ref=e326]:
+          - listitem [ref=e327] [cursor=pointer]:
+            - text: compiled_result = compile_func(self, token) ^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e328]: …
+        - group [ref=e329]:
+          - generic "Local vars" [ref=e330] [cursor=pointer]
+      - listitem [ref=e331]:
+        - code [ref=e332]: D:\Jarvis project\.venv\Lib\site-packages\django\template\defaulttags.py
+        - text: ", line 961, in do_if"
+        - list [ref=e334]:
+          - listitem [ref=e335] [cursor=pointer]:
+            - text: nodelist = parser.parse(("elif", "else", "endif")) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e336]: …
+        - group [ref=e337]:
+          - generic "Local vars" [ref=e338] [cursor=pointer]
+      - listitem [ref=e339]:
+        - code [ref=e340]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 510, in parse"
+        - list [ref=e342]:
+          - listitem [ref=e343] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e344]: …
+        - group [ref=e345]:
+          - generic "Local vars" [ref=e346] [cursor=pointer]
+      - listitem [ref=e347]:
+        - code [ref=e348]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 508, in parse"
+        - list [ref=e350]:
+          - listitem [ref=e351] [cursor=pointer]:
+            - text: compiled_result = compile_func(self, token) ^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e352]: …
+        - group [ref=e353]:
+          - generic "Local vars" [ref=e354] [cursor=pointer]
+      - listitem [ref=e355]:
+        - code [ref=e356]: D:\Jarvis project\.venv\Lib\site-packages\django\template\defaulttags.py
+        - text: ", line 861, in do_for"
+        - list [ref=e358]:
+          - listitem [ref=e359] [cursor=pointer]:
+            - text: nodelist_loop = parser.parse(
+            - generic [ref=e360]: …
+        - group [ref=e361]:
+          - generic "Local vars" [ref=e362] [cursor=pointer]
+      - listitem [ref=e363]:
+        - code [ref=e364]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 510, in parse"
+        - list [ref=e366]:
+          - listitem [ref=e367] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e368]: …
+        - group [ref=e369]:
+          - generic "Local vars" [ref=e370] [cursor=pointer]
+      - listitem [ref=e371]:
+        - code [ref=e372]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 508, in parse"
+        - list [ref=e374]:
+          - listitem [ref=e375] [cursor=pointer]:
+            - text: compiled_result = compile_func(self, token) ^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e376]: …
+        - group [ref=e377]:
+          - generic "Local vars" [ref=e378] [cursor=pointer]
+      - listitem [ref=e379]:
+        - code [ref=e380]: D:\Jarvis project\.venv\Lib\site-packages\django\template\defaulttags.py
+        - text: ", line 861, in do_for"
+        - list [ref=e382]:
+          - listitem [ref=e383] [cursor=pointer]:
+            - text: nodelist_loop = parser.parse(
+            - generic [ref=e384]: …
+        - group [ref=e385]:
+          - generic "Local vars" [ref=e386] [cursor=pointer]
+      - listitem [ref=e387]:
+        - code [ref=e388]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 481, in parse"
+        - list [ref=e390]:
+          - listitem [ref=e391] [cursor=pointer]:
+            - text: raise self.error(token, e) ^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e392]: …
+        - group [ref=e393]:
+          - generic "Local vars" [ref=e394] [cursor=pointer]
+      - listitem [ref=e395]:
+        - code [ref=e396]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 479, in parse"
+        - list [ref=e398]:
+          - listitem [ref=e399] [cursor=pointer]:
+            - text: filter_expression = self.compile_filter(token.contents) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e400]: …
+        - group [ref=e401]:
+          - generic "Local vars" [ref=e402] [cursor=pointer]
+      - listitem [ref=e403]:
+        - code [ref=e404]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 597, in compile_filter"
+        - list [ref=e406]:
+          - listitem [ref=e407] [cursor=pointer]:
+            - text: return FilterExpression(token, self) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            - generic [ref=e408]: …
+        - group [ref=e409]:
+          - generic "Local vars" [ref=e410] [cursor=pointer]
+      - listitem [ref=e411]:
+        - code [ref=e412]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 685, in __init__"
+        - list [ref=e414]:
+          - listitem [ref=e415] [cursor=pointer]:
+            - text: var_obj = Variable(var) ^^^^^^^^^^^^^
+            - generic [ref=e416]: …
+        - group [ref=e417]:
+          - generic "Local vars" [ref=e418] [cursor=pointer]
+      - listitem [ref=e419]:
+        - code [ref=e420]: D:\Jarvis project\.venv\Lib\site-packages\django\template\base.py
+        - text: ", line 832, in __init__"
+        - list [ref=e422]:
+          - listitem [ref=e423] [cursor=pointer]:
+            - text: raise TemplateSyntaxError( ^
+            - generic [ref=e424]: …
+        - group [ref=e425]:
+          - generic "Local vars" [ref=e426] [cursor=pointer]
+  - generic [ref=e427]:
+    - heading "Request information" [level=2] [ref=e428]
+    - heading "USER" [level=3] [ref=e429]
+    - paragraph [ref=e430]: admin
+    - heading "GET" [level=3] [ref=e431]
+    - paragraph [ref=e432]: No GET data
+    - heading "POST" [level=3] [ref=e433]
+    - paragraph [ref=e434]: No POST data
+    - heading "FILES" [level=3] [ref=e435]
+    - paragraph [ref=e436]: No FILES data
+    - heading "COOKIES" [level=3] [ref=e437]
+    - table [ref=e438]:
+      - rowgroup [ref=e439]:
+        - row "Variable Value" [ref=e440]:
+          - columnheader "Variable" [ref=e441]
+          - columnheader "Value" [ref=e442]
+      - rowgroup [ref=e443]:
+        - row "csrftoken '********************'" [ref=e444]:
+          - cell "csrftoken" [ref=e445]
+          - cell "'********************'" [ref=e446]:
+            - generic [ref=e447]: "'********************'"
+        - row "sessionid '********************'" [ref=e448]:
+          - cell "sessionid" [ref=e449]
+          - cell "'********************'" [ref=e450]:
+            - generic [ref=e451]: "'********************'"
+    - heading "META" [level=3] [ref=e452]
+    - table [ref=e453]:
+      - rowgroup [ref=e454]:
+        - row "Variable Value" [ref=e455]:
+          - columnheader "Variable" [ref=e456]
+          - columnheader "Value" [ref=e457]
+      - rowgroup [ref=e458]:
+        - row "CSRF_COOKIE 'lfeUtd9NFIGS1DlGWHuguoIoyM6UgUpJ'" [ref=e459]:
+          - cell "CSRF_COOKIE" [ref=e460]
+          - cell "'lfeUtd9NFIGS1DlGWHuguoIoyM6UgUpJ'" [ref=e461]:
+            - generic [ref=e462]: "'lfeUtd9NFIGS1DlGWHuguoIoyM6UgUpJ'"
+        - row "HTTP_ACCEPT 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'" [ref=e463]:
+          - cell "HTTP_ACCEPT" [ref=e464]
+          - cell "'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'" [ref=e465]:
+            - generic [ref=e466]: "'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'"
+        - row "HTTP_ACCEPT_ENCODING 'gzip, deflate, br, zstd'" [ref=e467]:
+          - cell "HTTP_ACCEPT_ENCODING" [ref=e468]
+          - cell "'gzip, deflate, br, zstd'" [ref=e469]:
+            - generic [ref=e470]: "'gzip, deflate, br, zstd'"
+        - row "HTTP_ACCEPT_LANGUAGE 'zh-CN,zh;q=0.9'" [ref=e471]:
+          - cell "HTTP_ACCEPT_LANGUAGE" [ref=e472]
+          - cell "'zh-CN,zh;q=0.9'" [ref=e473]:
+            - generic [ref=e474]: "'zh-CN,zh;q=0.9'"
+        - row "HTTP_CONNECTION 'keep-alive'" [ref=e475]:
+          - cell "HTTP_CONNECTION" [ref=e476]
+          - cell "'keep-alive'" [ref=e477]:
+            - generic [ref=e478]: "'keep-alive'"
+        - row "HTTP_COOKIE '********************'" [ref=e479]:
+          - cell "HTTP_COOKIE" [ref=e480]
+          - cell "'********************'" [ref=e481]:
+            - generic [ref=e482]: "'********************'"
+        - row "HTTP_HOST 'localhost:8001'" [ref=e483]:
+          - cell "HTTP_HOST" [ref=e484]
+          - cell "'localhost:8001'" [ref=e485]:
+            - generic [ref=e486]: "'localhost:8001'"
+        - row "HTTP_SEC_CH_UA '\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"'" [ref=e487]:
+          - cell "HTTP_SEC_CH_UA" [ref=e488]
+          - cell "'\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"'" [ref=e489]:
+            - generic [ref=e490]: "'\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"'"
+        - row "HTTP_SEC_CH_UA_MOBILE '?0'" [ref=e491]:
+          - cell "HTTP_SEC_CH_UA_MOBILE" [ref=e492]
+          - cell "'?0'" [ref=e493]:
+            - generic [ref=e494]: "'?0'"
+        - row "HTTP_SEC_CH_UA_PLATFORM '\"Windows\"'" [ref=e495]:
+          - cell "HTTP_SEC_CH_UA_PLATFORM" [ref=e496]
+          - cell "'\"Windows\"'" [ref=e497]:
+            - generic [ref=e498]: "'\"Windows\"'"
+        - row "HTTP_SEC_FETCH_DEST 'document'" [ref=e499]:
+          - cell "HTTP_SEC_FETCH_DEST" [ref=e500]
+          - cell "'document'" [ref=e501]:
+            - generic [ref=e502]: "'document'"
+        - row "HTTP_SEC_FETCH_MODE 'navigate'" [ref=e503]:
+          - cell "HTTP_SEC_FETCH_MODE" [ref=e504]
+          - cell "'navigate'" [ref=e505]:
+            - generic [ref=e506]: "'navigate'"
+        - row "HTTP_SEC_FETCH_SITE 'none'" [ref=e507]:
+          - cell "HTTP_SEC_FETCH_SITE" [ref=e508]
+          - cell "'none'" [ref=e509]:
+            - generic [ref=e510]: "'none'"
+        - row "HTTP_SEC_FETCH_USER '?1'" [ref=e511]:
+          - cell "HTTP_SEC_FETCH_USER" [ref=e512]
+          - cell "'?1'" [ref=e513]:
+            - generic [ref=e514]: "'?1'"
+        - row "HTTP_UPGRADE_INSECURE_REQUESTS '1'" [ref=e515]:
+          - cell "HTTP_UPGRADE_INSECURE_REQUESTS" [ref=e516]
+          - cell "'1'" [ref=e517]:
+            - generic [ref=e518]: "'1'"
+        - row "HTTP_USER_AGENT ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like ' 'Gecko) Chrome/148.0.0.0 Safari/537.36')" [ref=e519]:
+          - cell "HTTP_USER_AGENT" [ref=e520]
+          - cell "('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like ' 'Gecko) Chrome/148.0.0.0 Safari/537.36')" [ref=e521]:
+            - generic [ref=e522]: ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like ' 'Gecko) Chrome/148.0.0.0 Safari/537.36')
+        - row "PATH_INFO '/memory/timeline/'" [ref=e523]:
+          - cell "PATH_INFO" [ref=e524]
+          - cell "'/memory/timeline/'" [ref=e525]:
+            - generic [ref=e526]: "'/memory/timeline/'"
+        - row "QUERY_STRING ''" [ref=e527]:
+          - cell "QUERY_STRING" [ref=e528]
+          - cell "''" [ref=e529]:
+            - generic [ref=e530]: "''"
+        - row "REMOTE_ADDR '127.0.0.1'" [ref=e531]:
+          - cell "REMOTE_ADDR" [ref=e532]
+          - cell "'127.0.0.1'" [ref=e533]:
+            - generic [ref=e534]: "'127.0.0.1'"
+        - row "REMOTE_HOST '127.0.0.1'" [ref=e535]:
+          - cell "REMOTE_HOST" [ref=e536]
+          - cell "'127.0.0.1'" [ref=e537]:
+            - generic [ref=e538]: "'127.0.0.1'"
+        - row "REMOTE_PORT 63293" [ref=e539]:
+          - cell "REMOTE_PORT" [ref=e540]
+          - cell "63293" [ref=e541]:
+            - generic [ref=e542]: "63293"
+        - row "REQUEST_METHOD 'GET'" [ref=e543]:
+          - cell "REQUEST_METHOD" [ref=e544]
+          - cell "'GET'" [ref=e545]:
+            - generic [ref=e546]: "'GET'"
+        - row "SCRIPT_NAME ''" [ref=e547]:
+          - cell "SCRIPT_NAME" [ref=e548]
+          - cell "''" [ref=e549]:
+            - generic [ref=e550]: "''"
+        - row "SERVER_NAME '127.0.0.1'" [ref=e551]:
+          - cell "SERVER_NAME" [ref=e552]
+          - cell "'127.0.0.1'" [ref=e553]:
+            - generic [ref=e554]: "'127.0.0.1'"
+        - row "SERVER_PORT '8001'" [ref=e555]:
+          - cell "SERVER_PORT" [ref=e556]
+          - cell "'8001'" [ref=e557]:
+            - generic [ref=e558]: "'8001'"
+        - row "wsgi.multiprocess True" [ref=e559]:
+          - cell "wsgi.multiprocess" [ref=e560]
+          - cell "True" [ref=e561]:
+            - generic [ref=e562]: "True"
+        - row "wsgi.multithread True" [ref=e563]:
+          - cell "wsgi.multithread" [ref=e564]
+          - cell "True" [ref=e565]:
+            - generic [ref=e566]: "True"
+    - heading "Settings" [level=3] [ref=e567]
+    - heading "Using settings module config.settings.demo" [level=4] [ref=e568]:
+      - text: Using settings module
+      - code [ref=e569]: config.settings.demo
+    - table [ref=e570]:
+      - rowgroup [ref=e571]:
+        - row "Setting Value" [ref=e572]:
+          - columnheader "Setting" [ref=e573]
+          - columnheader "Value" [ref=e574]
+      - rowgroup [ref=e575]:
+        - 'row "ABSOLUTE_URL_OVERRIDES {}" [ref=e576]':
+          - cell "ABSOLUTE_URL_OVERRIDES" [ref=e577]
+          - 'cell "{}" [ref=e578]':
+            - generic [ref=e579]: "{}"
+        - row "ACCOUNT_EMAIL_VERIFICATION 'none'" [ref=e580]:
+          - cell "ACCOUNT_EMAIL_VERIFICATION" [ref=e581]
+          - cell "'none'" [ref=e582]:
+            - generic [ref=e583]: "'none'"
+        - 'row "ACCOUNT_LOGIN_METHODS {''username''}" [ref=e584]':
+          - cell "ACCOUNT_LOGIN_METHODS" [ref=e585]
+          - 'cell "{''username''}" [ref=e586]':
+            - generic [ref=e587]: "{'username'}"
+        - row "ACCOUNT_SESSION_REMEMBER True" [ref=e588]:
+          - cell "ACCOUNT_SESSION_REMEMBER" [ref=e589]
+          - cell "True" [ref=e590]:
+            - generic [ref=e591]: "True"
+        - row "ACCOUNT_SIGNUP_FIELDS ['username*', 'email*', 'password1*', 'password2*']" [ref=e592]:
+          - cell "ACCOUNT_SIGNUP_FIELDS" [ref=e593]
+          - cell "['username*', 'email*', 'password1*', 'password2*']" [ref=e594]:
+            - generic [ref=e595]: "['username*', 'email*', 'password1*', 'password2*']"
+        - row "ADMINS []" [ref=e596]:
+          - cell "ADMINS" [ref=e597]
+          - cell "[]" [ref=e598]:
+            - generic [ref=e599]: "[]"
+        - row "ALLOWED_HOSTS ['*']" [ref=e600]:
+          - cell "ALLOWED_HOSTS" [ref=e601]
+          - cell "['*']" [ref=e602]:
+            - generic [ref=e603]: "['*']"
+        - row "APPEND_SLASH True" [ref=e604]:
+          - cell "APPEND_SLASH" [ref=e605]
+          - cell "True" [ref=e606]:
+            - generic [ref=e607]: "True"
+        - row "ASGI_APPLICATION 'config.asgi.application'" [ref=e608]:
+          - cell "ASGI_APPLICATION" [ref=e609]
+          - cell "'config.asgi.application'" [ref=e610]:
+            - generic [ref=e611]: "'config.asgi.application'"
+        - row "AUTHENTICATION_BACKENDS ['django.contrib.auth.backends.ModelBackend', 'allauth.account.auth_backends.AuthenticationBackend']" [ref=e612]:
+          - cell "AUTHENTICATION_BACKENDS" [ref=e613]
+          - cell "['django.contrib.auth.backends.ModelBackend', 'allauth.account.auth_backends.AuthenticationBackend']" [ref=e614]:
+            - generic [ref=e615]: "['django.contrib.auth.backends.ModelBackend', 'allauth.account.auth_backends.AuthenticationBackend']"
+        - row "AUTH_PASSWORD_VALIDATORS '********************'" [ref=e616]:
+          - cell "AUTH_PASSWORD_VALIDATORS" [ref=e617]
+          - cell "'********************'" [ref=e618]:
+            - generic [ref=e619]: "'********************'"
+        - row "AUTH_USER_MODEL 'accounts.User'" [ref=e620]:
+          - cell "AUTH_USER_MODEL" [ref=e621]
+          - cell "'accounts.User'" [ref=e622]:
+            - generic [ref=e623]: "'accounts.User'"
+        - row "BASE_DIR WindowsPath('D:/Jarvis project')" [ref=e624]:
+          - cell "BASE_DIR" [ref=e625]
+          - cell "WindowsPath('D:/Jarvis project')" [ref=e626]:
+            - generic [ref=e627]: WindowsPath('D:/Jarvis project')
+        - 'row "CACHES {''default'': {''BACKEND'': ''django.core.cache.backends.locmem.LocMemCache''}}" [ref=e628]':
+          - cell "CACHES" [ref=e629]
+          - 'cell "{''default'': {''BACKEND'': ''django.core.cache.backends.locmem.LocMemCache''}}" [ref=e630]':
+            - generic [ref=e631]: "{'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}"
+        - row "CACHE_MIDDLEWARE_ALIAS 'default'" [ref=e632]:
+          - cell "CACHE_MIDDLEWARE_ALIAS" [ref=e633]
+          - cell "'default'" [ref=e634]:
+            - generic [ref=e635]: "'default'"
+        - row "CACHE_MIDDLEWARE_KEY_PREFIX '********************'" [ref=e636]:
+          - cell "CACHE_MIDDLEWARE_KEY_PREFIX" [ref=e637]
+          - cell "'********************'" [ref=e638]:
+            - generic [ref=e639]: "'********************'"
+        - row "CACHE_MIDDLEWARE_SECONDS 600" [ref=e640]:
+          - cell "CACHE_MIDDLEWARE_SECONDS" [ref=e641]
+          - cell "600" [ref=e642]:
+            - generic [ref=e643]: "600"
+        - row "CELERY_ACCEPT_CONTENT ['json']" [ref=e644]:
+          - cell "CELERY_ACCEPT_CONTENT" [ref=e645]
+          - cell "['json']" [ref=e646]:
+            - generic [ref=e647]: "['json']"
+        - row "CELERY_BROKER_URL 'redis://:redispass@localhost:6379/0'" [ref=e648]:
+          - cell "CELERY_BROKER_URL" [ref=e649]
+          - cell "'redis://:redispass@localhost:6379/0'" [ref=e650]:
+            - generic [ref=e651]: "'redis://:redispass@localhost:6379/0'"
+        - row "CELERY_RESULT_BACKEND 'redis://:redispass@localhost:6379/0'" [ref=e652]:
+          - cell "CELERY_RESULT_BACKEND" [ref=e653]
+          - cell "'redis://:redispass@localhost:6379/0'" [ref=e654]:
+            - generic [ref=e655]: "'redis://:redispass@localhost:6379/0'"
+        - row "CELERY_RESULT_SERIALIZER 'json'" [ref=e656]:
+          - cell "CELERY_RESULT_SERIALIZER" [ref=e657]
+          - cell "'json'" [ref=e658]:
+            - generic [ref=e659]: "'json'"
+        - row "CELERY_TASK_ALWAYS_EAGER True" [ref=e660]:
+          - cell "CELERY_TASK_ALWAYS_EAGER" [ref=e661]
+          - cell "True" [ref=e662]:
+            - generic [ref=e663]: "True"
+        - row "CELERY_TASK_EAGER_PROPAGATES True" [ref=e664]:
+          - cell "CELERY_TASK_EAGER_PROPAGATES" [ref=e665]
+          - cell "True" [ref=e666]:
+            - generic [ref=e667]: "True"
+        - row "CELERY_TASK_SERIALIZER 'json'" [ref=e668]:
+          - cell "CELERY_TASK_SERIALIZER" [ref=e669]
+          - cell "'json'" [ref=e670]:
+            - generic [ref=e671]: "'json'"
+        - 'row "CHANNEL_LAYERS {''default'': {''BACKEND'': ''channels.layers.InMemoryChannelLayer''}}" [ref=e672]':
+          - cell "CHANNEL_LAYERS" [ref=e673]
+          - 'cell "{''default'': {''BACKEND'': ''channels.layers.InMemoryChannelLayer''}}" [ref=e674]':
+            - generic [ref=e675]: "{'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'}}"
+        - row "CORS_ALLOWED_ORIGINS ['http://localhost:8000']" [ref=e676]:
+          - cell "CORS_ALLOWED_ORIGINS" [ref=e677]
+          - cell "['http://localhost:8000']" [ref=e678]:
+            - generic [ref=e679]: "['http://localhost:8000']"
+        - row "CORS_ALLOW_ALL_ORIGINS True" [ref=e680]:
+          - cell "CORS_ALLOW_ALL_ORIGINS" [ref=e681]
+          - cell "True" [ref=e682]:
+            - generic [ref=e683]: "True"
+        - row "CSRF_COOKIE_AGE 31449600" [ref=e684]:
+          - cell "CSRF_COOKIE_AGE" [ref=e685]
+          - cell "31449600" [ref=e686]:
+            - generic [ref=e687]: "31449600"
+        - row "CSRF_COOKIE_DOMAIN None" [ref=e688]:
+          - cell "CSRF_COOKIE_DOMAIN" [ref=e689]
+          - cell "None" [ref=e690]:
+            - generic [ref=e691]: None
+        - row "CSRF_COOKIE_HTTPONLY False" [ref=e692]:
+          - cell "CSRF_COOKIE_HTTPONLY" [ref=e693]
+          - cell "False" [ref=e694]:
+            - generic [ref=e695]: "False"
+        - row "CSRF_COOKIE_NAME 'csrftoken'" [ref=e696]:
+          - cell "CSRF_COOKIE_NAME" [ref=e697]
+          - cell "'csrftoken'" [ref=e698]:
+            - generic [ref=e699]: "'csrftoken'"
+        - row "CSRF_COOKIE_PATH '/'" [ref=e700]:
+          - cell "CSRF_COOKIE_PATH" [ref=e701]
+          - cell "'/'" [ref=e702]:
+            - generic [ref=e703]: "'/'"
+        - row "CSRF_COOKIE_SAMESITE 'Lax'" [ref=e704]:
+          - cell "CSRF_COOKIE_SAMESITE" [ref=e705]
+          - cell "'Lax'" [ref=e706]:
+            - generic [ref=e707]: "'Lax'"
+        - row "CSRF_COOKIE_SECURE False" [ref=e708]:
+          - cell "CSRF_COOKIE_SECURE" [ref=e709]
+          - cell "False" [ref=e710]:
+            - generic [ref=e711]: "False"
+        - row "CSRF_FAILURE_VIEW 'django.views.csrf.csrf_failure'" [ref=e712]:
+          - cell "CSRF_FAILURE_VIEW" [ref=e713]
+          - cell "'django.views.csrf.csrf_failure'" [ref=e714]:
+            - generic [ref=e715]: "'django.views.csrf.csrf_failure'"
+        - row "CSRF_HEADER_NAME 'HTTP_X_CSRFTOKEN'" [ref=e716]:
+          - cell "CSRF_HEADER_NAME" [ref=e717]
+          - cell "'HTTP_X_CSRFTOKEN'" [ref=e718]:
+            - generic [ref=e719]: "'HTTP_X_CSRFTOKEN'"
+        - row "CSRF_TRUSTED_ORIGINS ['http://localhost:8000']" [ref=e720]:
+          - cell "CSRF_TRUSTED_ORIGINS" [ref=e721]
+          - cell "['http://localhost:8000']" [ref=e722]:
+            - generic [ref=e723]: "['http://localhost:8000']"
+        - row "CSRF_USE_SESSIONS False" [ref=e724]:
+          - cell "CSRF_USE_SESSIONS" [ref=e725]
+          - cell "False" [ref=e726]:
+            - generic [ref=e727]: "False"
+        - 'row "DATABASES {''default'': {''ATOMIC_REQUESTS'': False, ''AUTOCOMMIT'': True, ''CONN_HEALTH_CHECKS'': False, ''CONN_MAX_AGE'': 0, ''ENGINE'': ''django.db.backends.sqlite3'', ''HOST'': '''', ''NAME'': WindowsPath(''D:/Jarvis project/demo.db''), ''OPTIONS'': {}, ''PASSWORD'': ''********************'', ''PORT'': '''', ''TEST'': {''CHARSET'': None, ''COLLATION'': None, ''MIGRATE'': True, ''MIRROR'': None, ''NAME'': None}, ''TIME_ZONE'': None, ''USER'': ''''}}" [ref=e728]':
+          - cell "DATABASES" [ref=e729]
+          - 'cell "{''default'': {''ATOMIC_REQUESTS'': False, ''AUTOCOMMIT'': True, ''CONN_HEALTH_CHECKS'': False, ''CONN_MAX_AGE'': 0, ''ENGINE'': ''django.db.backends.sqlite3'', ''HOST'': '''', ''NAME'': WindowsPath(''D:/Jarvis project/demo.db''), ''OPTIONS'': {}, ''PASSWORD'': ''********************'', ''PORT'': '''', ''TEST'': {''CHARSET'': None, ''COLLATION'': None, ''MIGRATE'': True, ''MIRROR'': None, ''NAME'': None}, ''TIME_ZONE'': None, ''USER'': ''''}}" [ref=e730]':
+            - generic [ref=e731]: "{'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True, 'CONN_HEALTH_CHECKS': False, 'CONN_MAX_AGE': 0, 'ENGINE': 'django.db.backends.sqlite3', 'HOST': '', 'NAME': WindowsPath('D:/Jarvis project/demo.db'), 'OPTIONS': {}, 'PASSWORD': '********************', 'PORT': '', 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIGRATE': True, 'MIRROR': None, 'NAME': None}, 'TIME_ZONE': None, 'USER': ''}}"
+        - row "DATABASE_ROUTERS []" [ref=e732]:
+          - cell "DATABASE_ROUTERS" [ref=e733]
+          - cell "[]" [ref=e734]:
+            - generic [ref=e735]: "[]"
+        - row "DATA_UPLOAD_MAX_MEMORY_SIZE 2621440" [ref=e736]:
+          - cell "DATA_UPLOAD_MAX_MEMORY_SIZE" [ref=e737]
+          - cell "2621440" [ref=e738]:
+            - generic [ref=e739]: "2621440"
+        - row "DATA_UPLOAD_MAX_NUMBER_FIELDS 1000" [ref=e740]:
+          - cell "DATA_UPLOAD_MAX_NUMBER_FIELDS" [ref=e741]
+          - cell "1000" [ref=e742]:
+            - generic [ref=e743]: "1000"
+        - row "DATA_UPLOAD_MAX_NUMBER_FILES 100" [ref=e744]:
+          - cell "DATA_UPLOAD_MAX_NUMBER_FILES" [ref=e745]
+          - cell "100" [ref=e746]:
+            - generic [ref=e747]: "100"
+        - row "DATETIME_FORMAT 'N j, Y, P'" [ref=e748]:
+          - cell "DATETIME_FORMAT" [ref=e749]
+          - cell "'N j, Y, P'" [ref=e750]:
+            - generic [ref=e751]: "'N j, Y, P'"
+        - row "DATETIME_INPUT_FORMATS ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d %H:%M', '%m/%d/%Y %H:%M:%S', '%m/%d/%Y %H:%M:%S.%f', '%m/%d/%Y %H:%M', '%m/%d/%y %H:%M:%S', '%m/%d/%y %H:%M:%S.%f', '%m/%d/%y %H:%M']" [ref=e752]:
+          - cell "DATETIME_INPUT_FORMATS" [ref=e753]
+          - cell "['%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d %H:%M', '%m/%d/%Y %H:%M:%S', '%m/%d/%Y %H:%M:%S.%f', '%m/%d/%Y %H:%M', '%m/%d/%y %H:%M:%S', '%m/%d/%y %H:%M:%S.%f', '%m/%d/%y %H:%M']" [ref=e754]:
+            - generic [ref=e755]: "['%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d %H:%M', '%m/%d/%Y %H:%M:%S', '%m/%d/%Y %H:%M:%S.%f', '%m/%d/%Y %H:%M', '%m/%d/%y %H:%M:%S', '%m/%d/%y %H:%M:%S.%f', '%m/%d/%y %H:%M']"
+        - row "DATE_FORMAT 'N j, Y'" [ref=e756]:
+          - cell "DATE_FORMAT" [ref=e757]
+          - cell "'N j, Y'" [ref=e758]:
+            - generic [ref=e759]: "'N j, Y'"
+        - row "DATE_INPUT_FORMATS ['%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', '%b %d %Y', '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y', '%B %d, %Y', '%d %B %Y', '%d %B, %Y']" [ref=e760]:
+          - cell "DATE_INPUT_FORMATS" [ref=e761]
+          - cell "['%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', '%b %d %Y', '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y', '%B %d, %Y', '%d %B %Y', '%d %B, %Y']" [ref=e762]:
+            - generic [ref=e763]: "['%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', '%b %d %Y', '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y', '%B %d, %Y', '%d %B %Y', '%d %B, %Y']"
+        - row "DEBUG True" [ref=e764]:
+          - cell "DEBUG" [ref=e765]
+          - cell "True" [ref=e766]:
+            - generic [ref=e767]: "True"
+        - row "DEBUG_PROPAGATE_EXCEPTIONS False" [ref=e768]:
+          - cell "DEBUG_PROPAGATE_EXCEPTIONS" [ref=e769]
+          - cell "False" [ref=e770]:
+            - generic [ref=e771]: "False"
+        - row "DECIMAL_SEPARATOR '.'" [ref=e772]:
+          - cell "DECIMAL_SEPARATOR" [ref=e773]
+          - cell "'.'" [ref=e774]:
+            - generic [ref=e775]: "'.'"
+        - row "DEEPSEEK_API_KEY '********************'" [ref=e776]:
+          - cell "DEEPSEEK_API_KEY" [ref=e777]
+          - cell "'********************'" [ref=e778]:
+            - generic [ref=e779]: "'********************'"
+        - row "DEFAULT_AUTO_FIELD 'django.db.models.BigAutoField'" [ref=e780]:
+          - cell "DEFAULT_AUTO_FIELD" [ref=e781]
+          - cell "'django.db.models.BigAutoField'" [ref=e782]:
+            - generic [ref=e783]: "'django.db.models.BigAutoField'"
+        - row "DEFAULT_CHARSET 'utf-8'" [ref=e784]:
+          - cell "DEFAULT_CHARSET" [ref=e785]
+          - cell "'utf-8'" [ref=e786]:
+            - generic [ref=e787]: "'utf-8'"
+        - row "DEFAULT_EXCEPTION_REPORTER 'django.views.debug.ExceptionReporter'" [ref=e788]:
+          - cell "DEFAULT_EXCEPTION_REPORTER" [ref=e789]
+          - cell "'django.views.debug.ExceptionReporter'" [ref=e790]:
+            - generic [ref=e791]: "'django.views.debug.ExceptionReporter'"
+        - row "DEFAULT_EXCEPTION_REPORTER_FILTER 'django.views.debug.SafeExceptionReporterFilter'" [ref=e792]:
+          - cell "DEFAULT_EXCEPTION_REPORTER_FILTER" [ref=e793]
+          - cell "'django.views.debug.SafeExceptionReporterFilter'" [ref=e794]:
+            - generic [ref=e795]: "'django.views.debug.SafeExceptionReporterFilter'"
+        - row "DEFAULT_FILE_STORAGE 'django.core.files.storage.FileSystemStorage'" [ref=e796]:
+          - cell "DEFAULT_FILE_STORAGE" [ref=e797]
+          - cell "'django.core.files.storage.FileSystemStorage'" [ref=e798]:
+            - generic [ref=e799]: "'django.core.files.storage.FileSystemStorage'"
+        - row "DEFAULT_FROM_EMAIL 'webmaster@localhost'" [ref=e800]:
+          - cell "DEFAULT_FROM_EMAIL" [ref=e801]
+          - cell "'webmaster@localhost'" [ref=e802]:
+            - generic [ref=e803]: "'webmaster@localhost'"
+        - row "DEFAULT_INDEX_TABLESPACE ''" [ref=e804]:
+          - cell "DEFAULT_INDEX_TABLESPACE" [ref=e805]
+          - cell "''" [ref=e806]:
+            - generic [ref=e807]: "''"
+        - row "DEFAULT_TABLESPACE ''" [ref=e808]:
+          - cell "DEFAULT_TABLESPACE" [ref=e809]
+          - cell "''" [ref=e810]:
+            - generic [ref=e811]: "''"
+        - row "DISALLOWED_USER_AGENTS []" [ref=e812]:
+          - cell "DISALLOWED_USER_AGENTS" [ref=e813]
+          - cell "[]" [ref=e814]:
+            - generic [ref=e815]: "[]"
+        - row "EMAIL_BACKEND 'django.core.mail.backends.console.EmailBackend'" [ref=e816]:
+          - cell "EMAIL_BACKEND" [ref=e817]
+          - cell "'django.core.mail.backends.console.EmailBackend'" [ref=e818]:
+            - generic [ref=e819]: "'django.core.mail.backends.console.EmailBackend'"
+        - row "EMAIL_HOST ''" [ref=e820]:
+          - cell "EMAIL_HOST" [ref=e821]
+          - cell "''" [ref=e822]:
+            - generic [ref=e823]: "''"
+        - row "EMAIL_HOST_PASSWORD '********************'" [ref=e824]:
+          - cell "EMAIL_HOST_PASSWORD" [ref=e825]
+          - cell "'********************'" [ref=e826]:
+            - generic [ref=e827]: "'********************'"
+        - row "EMAIL_HOST_USER ''" [ref=e828]:
+          - cell "EMAIL_HOST_USER" [ref=e829]
+          - cell "''" [ref=e830]:
+            - generic [ref=e831]: "''"
+        - row "EMAIL_PORT 587" [ref=e832]:
+          - cell "EMAIL_PORT" [ref=e833]
+          - cell "587" [ref=e834]:
+            - generic [ref=e835]: "587"
+        - row "EMAIL_SSL_CERTFILE None" [ref=e836]:
+          - cell "EMAIL_SSL_CERTFILE" [ref=e837]
+          - cell "None" [ref=e838]:
+            - generic [ref=e839]: None
+        - row "EMAIL_SSL_KEYFILE '********************'" [ref=e840]:
+          - cell "EMAIL_SSL_KEYFILE" [ref=e841]
+          - cell "'********************'" [ref=e842]:
+            - generic [ref=e843]: "'********************'"
+        - row "EMAIL_SUBJECT_PREFIX '[Django] '" [ref=e844]:
+          - cell "EMAIL_SUBJECT_PREFIX" [ref=e845]
+          - cell "'[Django] '" [ref=e846]:
+            - generic [ref=e847]: "'[Django] '"
+        - row "EMAIL_TIMEOUT None" [ref=e848]:
+          - cell "EMAIL_TIMEOUT" [ref=e849]
+          - cell "None" [ref=e850]:
+            - generic [ref=e851]: None
+        - row "EMAIL_USE_LOCALTIME False" [ref=e852]:
+          - cell "EMAIL_USE_LOCALTIME" [ref=e853]
+          - cell "False" [ref=e854]:
+            - generic [ref=e855]: "False"
+        - row "EMAIL_USE_SSL False" [ref=e856]:
+          - cell "EMAIL_USE_SSL" [ref=e857]
+          - cell "False" [ref=e858]:
+            - generic [ref=e859]: "False"
+        - row "EMAIL_USE_TLS True" [ref=e860]:
+          - cell "EMAIL_USE_TLS" [ref=e861]
+          - cell "True" [ref=e862]:
+            - generic [ref=e863]: "True"
+        - row "FILE_UPLOAD_DIRECTORY_PERMISSIONS None" [ref=e864]:
+          - cell "FILE_UPLOAD_DIRECTORY_PERMISSIONS" [ref=e865]
+          - cell "None" [ref=e866]:
+            - generic [ref=e867]: None
+        - row "FILE_UPLOAD_HANDLERS ['django.core.files.uploadhandler.MemoryFileUploadHandler', 'django.core.files.uploadhandler.TemporaryFileUploadHandler']" [ref=e868]:
+          - cell "FILE_UPLOAD_HANDLERS" [ref=e869]
+          - cell "['django.core.files.uploadhandler.MemoryFileUploadHandler', 'django.core.files.uploadhandler.TemporaryFileUploadHandler']" [ref=e870]:
+            - generic [ref=e871]: "['django.core.files.uploadhandler.MemoryFileUploadHandler', 'django.core.files.uploadhandler.TemporaryFileUploadHandler']"
+        - row "FILE_UPLOAD_MAX_MEMORY_SIZE 2621440" [ref=e872]:
+          - cell "FILE_UPLOAD_MAX_MEMORY_SIZE" [ref=e873]
+          - cell "2621440" [ref=e874]:
+            - generic [ref=e875]: "2621440"
+        - row "FILE_UPLOAD_PERMISSIONS 420" [ref=e876]:
+          - cell "FILE_UPLOAD_PERMISSIONS" [ref=e877]
+          - cell "420" [ref=e878]:
+            - generic [ref=e879]: "420"
+        - row "FILE_UPLOAD_TEMP_DIR None" [ref=e880]:
+          - cell "FILE_UPLOAD_TEMP_DIR" [ref=e881]
+          - cell "None" [ref=e882]:
+            - generic [ref=e883]: None
+        - row "FIRST_DAY_OF_WEEK 0" [ref=e884]:
+          - cell "FIRST_DAY_OF_WEEK" [ref=e885]
+          - cell "0" [ref=e886]:
+            - generic [ref=e887]: "0"
+        - row "FIXTURE_DIRS []" [ref=e888]:
+          - cell "FIXTURE_DIRS" [ref=e889]
+          - cell "[]" [ref=e890]:
+            - generic [ref=e891]: "[]"
+        - row "FORCE_SCRIPT_NAME None" [ref=e892]:
+          - cell "FORCE_SCRIPT_NAME" [ref=e893]
+          - cell "None" [ref=e894]:
+            - generic [ref=e895]: None
+        - row "FORMAT_MODULE_PATH None" [ref=e896]:
+          - cell "FORMAT_MODULE_PATH" [ref=e897]
+          - cell "None" [ref=e898]:
+            - generic [ref=e899]: None
+        - row "FORMS_URLFIELD_ASSUME_HTTPS False" [ref=e900]:
+          - cell "FORMS_URLFIELD_ASSUME_HTTPS" [ref=e901]
+          - cell "False" [ref=e902]:
+            - generic [ref=e903]: "False"
+        - row "FORM_RENDERER 'django.forms.renderers.DjangoTemplates'" [ref=e904]:
+          - cell "FORM_RENDERER" [ref=e905]
+          - cell "'django.forms.renderers.DjangoTemplates'" [ref=e906]:
+            - generic [ref=e907]: "'django.forms.renderers.DjangoTemplates'"
+        - row "IGNORABLE_404_URLS []" [ref=e908]:
+          - cell "IGNORABLE_404_URLS" [ref=e909]
+          - cell "[]" [ref=e910]:
+            - generic [ref=e911]: "[]"
+        - row "INSTALLED_APPS ['daphne', 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'django.contrib.sites', 'django.contrib.postgres', 'corsheaders', 'allauth', 'allauth.account', 'apps.accounts', 'apps.content', 'apps.goals', 'apps.wellness', 'apps.trajectory', 'apps.memory', 'apps.chat', 'apps.dashboard', 'apps.userprofile', 'channels', 'infra.eventbus', 'infra.llm', 'apps.health']" [ref=e912]:
+          - cell "INSTALLED_APPS" [ref=e913]
+          - cell "['daphne', 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'django.contrib.sites', 'django.contrib.postgres', 'corsheaders', 'allauth', 'allauth.account', 'apps.accounts', 'apps.content', 'apps.goals', 'apps.wellness', 'apps.trajectory', 'apps.memory', 'apps.chat', 'apps.dashboard', 'apps.userprofile', 'channels', 'infra.eventbus', 'infra.llm', 'apps.health']" [ref=e914]:
+            - generic [ref=e915]: "['daphne', 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'django.contrib.sites', 'django.contrib.postgres', 'corsheaders', 'allauth', 'allauth.account', 'apps.accounts', 'apps.content', 'apps.goals', 'apps.wellness', 'apps.trajectory', 'apps.memory', 'apps.chat', 'apps.dashboard', 'apps.userprofile', 'channels', 'infra.eventbus', 'infra.llm', 'apps.health']"
+        - row "INTERNAL_IPS []" [ref=e916]:
+          - cell "INTERNAL_IPS" [ref=e917]
+          - cell "[]" [ref=e918]:
+            - generic [ref=e919]: "[]"
+        - row [ref=e920]:
+          - cell "LANGUAGES" [ref=e921]
+          - cell [ref=e922]:
+            - generic [ref=e923]: "[('af', 'Afrikaans'), ('ar', 'Arabic'), ('ar-dz', 'Algerian Arabic'), ('ast', 'Asturian'), ('az', 'Azerbaijani'), ('bg', 'Bulgarian'), ('be', 'Belarusian'), ('bn', 'Bengali'), ('br', 'Breton'), ('bs', 'Bosnian'), ('ca', 'Catalan'), ('ckb', 'Central Kurdish (Sorani)'), ('cs', 'Czech'), ('cy', 'Welsh'), ('da', 'Danish'), ('de', 'German'), ('dsb', 'Lower Sorbian'), ('el', 'Greek'), ('en', 'English'), ('en-au', 'Australian English'), ('en-gb', 'British English'), ('eo', 'Esperanto'), ('es', 'Spanish'), ('es-ar', 'Argentinian Spanish'), ('es-co', 'Colombian Spanish'), ('es-mx', 'Mexican Spanish'), ('es-ni', 'Nicaraguan Spanish'), ('es-ve', 'Venezuelan Spanish'), ('et', 'Estonian'), ('eu', 'Basque'), ('fa', 'Persian'), ('fi', 'Finnish'), ('fr', 'French'), ('fy', 'Frisian'), ('ga', 'Irish'), ('gd', 'Scottish Gaelic'), ('gl', 'Galician'), ('he', 'Hebrew'), ('hi', 'Hindi'), ('hr', 'Croatian'), ('hsb', 'Upper Sorbian'), ('hu', 'Hungarian'), ('hy', 'Armenian'), ('ia', 'Interlingua'), ('id', 'Indonesian'), ('ig', 'Igbo'), ('io', 'Ido'), ('is', 'Icelandic'), ('it', 'Italian'), ('ja', 'Japanese'), ('ka', 'Georgian'), ('kab', 'Kabyle'), ('kk', 'Kazakh'), ('km', 'Khmer'), ('kn', 'Kannada'), ('ko', 'Korean'), ('ky', 'Kyrgyz'), ('lb', 'Luxembourgish'), ('lt', 'Lithuanian'), ('lv', 'Latvian'), ('mk', 'Macedonian'), ('ml', 'Malayalam'), ('mn', 'Mongolian'), ('mr', 'Marathi'), ('ms', 'Malay'), ('my', 'Burmese'), ('nb', 'Norwegian Bokmål'), ('ne', 'Nepali'), ('nl', 'Dutch'), ('nn', 'Norwegian Nynorsk'), ('os', 'Ossetic'), ('pa', 'Punjabi'), ('pl', 'Polish'), ('pt', 'Portuguese'), ('pt-br', 'Brazilian Portuguese'), ('ro', 'Romanian'), ('ru', 'Russian'), ('sk', 'Slovak'), ('sl', 'Slovenian'), ('sq', 'Albanian'), ('sr', 'Serbian'), ('sr-latn', 'Serbian Latin'), ('sv', 'Swedish'), ('sw', 'Swahili'), ('ta', 'Tamil'), ('te', 'Telugu'), ('tg', 'Tajik'), ('th', 'Thai'), ('tk', 'Turkmen'), ('tr', 'Turkish'), ('tt', 'Tatar'), ('udm', 'Udmurt'), ('ug', 'Uyghur'), ('uk', 'Ukrainian'), ('ur', 'Urdu'), ('uz', 'Uzbek'), ('vi', 'Vietnamese'), ('zh-hans', 'Simplified Chinese'), ('zh-hant', 'Traditional Chinese')]"
+        - row "LANGUAGES_BIDI ['he', 'ar', 'ar-dz', 'ckb', 'fa', 'ug', 'ur']" [ref=e924]:
+          - cell "LANGUAGES_BIDI" [ref=e925]
+          - cell "['he', 'ar', 'ar-dz', 'ckb', 'fa', 'ug', 'ur']" [ref=e926]:
+            - generic [ref=e927]: "['he', 'ar', 'ar-dz', 'ckb', 'fa', 'ug', 'ur']"
+        - row "LANGUAGE_CODE 'zh-hans'" [ref=e928]:
+          - cell "LANGUAGE_CODE" [ref=e929]
+          - cell "'zh-hans'" [ref=e930]:
+            - generic [ref=e931]: "'zh-hans'"
+        - row "LANGUAGE_COOKIE_AGE None" [ref=e932]:
+          - cell "LANGUAGE_COOKIE_AGE" [ref=e933]
+          - cell "None" [ref=e934]:
+            - generic [ref=e935]: None
+        - row "LANGUAGE_COOKIE_DOMAIN None" [ref=e936]:
+          - cell "LANGUAGE_COOKIE_DOMAIN" [ref=e937]
+          - cell "None" [ref=e938]:
+            - generic [ref=e939]: None
+        - row "LANGUAGE_COOKIE_HTTPONLY False" [ref=e940]:
+          - cell "LANGUAGE_COOKIE_HTTPONLY" [ref=e941]
+          - cell "False" [ref=e942]:
+            - generic [ref=e943]: "False"
+        - row "LANGUAGE_COOKIE_NAME 'django_language'" [ref=e944]:
+          - cell "LANGUAGE_COOKIE_NAME" [ref=e945]
+          - cell "'django_language'" [ref=e946]:
+            - generic [ref=e947]: "'django_language'"
+        - row "LANGUAGE_COOKIE_PATH '/'" [ref=e948]:
+          - cell "LANGUAGE_COOKIE_PATH" [ref=e949]
+          - cell "'/'" [ref=e950]:
+            - generic [ref=e951]: "'/'"
+        - row "LANGUAGE_COOKIE_SAMESITE None" [ref=e952]:
+          - cell "LANGUAGE_COOKIE_SAMESITE" [ref=e953]
+          - cell "None" [ref=e954]:
+            - generic [ref=e955]: None
+        - row "LANGUAGE_COOKIE_SECURE False" [ref=e956]:
+          - cell "LANGUAGE_COOKIE_SECURE" [ref=e957]
+          - cell "False" [ref=e958]:
+            - generic [ref=e959]: "False"
+        - row "LOCALE_PATHS []" [ref=e960]:
+          - cell "LOCALE_PATHS" [ref=e961]
+          - cell "[]" [ref=e962]:
+            - generic [ref=e963]: "[]"
+        - 'row "LOGGING {''disable_existing_loggers'': False, ''formatters'': {''simple'': {''format'': ''{levelname} {message}'', ''style'': ''{''}, ''verbose'': {''format'': ''{levelname} {asctime} {module} '' ''{message}'', ''style'': ''{''}}, ''handlers'': {''console'': {''class'': ''logging.StreamHandler'', ''formatter'': ''simple''}, ''file'': {''backupCount'': 5, ''class'': ''logging.handlers.RotatingFileHandler'', ''filename'': WindowsPath(''D:/Jarvis project/logs/django.log''), ''formatter'': ''verbose'', ''maxBytes'': 10485760}}, ''loggers'': {''django'': {''handlers'': [''console'', ''file''], ''level'': ''INFO'', ''propagate'': False}, ''django.db.backends'': {''handlers'': [''console'', ''file''], ''level'': ''WARNING'', ''propagate'': False}}, ''root'': {''handlers'': [''console'', ''file''], ''level'': ''INFO''}, ''version'': 1}" [ref=e964]':
+          - cell "LOGGING" [ref=e965]
+          - 'cell "{''disable_existing_loggers'': False, ''formatters'': {''simple'': {''format'': ''{levelname} {message}'', ''style'': ''{''}, ''verbose'': {''format'': ''{levelname} {asctime} {module} '' ''{message}'', ''style'': ''{''}}, ''handlers'': {''console'': {''class'': ''logging.StreamHandler'', ''formatter'': ''simple''}, ''file'': {''backupCount'': 5, ''class'': ''logging.handlers.RotatingFileHandler'', ''filename'': WindowsPath(''D:/Jarvis project/logs/django.log''), ''formatter'': ''verbose'', ''maxBytes'': 10485760}}, ''loggers'': {''django'': {''handlers'': [''console'', ''file''], ''level'': ''INFO'', ''propagate'': False}, ''django.db.backends'': {''handlers'': [''console'', ''file''], ''level'': ''WARNING'', ''propagate'': False}}, ''root'': {''handlers'': [''console'', ''file''], ''level'': ''INFO''}, ''version'': 1}" [ref=e966]':
+            - generic [ref=e967]: "{'disable_existing_loggers': False, 'formatters': {'simple': {'format': '{levelname} {message}', 'style': '{'}, 'verbose': {'format': '{levelname} {asctime} {module} ' '{message}', 'style': '{'}}, 'handlers': {'console': {'class': 'logging.StreamHandler', 'formatter': 'simple'}, 'file': {'backupCount': 5, 'class': 'logging.handlers.RotatingFileHandler', 'filename': WindowsPath('D:/Jarvis project/logs/django.log'), 'formatter': 'verbose', 'maxBytes': 10485760}}, 'loggers': {'django': {'handlers': ['console', 'file'], 'level': 'INFO', 'propagate': False}, 'django.db.backends': {'handlers': ['console', 'file'], 'level': 'WARNING', 'propagate': False}}, 'root': {'handlers': ['console', 'file'], 'level': 'INFO'}, 'version': 1}"
+        - row "LOGGING_CONFIG 'logging.config.dictConfig'" [ref=e968]:
+          - cell "LOGGING_CONFIG" [ref=e969]
+          - cell "'logging.config.dictConfig'" [ref=e970]:
+            - generic [ref=e971]: "'logging.config.dictConfig'"
+        - row "LOGIN_RATE_LIMIT_MAX 10" [ref=e972]:
+          - cell "LOGIN_RATE_LIMIT_MAX" [ref=e973]
+          - cell "10" [ref=e974]:
+            - generic [ref=e975]: "10"
+        - row "LOGIN_RATE_LIMIT_WINDOW 60" [ref=e976]:
+          - cell "LOGIN_RATE_LIMIT_WINDOW" [ref=e977]
+          - cell "60" [ref=e978]:
+            - generic [ref=e979]: "60"
+        - row "LOGIN_REDIRECT_URL '/'" [ref=e980]:
+          - cell "LOGIN_REDIRECT_URL" [ref=e981]
+          - cell "'/'" [ref=e982]:
+            - generic [ref=e983]: "'/'"
+        - row "LOGIN_URL '/accounts/login/'" [ref=e984]:
+          - cell "LOGIN_URL" [ref=e985]
+          - cell "'/accounts/login/'" [ref=e986]:
+            - generic [ref=e987]: "'/accounts/login/'"
+        - row "LOGOUT_REDIRECT_URL '/'" [ref=e988]:
+          - cell "LOGOUT_REDIRECT_URL" [ref=e989]
+          - cell "'/'" [ref=e990]:
+            - generic [ref=e991]: "'/'"
+        - row "MANAGERS []" [ref=e992]:
+          - cell "MANAGERS" [ref=e993]
+          - cell "[]" [ref=e994]:
+            - generic [ref=e995]: "[]"
+        - row "MEDIA_ROOT 'D:\\\\Jarvis project\\\\media'" [ref=e996]:
+          - cell "MEDIA_ROOT" [ref=e997]
+          - cell "'D:\\\\Jarvis project\\\\media'" [ref=e998]:
+            - generic [ref=e999]: "'D:\\\\Jarvis project\\\\media'"
+        - row "MEDIA_URL '/media/'" [ref=e1000]:
+          - cell "MEDIA_URL" [ref=e1001]
+          - cell "'/media/'" [ref=e1002]:
+            - generic [ref=e1003]: "'/media/'"
+        - row "MESSAGE_STORAGE 'django.contrib.messages.storage.fallback.FallbackStorage'" [ref=e1004]:
+          - cell "MESSAGE_STORAGE" [ref=e1005]
+          - cell "'django.contrib.messages.storage.fallback.FallbackStorage'" [ref=e1006]:
+            - generic [ref=e1007]: "'django.contrib.messages.storage.fallback.FallbackStorage'"
+        - row "MIDDLEWARE ['corsheaders.middleware.CorsMiddleware', 'django.middleware.security.SecurityMiddleware', 'whitenoise.middleware.WhiteNoiseMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware', 'django.middleware.common.CommonMiddleware', 'django.middleware.csrf.CsrfViewMiddleware', 'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware', 'django.middleware.clickjacking.XFrameOptionsMiddleware', 'apps.accounts.middleware.LoginRateLimitMiddleware', 'allauth.account.middleware.AccountMiddleware', 'apps.accounts.middleware.HtmxRedirectMiddleware']" [ref=e1008]:
+          - cell "MIDDLEWARE" [ref=e1009]
+          - cell "['corsheaders.middleware.CorsMiddleware', 'django.middleware.security.SecurityMiddleware', 'whitenoise.middleware.WhiteNoiseMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware', 'django.middleware.common.CommonMiddleware', 'django.middleware.csrf.CsrfViewMiddleware', 'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware', 'django.middleware.clickjacking.XFrameOptionsMiddleware', 'apps.accounts.middleware.LoginRateLimitMiddleware', 'allauth.account.middleware.AccountMiddleware', 'apps.accounts.middleware.HtmxRedirectMiddleware']" [ref=e1010]:
+            - generic [ref=e1011]: "['corsheaders.middleware.CorsMiddleware', 'django.middleware.security.SecurityMiddleware', 'whitenoise.middleware.WhiteNoiseMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware', 'django.middleware.common.CommonMiddleware', 'django.middleware.csrf.CsrfViewMiddleware', 'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware', 'django.middleware.clickjacking.XFrameOptionsMiddleware', 'apps.accounts.middleware.LoginRateLimitMiddleware', 'allauth.account.middleware.AccountMiddleware', 'apps.accounts.middleware.HtmxRedirectMiddleware']"
+        - 'row "MIGRATION_MODULES {}" [ref=e1012]':
+          - cell "MIGRATION_MODULES" [ref=e1013]
+          - 'cell "{}" [ref=e1014]':
+            - generic [ref=e1015]: "{}"
+        - row "MONTH_DAY_FORMAT 'F j'" [ref=e1016]:
+          - cell "MONTH_DAY_FORMAT" [ref=e1017]
+          - cell "'F j'" [ref=e1018]:
+            - generic [ref=e1019]: "'F j'"
+        - row "NUMBER_GROUPING 0" [ref=e1020]:
+          - cell "NUMBER_GROUPING" [ref=e1021]
+          - cell "0" [ref=e1022]:
+            - generic [ref=e1023]: "0"
+        - row "PASSWORD_HASHERS '********************'" [ref=e1024]:
+          - cell "PASSWORD_HASHERS" [ref=e1025]
+          - cell "'********************'" [ref=e1026]:
+            - generic [ref=e1027]: "'********************'"
+        - row "PASSWORD_RESET_TIMEOUT '********************'" [ref=e1028]:
+          - cell "PASSWORD_RESET_TIMEOUT" [ref=e1029]
+          - cell "'********************'" [ref=e1030]:
+            - generic [ref=e1031]: "'********************'"
+        - row "PREPEND_WWW False" [ref=e1032]:
+          - cell "PREPEND_WWW" [ref=e1033]
+          - cell "False" [ref=e1034]:
+            - generic [ref=e1035]: "False"
+        - row "ROOT_URLCONF 'config.urls'" [ref=e1036]:
+          - cell "ROOT_URLCONF" [ref=e1037]
+          - cell "'config.urls'" [ref=e1038]:
+            - generic [ref=e1039]: "'config.urls'"
+        - row "SECRET_KEY '********************'" [ref=e1040]:
+          - cell "SECRET_KEY" [ref=e1041]
+          - cell "'********************'" [ref=e1042]:
+            - generic [ref=e1043]: "'********************'"
+        - row "SECRET_KEY_FALLBACKS '********************'" [ref=e1044]:
+          - cell "SECRET_KEY_FALLBACKS" [ref=e1045]
+          - cell "'********************'" [ref=e1046]:
+            - generic [ref=e1047]: "'********************'"
+        - row "SECURE_CONTENT_TYPE_NOSNIFF True" [ref=e1048]:
+          - cell "SECURE_CONTENT_TYPE_NOSNIFF" [ref=e1049]
+          - cell "True" [ref=e1050]:
+            - generic [ref=e1051]: "True"
+        - row "SECURE_CROSS_ORIGIN_OPENER_POLICY 'same-origin'" [ref=e1052]:
+          - cell "SECURE_CROSS_ORIGIN_OPENER_POLICY" [ref=e1053]
+          - cell "'same-origin'" [ref=e1054]:
+            - generic [ref=e1055]: "'same-origin'"
+        - row "SECURE_HSTS_INCLUDE_SUBDOMAINS False" [ref=e1056]:
+          - cell "SECURE_HSTS_INCLUDE_SUBDOMAINS" [ref=e1057]
+          - cell "False" [ref=e1058]:
+            - generic [ref=e1059]: "False"
+        - row "SECURE_HSTS_PRELOAD False" [ref=e1060]:
+          - cell "SECURE_HSTS_PRELOAD" [ref=e1061]
+          - cell "False" [ref=e1062]:
+            - generic [ref=e1063]: "False"
+        - row "SECURE_HSTS_SECONDS 0" [ref=e1064]:
+          - cell "SECURE_HSTS_SECONDS" [ref=e1065]
+          - cell "0" [ref=e1066]:
+            - generic [ref=e1067]: "0"
+        - row "SECURE_PROXY_SSL_HEADER None" [ref=e1068]:
+          - cell "SECURE_PROXY_SSL_HEADER" [ref=e1069]
+          - cell "None" [ref=e1070]:
+            - generic [ref=e1071]: None
+        - row "SECURE_REDIRECT_EXEMPT []" [ref=e1072]:
+          - cell "SECURE_REDIRECT_EXEMPT" [ref=e1073]
+          - cell "[]" [ref=e1074]:
+            - generic [ref=e1075]: "[]"
+        - row "SECURE_REFERRER_POLICY 'same-origin'" [ref=e1076]:
+          - cell "SECURE_REFERRER_POLICY" [ref=e1077]
+          - cell "'same-origin'" [ref=e1078]:
+            - generic [ref=e1079]: "'same-origin'"
+        - row "SECURE_SSL_HOST None" [ref=e1080]:
+          - cell "SECURE_SSL_HOST" [ref=e1081]
+          - cell "None" [ref=e1082]:
+            - generic [ref=e1083]: None
+        - row "SECURE_SSL_REDIRECT False" [ref=e1084]:
+          - cell "SECURE_SSL_REDIRECT" [ref=e1085]
+          - cell "False" [ref=e1086]:
+            - generic [ref=e1087]: "False"
+        - row "SENTRY_DSN ''" [ref=e1088]:
+          - cell "SENTRY_DSN" [ref=e1089]
+          - cell "''" [ref=e1090]:
+            - generic [ref=e1091]: "''"
+        - row "SERVER_EMAIL 'root@localhost'" [ref=e1092]:
+          - cell "SERVER_EMAIL" [ref=e1093]
+          - cell "'root@localhost'" [ref=e1094]:
+            - generic [ref=e1095]: "'root@localhost'"
+        - row "SESSION_CACHE_ALIAS 'default'" [ref=e1096]:
+          - cell "SESSION_CACHE_ALIAS" [ref=e1097]
+          - cell "'default'" [ref=e1098]:
+            - generic [ref=e1099]: "'default'"
+        - row "SESSION_COOKIE_AGE 1209600" [ref=e1100]:
+          - cell "SESSION_COOKIE_AGE" [ref=e1101]
+          - cell "1209600" [ref=e1102]:
+            - generic [ref=e1103]: "1209600"
+        - row "SESSION_COOKIE_DOMAIN None" [ref=e1104]:
+          - cell "SESSION_COOKIE_DOMAIN" [ref=e1105]
+          - cell "None" [ref=e1106]:
+            - generic [ref=e1107]: None
+        - row "SESSION_COOKIE_HTTPONLY True" [ref=e1108]:
+          - cell "SESSION_COOKIE_HTTPONLY" [ref=e1109]
+          - cell "True" [ref=e1110]:
+            - generic [ref=e1111]: "True"
+        - row "SESSION_COOKIE_NAME 'sessionid'" [ref=e1112]:
+          - cell "SESSION_COOKIE_NAME" [ref=e1113]
+          - cell "'sessionid'" [ref=e1114]:
+            - generic [ref=e1115]: "'sessionid'"
+        - row "SESSION_COOKIE_PATH '/'" [ref=e1116]:
+          - cell "SESSION_COOKIE_PATH" [ref=e1117]
+          - cell "'/'" [ref=e1118]:
+            - generic [ref=e1119]: "'/'"
+        - row "SESSION_COOKIE_SAMESITE 'Lax'" [ref=e1120]:
+          - cell "SESSION_COOKIE_SAMESITE" [ref=e1121]
+          - cell "'Lax'" [ref=e1122]:
+            - generic [ref=e1123]: "'Lax'"
+        - row "SESSION_COOKIE_SECURE False" [ref=e1124]:
+          - cell "SESSION_COOKIE_SECURE" [ref=e1125]
+          - cell "False" [ref=e1126]:
+            - generic [ref=e1127]: "False"
+        - row "SESSION_ENGINE 'django.contrib.sessions.backends.db'" [ref=e1128]:
+          - cell "SESSION_ENGINE" [ref=e1129]
+          - cell "'django.contrib.sessions.backends.db'" [ref=e1130]:
+            - generic [ref=e1131]: "'django.contrib.sessions.backends.db'"
+        - row "SESSION_EXPIRE_AT_BROWSER_CLOSE False" [ref=e1132]:
+          - cell "SESSION_EXPIRE_AT_BROWSER_CLOSE" [ref=e1133]
+          - cell "False" [ref=e1134]:
+            - generic [ref=e1135]: "False"
+        - row "SESSION_FILE_PATH None" [ref=e1136]:
+          - cell "SESSION_FILE_PATH" [ref=e1137]
+          - cell "None" [ref=e1138]:
+            - generic [ref=e1139]: None
+        - row "SESSION_SAVE_EVERY_REQUEST False" [ref=e1140]:
+          - cell "SESSION_SAVE_EVERY_REQUEST" [ref=e1141]
+          - cell "False" [ref=e1142]:
+            - generic [ref=e1143]: "False"
+        - row "SESSION_SERIALIZER 'django.contrib.sessions.serializers.JSONSerializer'" [ref=e1144]:
+          - cell "SESSION_SERIALIZER" [ref=e1145]
+          - cell "'django.contrib.sessions.serializers.JSONSerializer'" [ref=e1146]:
+            - generic [ref=e1147]: "'django.contrib.sessions.serializers.JSONSerializer'"
+        - row "SETTINGS_MODULE 'config.settings.demo'" [ref=e1148]:
+          - cell "SETTINGS_MODULE" [ref=e1149]
+          - cell "'config.settings.demo'" [ref=e1150]:
+            - generic [ref=e1151]: "'config.settings.demo'"
+        - row "SHORT_DATETIME_FORMAT 'm/d/Y P'" [ref=e1152]:
+          - cell "SHORT_DATETIME_FORMAT" [ref=e1153]
+          - cell "'m/d/Y P'" [ref=e1154]:
+            - generic [ref=e1155]: "'m/d/Y P'"
+        - row "SHORT_DATE_FORMAT 'm/d/Y'" [ref=e1156]:
+          - cell "SHORT_DATE_FORMAT" [ref=e1157]
+          - cell "'m/d/Y'" [ref=e1158]:
+            - generic [ref=e1159]: "'m/d/Y'"
+        - row "SIGNING_BACKEND 'django.core.signing.TimestampSigner'" [ref=e1160]:
+          - cell "SIGNING_BACKEND" [ref=e1161]
+          - cell "'django.core.signing.TimestampSigner'" [ref=e1162]:
+            - generic [ref=e1163]: "'django.core.signing.TimestampSigner'"
+        - row "SILENCED_SYSTEM_CHECKS []" [ref=e1164]:
+          - cell "SILENCED_SYSTEM_CHECKS" [ref=e1165]
+          - cell "[]" [ref=e1166]:
+            - generic [ref=e1167]: "[]"
+        - row "SITE_ID 1" [ref=e1168]:
+          - cell "SITE_ID" [ref=e1169]
+          - cell "1" [ref=e1170]:
+            - generic [ref=e1171]: "1"
+        - row "STATICFILES_DIRS [WindowsPath('D:/Jarvis project/static')]" [ref=e1172]:
+          - cell "STATICFILES_DIRS" [ref=e1173]
+          - cell "[WindowsPath('D:/Jarvis project/static')]" [ref=e1174]:
+            - generic [ref=e1175]: "[WindowsPath('D:/Jarvis project/static')]"
+        - row "STATICFILES_FINDERS ['django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder']" [ref=e1176]:
+          - cell "STATICFILES_FINDERS" [ref=e1177]
+          - cell "['django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder']" [ref=e1178]:
+            - generic [ref=e1179]: "['django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder']"
+        - row "STATICFILES_STORAGE 'django.contrib.staticfiles.storage.StaticFilesStorage'" [ref=e1180]:
+          - cell "STATICFILES_STORAGE" [ref=e1181]
+          - cell "'django.contrib.staticfiles.storage.StaticFilesStorage'" [ref=e1182]:
+            - generic [ref=e1183]: "'django.contrib.staticfiles.storage.StaticFilesStorage'"
+        - row "STATIC_ROOT WindowsPath('D:/Jarvis project/staticfiles')" [ref=e1184]:
+          - cell "STATIC_ROOT" [ref=e1185]
+          - cell "WindowsPath('D:/Jarvis project/staticfiles')" [ref=e1186]:
+            - generic [ref=e1187]: WindowsPath('D:/Jarvis project/staticfiles')
+        - row "STATIC_URL '/static/'" [ref=e1188]:
+          - cell "STATIC_URL" [ref=e1189]
+          - cell "'/static/'" [ref=e1190]:
+            - generic [ref=e1191]: "'/static/'"
+        - 'row "STORAGES {''default'': {''BACKEND'': ''django.core.files.storage.FileSystemStorage''}, ''staticfiles'': {''BACKEND'': ''django.contrib.staticfiles.storage.StaticFilesStorage''}}" [ref=e1192]':
+          - cell "STORAGES" [ref=e1193]
+          - 'cell "{''default'': {''BACKEND'': ''django.core.files.storage.FileSystemStorage''}, ''staticfiles'': {''BACKEND'': ''django.contrib.staticfiles.storage.StaticFilesStorage''}}" [ref=e1194]':
+            - generic [ref=e1195]: "{'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'}, 'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'}}"
+        - 'row "TEMPLATES [{''APP_DIRS'': True, ''BACKEND'': ''django.template.backends.django.DjangoTemplates'', ''DIRS'': [WindowsPath(''D:/Jarvis project/templates'')], ''OPTIONS'': {''context_processors'': [''django.template.context_processors.debug'', ''django.template.context_processors.request'', ''django.contrib.auth.context_processors.auth'', ''django.contrib.messages.context_processors.messages'']}}]" [ref=e1196]':
+          - cell "TEMPLATES" [ref=e1197]
+          - 'cell "[{''APP_DIRS'': True, ''BACKEND'': ''django.template.backends.django.DjangoTemplates'', ''DIRS'': [WindowsPath(''D:/Jarvis project/templates'')], ''OPTIONS'': {''context_processors'': [''django.template.context_processors.debug'', ''django.template.context_processors.request'', ''django.contrib.auth.context_processors.auth'', ''django.contrib.messages.context_processors.messages'']}}]" [ref=e1198]':
+            - generic [ref=e1199]: "[{'APP_DIRS': True, 'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [WindowsPath('D:/Jarvis project/templates')], 'OPTIONS': {'context_processors': ['django.template.context_processors.debug', 'django.template.context_processors.request', 'django.contrib.auth.context_processors.auth', 'django.contrib.messages.context_processors.messages']}}]"
+        - row "TEST_NON_SERIALIZED_APPS []" [ref=e1200]:
+          - cell "TEST_NON_SERIALIZED_APPS" [ref=e1201]
+          - cell "[]" [ref=e1202]:
+            - generic [ref=e1203]: "[]"
+        - row "TEST_RUNNER 'django.test.runner.DiscoverRunner'" [ref=e1204]:
+          - cell "TEST_RUNNER" [ref=e1205]
+          - cell "'django.test.runner.DiscoverRunner'" [ref=e1206]:
+            - generic [ref=e1207]: "'django.test.runner.DiscoverRunner'"
+        - row "THOUSAND_SEPARATOR ','" [ref=e1208]:
+          - cell "THOUSAND_SEPARATOR" [ref=e1209]
+          - cell "','" [ref=e1210]:
+            - generic [ref=e1211]: "','"
+        - row "TIME_FORMAT 'P'" [ref=e1212]:
+          - cell "TIME_FORMAT" [ref=e1213]
+          - cell "'P'" [ref=e1214]:
+            - generic [ref=e1215]: "'P'"
+        - row "TIME_INPUT_FORMATS ['%H:%M:%S', '%H:%M:%S.%f', '%H:%M']" [ref=e1216]:
+          - cell "TIME_INPUT_FORMATS" [ref=e1217]
+          - cell "['%H:%M:%S', '%H:%M:%S.%f', '%H:%M']" [ref=e1218]:
+            - generic [ref=e1219]: "['%H:%M:%S', '%H:%M:%S.%f', '%H:%M']"
+        - row "TIME_ZONE 'Asia/Shanghai'" [ref=e1220]:
+          - cell "TIME_ZONE" [ref=e1221]
+          - cell "'Asia/Shanghai'" [ref=e1222]:
+            - generic [ref=e1223]: "'Asia/Shanghai'"
+        - row "USE_I18N True" [ref=e1224]:
+          - cell "USE_I18N" [ref=e1225]
+          - cell "True" [ref=e1226]:
+            - generic [ref=e1227]: "True"
+        - row "USE_THOUSAND_SEPARATOR False" [ref=e1228]:
+          - cell "USE_THOUSAND_SEPARATOR" [ref=e1229]
+          - cell "False" [ref=e1230]:
+            - generic [ref=e1231]: "False"
+        - row "USE_TZ True" [ref=e1232]:
+          - cell "USE_TZ" [ref=e1233]
+          - cell "True" [ref=e1234]:
+            - generic [ref=e1235]: "True"
+        - row "USE_X_FORWARDED_HOST False" [ref=e1236]:
+          - cell "USE_X_FORWARDED_HOST" [ref=e1237]
+          - cell "False" [ref=e1238]:
+            - generic [ref=e1239]: "False"
+        - row "USE_X_FORWARDED_PORT False" [ref=e1240]:
+          - cell "USE_X_FORWARDED_PORT" [ref=e1241]
+          - cell "False" [ref=e1242]:
+            - generic [ref=e1243]: "False"
+        - row "WSGI_APPLICATION 'config.wsgi.application'" [ref=e1244]:
+          - cell "WSGI_APPLICATION" [ref=e1245]
+          - cell "'config.wsgi.application'" [ref=e1246]:
+            - generic [ref=e1247]: "'config.wsgi.application'"
+        - row "X_FRAME_OPTIONS 'DENY'" [ref=e1248]:
+          - cell "X_FRAME_OPTIONS" [ref=e1249]
+          - cell "'DENY'" [ref=e1250]:
+            - generic [ref=e1251]: "'DENY'"
+        - row "YEAR_MONTH_FORMAT 'F Y'" [ref=e1252]:
+          - cell "YEAR_MONTH_FORMAT" [ref=e1253]
+          - cell "'F Y'" [ref=e1254]:
+            - generic [ref=e1255]: "'F Y'"
+  - paragraph [ref=e1257]:
+    - text: You’re seeing this error because you have
+    - code [ref=e1258]: DEBUG = True
+    - text: in your Django settings file. Change that to
+    - code [ref=e1259]: "False"
+    - text: ", and Django will display a standard page generated by the handler for this status code."

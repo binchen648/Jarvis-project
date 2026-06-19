@@ -1,0 +1,63 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - heading "Memory Timeline" [level=2] [ref=e13]
+      - generic [ref=e15]: Cmd + K to search
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: 
+          - textbox "搜索记忆..." [ref=e21]
+        - generic [ref=e22]:
+          - link "All" [ref=e23] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=all
+          - link "🎯 Goal" [ref=e24] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=goal
+          - link "🧠 Learning" [ref=e25] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=learning
+          - link "❤️ Health" [ref=e26] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=health
+          - link "💬 Chat" [ref=e27] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=chat
+          - link "📝 Agent" [ref=e28] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=agent_note
+      - generic [ref=e30]:
+        - paragraph [ref=e32]: 还没有记忆记录
+        - paragraph [ref=e33]: Jarvis 会在你学习和使用过程中自动记录重要的事件和进展
+        - generic [ref=e34]:
+          - link "💬 去和 Agent 对话" [ref=e35] [cursor=pointer]:
+            - /url: /chat/
+          - link "🎯 创建第一个目标" [ref=e36] [cursor=pointer]:
+            - /url: /goals/
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: 本周新增
+          - paragraph [ref=e42]: +0 条
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - paragraph [ref=e46]: 🎯 Goals
+            - paragraph [ref=e47]: "0"
+          - generic [ref=e48]:
+            - paragraph [ref=e49]: 🧠 Learning
+            - paragraph [ref=e50]: "0"
+          - generic [ref=e51]:
+            - paragraph [ref=e52]: ❤️ Health
+            - paragraph [ref=e53]: "0"
+      - generic [ref=e54]:
+        - paragraph [ref=e55]: 🧠 总计记忆
+        - paragraph [ref=e56]: 0 条

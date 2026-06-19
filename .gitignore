@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.venv/
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Django
+*.log
+logs/
+local_settings.py
+db.sqlite3
+media/
+
+# Static files (collectstatic output — except source CSS)
+static/
+!static/css/
+static/css/tailwind.css
+
+# Node.js
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Demo / temp
+demo.db
+*.db
+
+# Backups
+backups/
+*.sql
+*.sql.gz

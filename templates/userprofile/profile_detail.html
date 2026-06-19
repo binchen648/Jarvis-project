@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}个人资料{% endblock %}
+
+{% block content %}
+<div class="card card-body bg-base-100 shadow-md max-w-md mx-auto">
+  <div class="flex items-center gap-6 mb-8">
+    <div class="avatar">
+      <div class="w-20 rounded-full bg-base-300 flex items-center justify-center text-2xl text-base-content/40">
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar }}" alt="{{ user.username }}">
+        {% else %}
+          {{ user.username|first|upper }}
+        {% endif %}
+      </div>
+    </div>
+    <div>
+      <h2 class="text-xl font-semibold">{{ user.username }}</h2>
+      <p class="text-sm text-base-content/60">{{ user.email }}</p>
+    </div>
+  </div>
+
+  <dl class="space-y-4">
+    <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wider">个人简介</dt>
+    <dd class="pb-3 border-b border-base-200">{{ profile.bio|default:"暂未填写" }}</dd>
+  </dl>
+
+  <dl class="space-y-4">
+    <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wider">社交链接</dt>
+    <dd class="pb-3 border-b border-base-200">{% if profile.social_links %}{{ profile.social_links }}{% else %}暂未填写{% endif %}</dd>
+  </dl>
+
+  <dl class="space-y-4">
+    <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wider">注册时间</dt>
+    <dd class="pb-3 border-b border-base-200">{{ user.date_joined|date:"Y年m月d日" }}</dd>
+  </dl>
+
+  <div class="mt-6">
+    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary">编辑资料</a>
+  </div>
+</div>
+{% endblock %}

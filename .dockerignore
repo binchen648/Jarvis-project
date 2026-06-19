@@ -1,0 +1,11 @@
+.env
+.git
+.gitignore
+__pycache__
+*.pyc
+.venv
+.idea
+*.egg-info
+.dockerignore
+README.md
+docs/

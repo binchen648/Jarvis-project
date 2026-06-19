@@ -1,0 +1,153 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link " Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11]: 
+            - text: Dashboard
+          - link " Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - generic [ref=e14]: 
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - text: Goals
+          - link " Wellness" [ref=e17] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - generic [ref=e19]: 
+            - text: Wellness
+        - generic [ref=e21]:
+          - link " Content" [ref=e22] [cursor=pointer]:
+            - /url: /content/feed/
+            - generic [ref=e24]: 
+            - text: Content
+          - link " Trajectory" [ref=e25] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - generic [ref=e27]: 
+            - text: Trajectory
+        - link " Settings" [ref=e30] [cursor=pointer]:
+          - /url: /profile/
+          - generic [ref=e32]: 
+          - text: Settings
+      - link "A admin Personal AI OS" [ref=e34] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e35]: A
+        - generic [ref=e36]:
+          - generic [ref=e37]: admin
+          - generic [ref=e38]: Personal AI OS
+    - generic [ref=e39]:
+      - banner [ref=e40]:
+        - generic [ref=e41]:
+          - text: 
+          - heading " JARVIS CORE Active Memory 43 Tools 12 Confidence 87%" [level=1] [ref=e42]:
+            - generic [ref=e43]:
+              - generic [ref=e44]:
+                - generic [ref=e45]: 
+                - generic [ref=e46]: JARVIS CORE
+              - generic [ref=e47]:
+                - generic [ref=e48]: Active
+                - generic [ref=e50]: Memory 43
+                - generic [ref=e51]: Tools 12
+                - generic [ref=e52]: Confidence 87%
+        - generic [ref=e53]:
+          - generic [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: Search
+            - generic [ref=e56]: ⌘K
+          - generic [ref=e58] [cursor=pointer]: 
+          - generic "Jarvis AI Core | v1.0" [ref=e60] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e65]:
+              - generic [ref=e67]: 
+              - paragraph [ref=e68]: 开始对话
+              - paragraph [ref=e69]: 在下方输入你的问题
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - button "Ask" [ref=e73] [cursor=pointer]
+                - button "Plan" [ref=e74] [cursor=pointer]
+                - button "Execute" [ref=e75] [cursor=pointer]
+              - generic [ref=e76]:
+                - generic [ref=e77]: deepseek-chat
+                - generic [ref=e78]:
+                  - textbox "› 输入消息..." [active] [ref=e79]
+                  - button "" [ref=e80] [cursor=pointer]:
+                    - generic [ref=e81]: 
+              - generic [ref=e82]:
+                - generic [ref=e83]:
+                  - 'button " 型号: deepseek-chat " [ref=e84]':
+                    - generic [ref=e85]: 
+                    - generic [ref=e86]: "型号:"
+                    - generic [ref=e87]: deepseek-chat
+                    - generic [ref=e88]: 
+                  - 'button " 工具: auto " [ref=e89]':
+                    - generic [ref=e90]: 
+                    - generic [ref=e91]: "工具:"
+                    - generic [ref=e92]: auto
+                    - generic [ref=e93]: 
+                - generic [ref=e94]:
+                  - generic [ref=e95]: 
+                  - text: 0 msg
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - heading "Agent State" [level=3] [ref=e99]
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - generic [ref=e102]: Focus Goal
+                  - generic [ref=e103]: LeetCode 92
+                - generic [ref=e104]:
+                  - generic [ref=e105]: Active Memory
+                  - generic [ref=e106]: ReAct Notes
+                - generic [ref=e107]:
+                  - generic [ref=e108]: Current Tool
+                  - generic [ref=e109]: search_memories
+                - generic [ref=e110]:
+                  - generic [ref=e111]: Confidence
+                  - generic [ref=e112]: 87%
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - heading "Agent Activity" [level=3] [ref=e115]
+                - generic [ref=e116]: 
+              - generic [ref=e117]:
+                - generic [ref=e122]:
+                  - paragraph [ref=e123]: 用户询问学习计划
+                  - paragraph [ref=e124]: 14:30
+                - generic [ref=e129]:
+                  - paragraph [ref=e130]: 调用 get_goal_progress
+                  - paragraph [ref=e131]: 14:30
+                - generic [ref=e135]:
+                  - paragraph [ref=e136]: 生成行动计划
+                  - paragraph [ref=e137]: 14:31
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]: 🎯
+                - heading "Current Goal" [level=3] [ref=e141]
+              - paragraph [ref=e142]: 暂无活跃目标
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - generic [ref=e145]: 💡
+                - heading "Suggestions" [level=3] [ref=e146]
+              - generic [ref=e147]:
+                - generic [ref=e148] [cursor=pointer]:
+                  - generic [ref=e151]: 今天还没有学习记录，开始学习吧
+                  - img [ref=e152]
+                - generic [ref=e154] [cursor=pointer]:
+                  - generic [ref=e157]: 已 3 天未学习，建议回顾之前的目标
+                  - img [ref=e158]
+            - generic [ref=e160]:
+              - paragraph [ref=e161]: Recent Logs
+              - generic [ref=e162]:
+                - generic [ref=e163]:
+                  - generic [ref=e164]: ✓ get_memories
+                  - generic [ref=e165]: 14:29
+                - generic [ref=e166]:
+                  - generic [ref=e167]: ✓ update_state
+                  - generic [ref=e168]: 14:28
+  - button "Jarvis AI Surface" [ref=e170] [cursor=pointer]:
+    - generic [ref=e171]: 

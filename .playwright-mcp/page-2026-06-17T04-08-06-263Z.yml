@@ -1,0 +1,86 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - img [ref=e10]
+            - text: Dashboard
+          - link "Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - img [ref=e13]
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - img [ref=e16]
+            - text: Goals
+          - link "Wellness" [ref=e18] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - img [ref=e19]
+            - text: Wellness
+        - generic [ref=e22]:
+          - link "Content" [ref=e23] [cursor=pointer]:
+            - /url: /content/feed/
+            - img [ref=e24]
+            - text: Content
+          - link "Trajectory" [ref=e26] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - img [ref=e27]
+            - text: Trajectory
+        - link "Settings" [ref=e31] [cursor=pointer]:
+          - /url: /profile/
+          - img [ref=e32]
+          - text: Settings
+    - generic [ref=e35]:
+      - banner [ref=e36]:
+        - generic:
+          - heading [level=1]
+        - generic [ref=e37]:
+          - generic [ref=e38] [cursor=pointer]:
+            - generic [ref=e39]: Search
+            - generic [ref=e40]: ⌘K
+          - img [ref=e42] [cursor=pointer]
+          - generic "Jarvis AI Core | v1.0" [ref=e45] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e46]:
+        - generic [ref=e47]:
+          - heading "登录" [level=1] [ref=e48]
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: 用户名
+              - textbox "用户名" [ref=e52]
+            - generic [ref=e53]:
+              - generic [ref=e54]: 密码
+              - textbox "密码" [ref=e55]
+              - link "忘记密码？" [ref=e58] [cursor=pointer]:
+                - /url: /accounts/password/reset/
+            - button "登录" [ref=e59]
+          - paragraph [ref=e60]:
+            - link "注册新账号" [ref=e61] [cursor=pointer]:
+              - /url: /accounts/signup/
+          - paragraph [ref=e62]:
+            - link "忘记密码？" [ref=e63] [cursor=pointer]:
+              - /url: /accounts/password/reset/
+  - generic [ref=e64]:
+    - generic:
+      - generic:
+        - generic:
+          - generic: Morning Briefing
+        - button "Dismiss":
+          - img
+      - generic:
+        - generic:
+          - heading "Good morning ✦" [level=4]
+          - paragraph: You have 3 goals active today. LeetCode streak is at 12 days — keep it going.
+      - generic:
+        - img
+        - generic: Today · 08:00
+      - generic:
+        - button "Later"
+        - button "View Goals"
+    - button "Jarvis AI Surface" [ref=e65] [cursor=pointer]:
+      - img [ref=e66]

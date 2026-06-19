@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_create %}新建目标{% else %}编辑目标{% endif %} — Jarvis{% endblock %}
+
+{% block content %}
+<div class="goal-form-page">
+    <div class="mb-6">
+        <a href="{% url 'goals:goal_list' %}" class="text-sm text-base-content/60">&larr; 返回目标列表</a>
+    </div>
+
+    <div class="card card-body bg-base-100 shadow-md max-w-lg">
+        <h1 class="text-xl font-bold mb-4">{% if is_create %}新建学习目标{% else %}编辑目标{% endif %}</h1>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error shadow-sm mb-4">
+                {% for error in form.non_field_errors %}<span>{{ error }}</span>{% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                {% with wname=field.field.widget.__class__.__name__ %}
+                <div class="form-control mb-4">
+                    {% if wname == 'CheckboxInput' %}
+                        {% if field.errors %}
+                            <div class="text-error text-sm mb-1">
+                                {% for error in field.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
+                        {% endif %}
+                        <label class="label cursor-pointer">
+                            {{ field }}
+                            <span class="label-text">{{ field.label }}</span>
+                        </label>
+                    {% else %}
+                        <label class="label" for="{{ field.id_for_label }}">
+                            <span class="label-text">{{ field.label }}</span>
+                        </label>
+                        {% if field.errors %}
+                            <div class="text-error text-sm mb-1">
+                                {% for error in field.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if wname == 'Select' or wname == 'SelectMultiple' %}
+                            <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="select select-bordered w-full">
+                                {% for choice in field %}{{ choice }}{% endfor %}
+                            </select>
+                        {% elif wname == 'Textarea' %}
+                            <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="textarea textarea-bordered w-full" rows="{{ field.field.widget.attrs.rows|default:4 }}" {% if field.field.required %}required{% endif %}>{% if field.value %}{{ field.value }}{% endif %}</textarea>
+                        {% else %}
+                            <input type="{{ field.field.widget.input_type|default:'text' }}"
+                                   name="{{ field.name }}"
+                                   id="{{ field.id_for_label }}"
+                                   class="input input-bordered w-full"
+                                   {% if field.field.required %}required{% endif %}
+                                   {% if field.value %}value="{{ field.value }}"{% endif %}>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <label class="label">
+                                <span class="label-text-alt text-base-content/50">{{ field.help_text }}</span>
+                            </label>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endwith %}
+            {% endfor %}
+
+            <div class="flex gap-3 mt-6">
+                <button type="submit" class="btn btn-primary btn-sm flex-1">
+                    {% if is_create %}创建目标{% else %}保存修改{% endif %}
+                </button>
+                <a href="{% url 'goals:goal_list' %}" class="btn btn-ghost btn-sm flex-1 text-center">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

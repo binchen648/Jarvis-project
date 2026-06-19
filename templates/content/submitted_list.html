@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}已提交内容 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">已提交内容</h1>
+        <a href="{% url 'content:submit_url' %}" class="btn btn-primary btn-sm">提交新内容</a>
+    </div>
+
+    {% if items %}
+        <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>标题</th>
+                        <th>提交时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="max-w-xs">
+                            <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="text-primary link link-hover truncate block">
+                                {{ item.url|truncatechars:50 }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if item.title %}
+                                <span class="text-base-content">{{ item.title|truncatechars:60 }}</span>
+                            {% else %}
+                                <span class="text-base-content/40 italic">等待抓取...</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-sm text-base-content/60">{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info shadow-sm">
+            <span>还没有提交过内容。</span>
+            <a href="{% url 'content:submit_url' %}" class="link link-primary ml-2">立即提交</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

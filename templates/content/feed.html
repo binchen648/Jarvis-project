@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}推荐内容 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="content-feed">
+    <div class="flex items-center justify-between mb-4">
+        <h1>推荐内容</h1>
+        <a href="{% url 'content:submit_url' %}" class="btn btn-outline btn-sm">提交内容</a>
+    </div>
+    
+    {% if contents %}
+        <div class="content-list">
+        {% for item in contents %}
+            <div class="card border border-base-300 mb-3">
+                <div class="card-body">
+                    <h3 class="mb-2">
+                        <a href="{% url 'content:detail' item.id %}" class="text-primary no-underline">
+                            {{ item.title }}
+                        </a>
+                    </h3>
+                    <p class="text-base-content/60 text-sm mb-2">
+                        {{ item.description|truncatewords:30 }}
+                    </p>
+                    <div class="flex gap-3 text-xs text-base-content/60">
+                        <span>{{ item.get_content_type_display }}</span>
+                        <span>评分: {{ item.quality_score|floatformat:1 }}</span>
+                        {% if item.duration_minutes %}
+                            <span>{{ item.duration_minutes }}分钟</span>
+                        {% endif %}
+                    </div>
+                    <div class="mt-2 flex gap-2">
+                        <form method="post" action="{% url 'content:interact' item.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="bookmark">
+                            <button type="submit" class="btn btn-primary btn-sm">收藏</button>
+                        </form>
+                        <form method="post" action="{% url 'content:interact' item.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="block">
+                            <button type="submit" class="btn btn-outline btn-sm">不感兴趣</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info shadow-sm">暂无推荐内容。请先订阅感兴趣的 UP 主或标签。</div>
+    {% endif %}
+</div>
+{% endblock %}

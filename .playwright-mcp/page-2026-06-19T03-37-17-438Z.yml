@@ -1,0 +1,91 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+      - link " Wellness" [ref=e12] [cursor=pointer]:
+        - /url: /wellness/suggestions/
+        - generic [ref=e13]: 
+        - text: Wellness
+    - navigation [ref=e15]:
+      - link " Content" [ref=e16] [cursor=pointer]:
+        - /url: /content/feed/
+        - generic [ref=e17]: 
+        - text: Content
+      - link " Trajectory" [ref=e18] [cursor=pointer]:
+        - /url: /trajectory/skills/
+        - generic [ref=e19]: 
+        - text: Trajectory
+    - navigation [ref=e21]:
+      - link " Settings" [ref=e22] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e23]: 
+        - text: Settings
+  - main [ref=e24]:
+    - generic [ref=e25]:
+      - heading "Memory Timeline" [level=2] [ref=e26]
+      - generic [ref=e28]:
+        - generic [ref=e29]: 
+        - combobox [ref=e30] [cursor=pointer]:
+          - option "Jarvis" [selected]
+          - option "Ocean"
+          - option "Sunset"
+          - option "Forest"
+          - option "Rose"
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: 
+          - textbox "搜索记忆..." [ref=e37]
+        - generic [ref=e38]:
+          - link "All" [ref=e39] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=all
+          - link "🎯 Goal" [ref=e40] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=goal
+          - link "🧠 Learning" [ref=e41] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=learning
+          - link "❤️ Health" [ref=e42] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=health
+          - link "💬 Chat" [ref=e43] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=chat
+          - link "📝 Agent" [ref=e44] [cursor=pointer]:
+            - /url: /memory/timeline/?filter=agent_note
+      - generic [ref=e46]:
+        - paragraph [ref=e48]: 还没有记忆记录
+        - paragraph [ref=e49]: Jarvis 会在你学习和使用过程中自动记录重要的事件和进展
+        - generic [ref=e50]:
+          - link "💬 去和 Agent 对话" [ref=e51] [cursor=pointer]:
+            - /url: /chat/
+          - link "🎯 创建第一个目标" [ref=e52] [cursor=pointer]:
+            - /url: /goals/
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - paragraph [ref=e57]: 本周新增
+          - paragraph [ref=e58]: +0 条
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - paragraph [ref=e62]: 🎯 Goals
+            - paragraph [ref=e63]: "0"
+          - generic [ref=e64]:
+            - paragraph [ref=e65]: 🧠 Learning
+            - paragraph [ref=e66]: "0"
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: ❤️ Health
+            - paragraph [ref=e69]: "0"
+      - generic [ref=e70]:
+        - paragraph [ref=e71]: 🧠 总计记忆
+        - paragraph [ref=e72]: 0 条

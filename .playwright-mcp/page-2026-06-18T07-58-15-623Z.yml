@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link " Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11]: 
+            - text: Dashboard
+          - link " Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - generic [ref=e14]: 
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - text: Goals
+          - link " Wellness" [ref=e17] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - generic [ref=e19]: 
+            - text: Wellness
+        - generic [ref=e21]:
+          - link " Content" [ref=e22] [cursor=pointer]:
+            - /url: /content/feed/
+            - generic [ref=e24]: 
+            - text: Content
+          - link " Trajectory" [ref=e25] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - generic [ref=e27]: 
+            - text: Trajectory
+        - link " Settings" [ref=e30] [cursor=pointer]:
+          - /url: /profile/
+          - generic [ref=e32]: 
+          - text: Settings
+      - link "A admin Personal AI OS" [ref=e34] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e35]: A
+        - generic [ref=e36]:
+          - generic [ref=e37]: admin
+          - generic [ref=e38]: Personal AI OS
+    - generic [ref=e39]:
+      - banner [ref=e40]:
+        - generic:
+          - text: 
+          - heading [level=1]
+        - generic [ref=e41]:
+          - generic [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]: Search
+            - generic [ref=e44]: ⌘K
+          - generic [ref=e46] [cursor=pointer]: 
+          - generic "Jarvis AI Core | v1.0" [ref=e48] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e49]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "💬 对话历史" [level=1] [ref=e53]
+            - link "新建对话" [ref=e54] [cursor=pointer]:
+              - /url: /chat/new/
+              - img [ref=e55]
+              - text: 新建对话
+          - generic [ref=e57]:
+            - link "对话 06/17 04:09 06/17 12:09 · 0 条消息" [ref=e58] [cursor=pointer]:
+              - /url: /chat/1/
+              - generic [ref=e60]:
+                - generic [ref=e61]:
+                  - img [ref=e63]
+                  - generic [ref=e65]:
+                    - paragraph [ref=e66]: 对话 06/17 04:09
+                    - paragraph [ref=e67]: 06/17 12:09 · 0 条消息
+                - img [ref=e68]
+            - link "对话 06/17 04:09 06/17 12:09 · 0 条消息" [ref=e70] [cursor=pointer]:
+              - /url: /chat/2/
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - img [ref=e75]
+                  - generic [ref=e77]:
+                    - paragraph [ref=e78]: 对话 06/17 04:09
+                    - paragraph [ref=e79]: 06/17 12:09 · 0 条消息
+                - img [ref=e80]
+            - link "对话 06/17 08:27 06/17 16:27 · 0 条消息" [ref=e82] [cursor=pointer]:
+              - /url: /chat/3/
+              - generic [ref=e84]:
+                - generic [ref=e85]:
+                  - img [ref=e87]
+                  - generic [ref=e89]:
+                    - paragraph [ref=e90]: 对话 06/17 08:27
+                    - paragraph [ref=e91]: 06/17 16:27 · 0 条消息
+                - img [ref=e92]
+  - generic [ref=e94]:
+    - generic:
+      - generic:
+        - generic:
+          - generic: Morning Briefing
+        - button "Dismiss":
+          - generic: 
+      - generic:
+        - generic:
+          - heading "Good morning ✦" [level=4]
+          - paragraph: You have 3 goals active today. LeetCode streak is at 12 days — keep it going.
+      - generic:
+        - generic: 
+        - generic: Today · 08:00
+      - generic:
+        - button "Later"
+        - button "View Goals"
+    - button "Jarvis AI Surface" [ref=e95] [cursor=pointer]:
+      - img [ref=e96]

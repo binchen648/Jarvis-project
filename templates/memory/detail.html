@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} — Memory{% endblock %}
+
+{% block topbar_title %}
+  <a href="{% url 'memory:timeline' %}" style="color: var(--text-tertiary); text-decoration: none; margin-right: var(--space-2);">Memory</a>
+  <span style="color: var(--text-tertiary); margin-right: var(--space-2);">/</span>
+  {{ event.title|truncatechars:30 }}
+{% endblock %}
+
+{% block content %}
+<style>
+  /* ── Memory Detail Page ── */
+  .memory-detail-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-8);
+  }
+
+  .memory-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: var(--space-6);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .memory-detail-back:hover {
+    color: var(--jarvis-cyan);
+  }
+
+  .memory-detail-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--card-radius);
+    padding: var(--card-padding);
+    overflow: hidden;
+    animation: panel-enter var(--duration-normal) var(--ease-out);
+  }
+
+  @keyframes panel-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .memory-detail-card-header {
+    border-bottom: 1px solid var(--border-default);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .memory-detail-card-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+    line-height: var(--leading-tight);
+  }
+
+  .memory-detail-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .memory-detail-type-badge.type-learning {
+    background: rgba(79, 140, 255, 0.12);
+    color: var(--jarvis-blue);
+  }
+  .memory-detail-type-badge.type-achievement {
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--jarvis-purple);
+  }
+  .memory-detail-type-badge.type-reflection {
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--jarvis-purple);
+  }
+  .memory-detail-type-badge.type-milestone {
+    background: rgba(6, 182, 212, 0.12);
+    color: var(--jarvis-cyan);
+  }
+
+  .memory-detail-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-8);
+    white-space: pre-wrap;
+  }
+
+  .memory-detail-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--surface-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+  }
+
+  .memory-detail-meta-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: var(--space-1);
+  }
+
+  .memory-detail-meta-value {
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+  }
+
+  .memory-detail-nav {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-default);
+  }
+
+  .memory-detail-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .memory-detail-nav-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+
+  @media (max-width: 640px) {
+    .memory-detail-page {
+      padding: var(--space-4);
+    }
+    .memory-detail-meta-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="memory-detail-page">
+  <a href="{% url 'memory:timeline' %}" class="memory-detail-back">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    返回时间线
+  </a>
+
+  <div class="memory-detail-card">
+    <div class="memory-detail-card-header">
+      <span class="memory-detail-type-badge type-{{ event.event_type }}">
+        {% if event.event_type == 'learning' %}🧠{% elif event.event_type == 'achievement' %}🎯{% elif event.event_type == 'reflection' %}💬{% elif event.event_type == 'milestone' %}📝{% endif %}
+        {{ event.get_event_type_display }}
+      </span>
+      <h1 class="memory-detail-card-title">{{ event.title }}</h1>
+    </div>
+
+    <div class="memory-detail-card-body">
+      {% if event.description %}
+        <div class="memory-detail-desc">{{ event.description }}</div>
+      {% else %}
+        <div class="memory-detail-desc" style="color: var(--text-tertiary); font-style: italic;">暂无详细描述</div>
+      {% endif %}
+
+      <div class="memory-detail-meta-grid">
+        <div>
+          <div class="memory-detail-meta-label">发生时间</div>
+          <div class="memory-detail-meta-value">{{ event.happened_at|date:"Y-m-d H:i" }}</div>
+        </div>
+        <div>
+          <div class="memory-detail-meta-label">记录时间</div>
+          <div class="memory-detail-meta-value">{{ event.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+        <div>
+          <div class="memory-detail-meta-label">事件类型</div>
+          <div class="memory-detail-meta-value">{{ event.get_event_type_display }}</div>
+        </div>
+        <div>
+          <div class="memory-detail-meta-label">事件 ID</div>
+          <div class="memory-detail-meta-value" style="font-family: monospace; color: var(--text-tertiary);">#{{ event.pk }}</div>
+        </div>
+      </div>
+
+      <div class="memory-detail-nav">
+        <a href="{% url 'memory:timeline' %}" class="memory-detail-nav-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+          </svg>
+          全部记忆
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

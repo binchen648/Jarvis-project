@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ goal.title }} — Jarvis{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="mb-6">
+        <a href="{% url 'goals:goal_list' %}" class="text-sm text-base-content/60 hover:text-base-content">&larr; 返回目标列表</a>
+    </div>
+
+    <div class="border border-base-300 rounded-lg p-5 bg-base-100 mb-6">
+        <div class="flex justify-between items-start">
+            <h1 class="text-2xl font-semibold mb-2">{{ goal.title }}</h1>
+            <div id="status-badge-{{ goal.pk }}">
+                {% include "goals/_status_badge.html" %}
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 text-sm text-base-content/60 mb-3">
+            <span>类型: {{ goal.get_goal_type_display }}</span>
+            {% if goal.target_value %}
+                <span>目标: {{ goal.target_value }}{{ goal.target_unit }}</span>
+            {% endif %}
+            <span>周期: {{ goal.get_category_display }}</span>
+            {% if goal.is_recurring %}<span>循环</span>{% endif %}
+            {% if goal.deadline %}
+                <span>截止: {{ goal.deadline|date:"Y-m-d" }}</span>
+            {% endif %}
+            <span>创建: {{ goal.created_at|date:"Y-m-d" }}</span>
+        </div>
+
+        {% if goal.description %}
+            <p class="text-base-content text-sm leading-relaxed mb-3">{{ goal.description }}</p>
+        {% endif %}
+
+        <div class="flex gap-2 mt-3 flex-wrap">
+            <a href="{% url 'goals:goal_edit' goal.pk %}" class="btn btn-primary btn-sm">编辑目标</a>
+            <form method="post" action="{% url 'goals:update_status' goal.pk %}"
+                  hx-post="{% url 'goals:update_status' goal.pk %}"
+                  hx-target="#status-badge-{{ goal.pk }}"
+                  hx-swap="innerHTML"
+                  class="inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost btn-sm">切换状态</button>
+            </form>
+        </div>
+    </div>
+
+    {% if progress_records %}
+    <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-3">进度记录</h2>
+        <div class="border border-base-300 rounded-lg overflow-hidden">
+            <table class="w-full border-collapse text-sm">
+                <thead class="bg-base-200">
+                    <tr>
+                        <th class="px-3 py-2 text-left border-b border-base-300">时间</th>
+                        <th class="px-3 py-2 text-right border-b border-base-300">进度</th>
+                        <th class="px-3 py-2 text-left border-b border-base-300">备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for pr in progress_records %}
+                    <tr>
+                        <td class="px-3 py-2 border-b border-base-300 text-base-content/60">{{ pr.recorded_at|date:"m/d H:i" }}</td>
+                        <td class="px-3 py-2 text-right border-b border-base-300">{{ pr.progress_percent|floatformat:0 }}%</td>
+                        <td class="px-3 py-2 border-b border-base-300">{{ pr.note|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div>
+        <div class="flex justify-between items-center mb-3">
+            <h2 class="text-lg font-semibold">学习记录（共 {{ total_minutes }} 分钟）</h2>
+            <a href="{% url 'goals:log_session' %}" class="btn btn-primary btn-sm">记录学习</a>
+        </div>
+
+        {% if sessions %}
+            {% for session in sessions %}
+                <div class="border border-base-300 rounded-md p-3 mb-2 bg-base-100">
+                    <div class="flex justify-between text-sm">
+                        <span class="font-medium">{{ session.date|date:"Y-m-d" }}</span>
+                        <span class="text-primary font-semibold">{{ session.duration_minutes }} 分钟</span>
+                    </div>
+                    {% if session.note %}
+                        <p class="text-xs text-base-content/60 mt-1">{{ session.note }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-base-content/60 text-sm">暂无学习记录。开始学习后记得记录哦！</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

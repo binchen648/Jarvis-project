@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="jarvis">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Jarvis Agent Console - v2.5</title>
+    <style>
+        :root {
+            --surface-bg: #08080D;
+            --surface-card: rgba(20, 20, 30, 0.65);
+            --primary: #8B5CF6;
+            --secondary: #4F8CFF;
+            --accent: #06B6D4;
+            --text-main: #F1F1F6;
+            --text-secondary: #9191A8;
+        }
+
+        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
+
+        body {
+            background: var(--surface-bg);
+            color: var(--text-main);
+            font-family: Inter, system-ui, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Aurora 背景系统 — matching Dashboard */
+        body::before {
+            content: "";
+            position: fixed;
+            top: -30%; left: -30%;
+            width: 160%; height: 160%;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 25%, transparent), transparent 30%),
+                radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+                radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 40%);
+            filter: blur(120px);
+            animation: aurora-drift 35s ease-in-out infinite;
+            z-index: -3;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 30%),
+                radial-gradient(circle at 30% 70%, color-mix(in srgb, var(--secondary) 10%, transparent), transparent 35%);
+            filter: blur(150px);
+            animation: aurora-reverse 60s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes aurora-drift {
+            0% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(-5%,4%) scale(1.08); }
+            50% { transform: translate(5%,-5%) scale(1.15); }
+            75% { transform: translate(-3%,-4%) scale(1.08); }
+            100% { transform: translate(0,0) scale(1); }
+        }
+
+        @keyframes aurora-reverse {
+            0% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(6%,5%) scale(1.2); }
+            100% { transform: translate(0,0) scale(1); }
+        }
+
+        /* Glass Card 升级 — matching Dashboard */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.25);
+            transition: all .3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--primary) 40%, rgba(255,255,255,.05));
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 15%, transparent), 0 15px 40px color-mix(in srgb, var(--primary) 8%, transparent);
+        }
+
+        /* Scrollbar — custom like Dashboard */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        /* Agent Mode 按钮样式 */
+        .agent-mode {
+            padding: 8px 14px;
+            font-size: 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.03);
+            color: rgba(255,255,255,.5);
+            border: 1px solid rgba(255,255,255,.05);
+            transition: .2s;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .agent-mode:hover { border-color: var(--primary); color: rgba(255,255,255,.7); }
+        .agent-mode.active {
+            background: color-mix(in srgb, var(--primary) 20%, transparent);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 10%, transparent);
+        }
+
+        .jarvis-core-sphere {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            animation: core-spin 10s linear infinite;
+            box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 30%, transparent);
+        }
+        @keyframes core-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ── Conversation Enrichment ── */
+
+        /* User message bubble */
+        .msg-user {
+            background: linear-gradient(135deg, rgba(139,92,246,.12), rgba(139,92,246,.04));
+            border: 1px solid rgba(139,92,246,.15);
+            border-left: 3px solid var(--primary);
+            transition: all .25s ease;
+        }
+        .msg-user:hover {
+            border-color: rgba(139,92,246,.3);
+            box-shadow: 0 4px 20px rgba(139,92,246,.08);
+        }
+
+        /* User timestamp badge */
+        .ts-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(139,92,246,.1);
+            border: 1px solid rgba(139,92,246,.12);
+            font-size: 10px;
+            font-family: monospace;
+            color: rgba(255,255,255,.45);
+        }
+
+        /* Agent message bubble */
+        .msg-agent {
+            background: linear-gradient(135deg, rgba(6,182,212,.08), rgba(6,182,212,.02));
+            border: 1px solid rgba(6,182,212,.1);
+            border-left: 3px solid var(--accent);
+            transition: all .25s ease;
+        }
+        .msg-agent:hover {
+            border-color: rgba(6,182,212,.25);
+            box-shadow: 0 4px 20px rgba(6,182,212,.06);
+        }
+
+        /* Jarvis label badge */
+        .jarvis-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(6,182,212,.15), rgba(6,182,212,.05));
+            border: 1px solid rgba(6,182,212,.2);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+        }
+        .jarvis-badge::before {
+            content: "";
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 6px var(--accent);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(.8); }
+        }
+
+        /* Thought Process header badge */
+        .thought-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(139,92,246,.15), rgba(79,140,255,.08));
+            border: 1px solid rgba(139,92,246,.18);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        /* Tool call card enrichment */
+        .tool-call-card {
+            background: linear-gradient(135deg, rgba(139,92,246,.1), rgba(79,140,255,.05));
+            border: 1px solid rgba(139,92,246,.15);
+            border-left: 3px solid var(--primary);
+            transition: all .25s ease;
+        }
+        .tool-call-card:hover {
+            border-color: rgba(139,92,246,.3);
+            box-shadow: 0 4px 16px rgba(139,92,246,.08);
+        }
+
+        /* Tool status indicator */
+        .tool-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-family: monospace;
+        }
+        .tool-status--running {
+            background: rgba(139,92,246,.12);
+            color: var(--primary);
+            border: 1px solid rgba(139,92,246,.2);
+        }
+        .tool-status--done {
+            background: rgba(34,197,94,.1);
+            color: #22C55E;
+            border: 1px solid rgba(34,197,94,.15);
+        }
+
+        /* User avatar indicator */
+        .user-avatar-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 8px rgba(139,92,246,.4);
+            flex-shrink: 0;
+        }
+
+        /* Empty state card */
+        .empty-state-card {
+            background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 20px 60px rgba(0,0,0,.2);
+        }
+
+        /* Hover lift for interactive sidebar items */
+        .sidebar-card {
+            transition: all .25s ease;
+        }
+        .sidebar-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255,255,255,.1);
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-black/20 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
+        <div class="p-8">
+            <h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1>
+        </div>
+                <nav class="flex-1 px-4 space-y-2">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-grid-fill" ></i> Dashboard</a>
+            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/10 text-white shadow-lg"><i class="bi bi-stars" style="color: var(--primary)"></i> Agent</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-brain" ></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-target" ></i> Goals</a>
+            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+        </nav>
+        <div class="h-px bg-white/5 mx-4 my-2"></div>
+        <nav class="px-4 space-y-2">
+            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+        </nav>
+        <div class="h-px bg-white/5 mx-4 my-2"></div>
+        <nav class="px-4 space-y-2">
+            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
+        </nav>        <div class="p-6 border-t border-white/5 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div>
+            <span class="text-xs text-white/60 font-medium">{{ user.username|default:"Alex" }} OS</span>
+        </div>
+    </aside>
+
+    <!-- 主容器 -->
+    <main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+        
+        <!-- Header: Jarvis Core Status Bar -->
+        <header class="h-20 flex items-center justify-between px-10 border-b border-white/5" style="background: rgba(8,8,13,0.6); backdrop-filter: blur(18px);">
+            <div>
+                <h2 class="text-sm font-bold text-white tracking-widest">JARVIS CORE</h2>
+                <div class="flex gap-4 mt-1">
+                    <span class="text-[10px] text-emerald-400 flex items-center gap-1">
+                        <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                    </span>
+                    <span class="text-[10px] text-white/40">Memory 43</span>
+                    <span class="text-[10px] text-white/40">Tools 12</span>
+                    <span class="text-[10px] text-white/40">Confidence 87%</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-palette2 text-xs text-white/40"></i>
+                    <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none focus:ring-1 focus:ring-white/20 transition cursor-pointer">
+                        <option value="jarvis" class="bg-[#08080D]">Jarvis</option>
+                        <option value="ocean" class="bg-[#08080D]">Ocean</option>
+                        <option value="sunset" class="bg-[#08080D]">Sunset</option>
+                        <option value="forest" class="bg-[#08080D]">Forest</option>
+                        <option value="rose" class="bg-[#08080D]">Rose</option>
+                    </select>
+                </div>
+                <div class="h-8 w-px bg-white/10"></div>
+                <div class="jarvis-core-sphere"></div>
+            </div>
+        </header>
+
+        <!-- 双栏布局 -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- 左侧：对话区（flex-col：上为消息，下为输入栏） -->
+            <div class="flex-1 flex flex-col overflow-hidden">
+                
+                <!-- 消息区域 -->
+                <div class="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-6" id="chat-messages">
+                    {% for msg in history %}
+                        {% if msg.role == 'user' %}
+                        <div class="flex justify-end group">
+                            <div class="max-w-[80%] lg:max-w-[70%] space-y-2 flex flex-col items-end">
+                                <div class="msg-user rounded-[1.25rem] rounded-tr-sm p-5">
+                                    <p class="text-sm text-white/90 leading-relaxed">{{ msg.content }}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="ts-badge">{{ msg.created_at|date:"H:i" }}{% if msg.tokens_used %} · {{ msg.tokens_used }}t{% endif %}</span>
+                                    <div class="user-avatar-dot"></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="flex justify-start group">
+                            <div class="max-w-[90%] lg:max-w-[80%] space-y-3">
+                                <div class="flex items-center gap-2 ml-1">
+                                    <span class="jarvis-badge">Jarvis</span>
+                                </div>
+                                <div class="msg-agent rounded-[1.25rem] rounded-tl-sm p-6">
+                                    <div class="mb-3">
+                                        <span class="thought-badge"><i class="bi bi-lightbulb" style="font-size: 10px;"></i> Thought Process</span>
+                                    </div>
+                                    <p class="text-sm leading-relaxed text-white/90">{{ msg.content|linebreaksbr }}</p>
+                                </div>
+                                <span class="ts-badge ml-1">{{ msg.created_at|date:"H:i" }}{% if msg.tokens_used %} · {{ msg.tokens_used }}t{% endif %}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                    <div class="flex flex-col items-center justify-center h-full text-center" style="padding-top: 18vh;">
+                        <div class="empty-state-card rounded-[2rem] p-10 flex flex-col items-center max-w-sm">
+                            <div class="w-20 h-20 rounded-[1.5rem] flex items-center justify-center mb-6" style="background: linear-gradient(135deg, rgba(139,92,246,.15), rgba(6,182,212,.1)); border: 1px solid rgba(139,92,246,.15);">
+                                <i class="bi bi-stars text-4xl" style="color: var(--primary);"></i>
+                            </div>
+                            <p class="text-lg text-white/80 font-semibold mb-2">开始与 Jarvis 对话</p>
+                            <p class="text-sm text-white/35 leading-relaxed">输入任何问题，Jarvis 会运用工具与记忆<br>为你深度分析并生成回答</p>
+                            <div class="flex items-center gap-2 mt-6">
+                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                                <span class="text-[10px] text-emerald-400/70 font-mono">System Online</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {# ── Typing Indicator ── #}
+                    <div id="typing-indicator" class="hidden">
+                        <span class="text-sm font-mono" style="color: var(--accent);">&#x25CF; Jarvis 思考中</span>
+                    </div>
+                </div>
+
+                <!-- 输入区域：只在左侧对话栏中，不侵入右侧 -->
+                <div class="shrink-0 px-10 pb-6 pt-2">
+                    <div class="max-w-4xl">
+                        <!-- Mode Switcher -->
+                        <div class="flex gap-3 mb-3">
+                            <button class="agent-mode active">Ask</button>
+                            <button class="agent-mode">Plan</button>
+                            <button class="agent-mode">Execute</button>
+                        </div>
+
+                        <!-- Input Bar -->
+                        <form id="chat-form" class="glass-card rounded-[2rem] p-3 flex items-center gap-3 pr-3 shadow-2xl" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="px-5 py-2.5 text-[11px] bg-white/5 rounded-full font-bold text-white/60 whitespace-nowrap">
+                                deepseek-v3
+                            </div>
+                            <input type="text" id="chat-input" placeholder="› 输入指令或询问 Jarvis..." 
+                                   class="flex-1 bg-transparent border-none outline-none text-sm text-white px-2 placeholder:text-white/20">
+                            <button type="submit" id="send-btn"
+                                    class="w-11 h-11 rounded-full bg-[var(--primary)] text-white flex items-center justify-center hover:scale-110 transition shadow-lg disabled:opacity-40 disabled:cursor-not-allowed">
+                                <i class="bi bi-arrow-up-short text-2xl"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：Agent 控制台侧边栏 -->
+            <aside class="w-[380px] border-l border-white/5 p-6 bg-black/10 overflow-y-auto custom-scrollbar space-y-6">
+                
+                <!-- Agent State Stack -->
+                <div class="glass-card p-5 rounded-[2rem] sidebar-card">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-white/40 mb-4">Agent State</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Focus Goal</span>
+                            <span class="text-xs text-[var(--primary)] font-medium">LeetCode 92</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Active Memory</span>
+                            <span class="text-xs text-[var(--accent)] font-medium">ReAct Notes</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Current Tool</span>
+                            <span class="text-xs text-cyan-400 font-mono">search_memories</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Confidence</span>
+                            <span class="text-xs text-emerald-400 font-medium">87%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Activity Timeline -->
+                <div class="glass-card p-5 rounded-[2rem] sidebar-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-white/40">Agent Activity</h3>
+                        <i class="bi bi-activity text-[var(--primary)]"></i>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-[var(--primary)]"></div>
+                                <div class="w-px h-10 bg-white/10"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">用户询问学习计划</p>
+                                <p class="text-[10px] text-white/30">14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                                <div class="w-px h-10 bg-white/10"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">调用 get_goal_progress</p>
+                                <p class="text-[10px] text-white/30">14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">生成行动计划</p>
+                                <p class="text-[10px] text-white/30">14:31</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Calls History -->
+                <div class="p-2">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-white/20 mb-3 ml-2">Recent Logs</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-[10px] font-mono opacity-40 hover:opacity-60 transition">
+                            <span>✓ get_memories</span>
+                            <span class="text-white/20">14:29</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] font-mono opacity-40 hover:opacity-60 transition">
+                            <span>✓ update_state</span>
+                            <span class="text-white/20">14:28</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <!-- AI Surface -->
+    <div class="fixed bottom-8 right-8 z-50">
+        <div class="w-14 h-14 bg-[var(--primary)] rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(0,0,0,0.5)] cursor-pointer hover:scale-110 transition shadow-glow relative">
+            <div class="absolute inset-0 rounded-full bg-[var(--primary)] opacity-20 animate-ping"></div>
+            <i class="bi bi-stars text-xl"></i>
+        </div>
+    </div>
+
+    <script>
+        // Theme Switcher
+        const switcher = document.getElementById("themeSwitcher");
+        if (switcher) {
+            switcher.addEventListener("change", e => {
+                const theme = e.target.value;
+                document.documentElement.setAttribute("data-theme", theme);
+                localStorage.setItem("jarvis-theme", theme);
+            });
+            const saved = localStorage.getItem("jarvis-theme");
+            if (saved) {
+                document.documentElement.setAttribute("data-theme", saved);
+                switcher.value = saved;
+            }
+        }
+
+        // Mode Switcher Logic
+        document.querySelectorAll('.agent-mode').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.agent-mode').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // ── WebSocket Chat ──
+        (function() {
+            var conversationId = {{ conversation.id }};
+            var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            var wsUrl = protocol + '//' + window.location.host + '/ws/chat/' + conversationId + '/';
+
+            var messagesEl = document.getElementById('chat-messages');
+            var formEl = document.getElementById('chat-form');
+            var inputEl = document.getElementById('chat-input');
+            var sendBtn = document.getElementById('send-btn');
+            var typingEl = document.getElementById('typing-indicator');
+
+            var ws = null;
+            var messageCount = {{ history|length }};
+            var assistantBuffer = '';
+            var streamBubbleEl = null;
+            var reconnectAttempts = 0;
+            var MAX_RECONNECT = 10;
+
+            function connect() {
+                ws = new WebSocket(wsUrl);
+                ws.onopen = function() { reconnectAttempts = 0; sendBtn.disabled = false; inputEl.disabled = false; inputEl.focus(); };
+                ws.onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    if (data.type === 'user_message') { addMessage(data.content, 'user', data.timestamp); scrollToBottom(); }
+                    else if (data.type === 'thinking') {
+                        if (streamBubbleEl) { streamBubbleEl.remove(); streamBubbleEl = null; assistantBuffer = ''; }
+                        typingEl.classList.remove('hidden');
+                        typingEl.innerHTML = '<span class="text-xs font-mono" style="color: var(--accent);">&#x25CF; Jarvis 思考中 (' + (data.step||1) + '/' + (data.total_steps||'?') + ')</span>';
+                        scrollToBottom();
+                    }
+                    else if (data.type === 'tool_call') {
+                        typingEl.classList.remove('hidden');
+                        typingEl.innerHTML = '<span class="text-xs font-mono" style="color: var(--color-warning);">&#x25CF; 使用工具: ' + escapeHtml(data.tool) + '</span>';
+                        var toolCard = document.createElement('div');
+                        toolCard.className = 'flex justify-start';
+                        toolCard.innerHTML = '<div class="max-w-[85%]"><div class="tool-call-card rounded-[1.25rem] rounded-tl-sm p-4"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(139,92,246,.2), rgba(79,140,255,.1));"><i class="bi bi-tools text-sm" style="color: var(--primary);"></i></div><div class="flex-1"><span class="text-xs font-mono font-medium text-white/80">' + escapeHtml(data.tool) + '</span></div><span class="tool-status tool-status--running"><span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse"></span>执行中</span></div></div></div>';
+                        messagesEl.appendChild(toolCard);
+                        scrollToBottom();
+                    }
+                    else if (data.type === 'tool_result') {
+                        typingEl.classList.remove('hidden');
+                        typingEl.innerHTML = '<span class="text-xs font-mono" style="color: var(--color-success);">&#x25CF; 工具执行完成</span>';
+                        scrollToBottom();
+                    }
+                    else if (data.type === 'chunk') {
+                        typingEl.classList.add('hidden');
+                        if (!streamBubbleEl) {
+                            streamBubbleEl = document.createElement('div');
+                            streamBubbleEl.className = 'flex justify-start';
+                            streamBubbleEl.innerHTML = '<div class="max-w-[85%] space-y-3"><div class="flex items-center gap-2 ml-1"><span class="jarvis-badge">Jarvis</span></div><div class="msg-agent rounded-[1.25rem] rounded-tl-sm p-6"><p class="whitespace-pre-wrap text-sm text-white/90 leading-relaxed"></p></div></div>';
+                            messagesEl.appendChild(streamBubbleEl);
+                            assistantBuffer = '';
+                        }
+                        assistantBuffer += (data.content || '');
+                        streamBubbleEl.querySelector('.msg-agent p').textContent = assistantBuffer;
+                        scrollToBottom();
+                    }
+                    else if (data.type === 'done') {
+                        typingEl.classList.add('hidden');
+                        if (streamBubbleEl) { streamBubbleEl = null; assistantBuffer = ''; }
+                        else if (data.content) { addMessage(data.content, 'assistant'); }
+                        messageCount++; sendBtn.disabled = false; inputEl.disabled = false; inputEl.focus();
+                    }
+                    else if (data.type === 'error') {
+                        typingEl.classList.add('hidden');
+                        if (streamBubbleEl) { streamBubbleEl.remove(); streamBubbleEl = null; assistantBuffer = ''; }
+                        addMessage(data.content, 'assistant');
+                        sendBtn.disabled = false; inputEl.disabled = false;
+                    }
+                };
+                ws.onclose = function() {
+                    sendBtn.disabled = true; inputEl.disabled = true; reconnectAttempts++;
+                    if (reconnectAttempts > MAX_RECONNECT) { addMessage('连接已断开，请刷新页面重试。', 'assistant'); return; }
+                    setTimeout(connect, Math.min(3000 * Math.pow(1.5, reconnectAttempts - 1), 60000));
+                };
+                ws.onerror = function() { ws.close(); };
+            }
+
+            function sendMessage() {
+                var content = inputEl.value.trim();
+                if (!content) return;
+                inputEl.value = ''; sendBtn.disabled = true; inputEl.disabled = true;
+                typingEl.classList.remove('hidden'); scrollToBottom(); messageCount++;
+                ws.send(JSON.stringify({ type: 'message', content: content }));
+            }
+
+            function addMessage(content, role, timestamp) {
+                var outer = document.createElement('div');
+                var ts = timestamp ? formatTime(timestamp) : '';
+                if (role === 'user') {
+                    outer.className = 'flex justify-end group';
+                    outer.innerHTML = '<div class="max-w-[70%] space-y-2 flex flex-col items-end"><div class="msg-user rounded-[1.25rem] rounded-tr-sm p-5"><p class="text-sm text-white/90 leading-relaxed">' + escapeHtml(content) + '</p></div>' + (ts ? '<div class="flex items-center gap-2"><span class="ts-badge">' + ts + '</span><div class="user-avatar-dot"></div></div>' : '') + '</div>';
+                } else {
+                    outer.className = 'flex justify-start group';
+                    outer.innerHTML = '<div class="max-w-[85%] space-y-3"><div class="flex items-center gap-2 ml-1"><span class="jarvis-badge">Jarvis</span></div><div class="msg-agent rounded-[1.25rem] rounded-tl-sm p-6"><p class="text-sm text-white/90 leading-relaxed">' + escapeHtml(content) + '</p></div>' + (ts ? '<span class="ts-badge ml-1">' + ts + '</span>' : '') + '</div>';
+                }
+                messagesEl.appendChild(outer);
+            }
+
+            function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+            function escapeHtml(text) {
+                var d = document.createElement('div');
+                d.textContent = text;
+                return d.innerHTML;
+            }
+            function formatTime(isoString) {
+                var d = new Date(isoString);
+                return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+            }
+
+            formEl.addEventListener('submit', function(e) { e.preventDefault(); sendMessage(); });
+            connect();
+        })();
+    </script>
+</body>
+</html>

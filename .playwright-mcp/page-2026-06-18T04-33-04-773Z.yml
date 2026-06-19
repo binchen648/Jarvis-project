@@ -1,0 +1,89 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+    - generic [ref=e14]: admin OS
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "JARVIS CORE" [level=2] [ref=e18]
+        - generic [ref=e19]:
+          - generic [ref=e20]: Active
+          - generic [ref=e22]: Memory 43
+          - generic [ref=e23]: Tools 12
+          - generic [ref=e24]: Confidence 87%
+      - combobox [ref=e26]:
+        - option "Jarvis" [selected]
+        - option "Ocean"
+        - option "Sunset"
+        - option "Forest"
+        - option "Rose"
+    - generic [ref=e28]:
+      - generic [ref=e30]:
+        - generic [ref=e32]: 
+        - paragraph [ref=e33]: 开始对话
+        - paragraph [ref=e34]: 在下方输入你的问题
+      - complementary [ref=e35]:
+        - generic [ref=e36]:
+          - heading "Agent State" [level=3] [ref=e37]
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: Focus Goal
+              - generic [ref=e41]: LeetCode 92
+            - generic [ref=e42]:
+              - generic [ref=e43]: Active Memory
+              - generic [ref=e44]: ReAct Notes
+            - generic [ref=e45]:
+              - generic [ref=e46]: Current Tool
+              - generic [ref=e47]: search_memories
+            - generic [ref=e48]:
+              - generic [ref=e49]: Confidence
+              - generic [ref=e50]: 87%
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Agent Activity" [level=3] [ref=e53]
+            - generic [ref=e54]: 
+          - generic [ref=e55]:
+            - generic [ref=e60]:
+              - paragraph [ref=e61]: 用户询问学习计划
+              - paragraph [ref=e62]: 14:30
+            - generic [ref=e67]:
+              - paragraph [ref=e68]: 调用 get_goal_progress
+              - paragraph [ref=e69]: 14:30
+            - generic [ref=e73]:
+              - paragraph [ref=e74]: 生成行动计划
+              - paragraph [ref=e75]: 14:31
+        - generic [ref=e76]:
+          - paragraph [ref=e77]: Recent Logs
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]: ✓ get_memories
+              - generic [ref=e81]: 14:29
+            - generic [ref=e82]:
+              - generic [ref=e83]: ✓ update_state
+              - generic [ref=e84]: 14:28
+    - generic [ref=e85]:
+      - generic [ref=e86]:
+        - button "Ask" [ref=e87] [cursor=pointer]
+        - button "Plan" [ref=e88] [cursor=pointer]
+        - button "Execute" [ref=e89] [cursor=pointer]
+      - generic [ref=e90]:
+        - generic [ref=e91]: deepseek-v3
+        - textbox "› 输入指令或询问 Jarvis..." [ref=e92]
+        - button "" [ref=e93] [cursor=pointer]:
+          - generic [ref=e94]: 
+  - generic [ref=e98] [cursor=pointer]: 

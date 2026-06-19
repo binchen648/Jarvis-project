@@ -1,0 +1,39 @@
+﻿{
+    "entries":  [
+                    {
+                        "summary":  "完成了 Jarvis 暑期项目的 Phase A 架构升级：ReAct Agent Loop + 多级记忆系统 + 工具注册系统 + Agent 化 Chat Consumer",
+                        "id":  "conv-001",
+                        "projectPath":  "D:\\Jarvis project",
+                        "fileCount":  10,
+                        "tags":  [
+                                     "Django",
+                                     "Python",
+                                     "Agent",
+                                     "架构升级"
+                                 ],
+                        "time":  "14:36:00",
+                        "date":  "2026-06-14",
+                        "title":  "Jarvis Phase A 升级 — ReAct Agent + 多级记忆系统",
+                        "sessionDuration":  "4h29m",
+                        "file":  "2026-06-14_Jarvis_Phase_A_升级_ReAct_Agent_多级记忆系统.md"
+                    },
+                    {
+                        "summary":  "全面架构重构 + 复杂专员审查 + Phase A 21 项修复 + 4 模块测试覆盖 + Docker/SQLite 演示环境修复",
+                        "id":  "conv-002",
+                        "projectPath":  "D:\\Jarvis project",
+                        "fileCount":  25,
+                        "tags":  [
+                                     "Django",
+                                     "Python",
+                                     "Agent",
+                                     "架构重构",
+                                     "复杂专员"
+                                 ],
+                        "time":  "16:57:00",
+                        "date":  "2026-06-15",
+                        "title":  "架构重构 + 复杂专员审查 + Phase A 修复",
+                        "sessionDuration":  "6h",
+                        "file":  "2026-06-15_架构重构+复杂专员审查+PhaseA修复.md"
+                    }
+                ]
+}

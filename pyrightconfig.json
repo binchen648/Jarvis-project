@@ -1,0 +1,12 @@
+{
+  "include": ["apps", "config", "infra"],
+  "exclude": [".venv", "media", "static", "**/migrations"],
+  "extraPaths": ["D:\\Jarvis project\\.venv\\Lib\\site-packages"],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "reportMissingModuleSource": "warning",
+  "reportArgumentType": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportAssignmentType": "none",
+  "reportIndexIssue": "none"
+}

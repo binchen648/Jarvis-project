@@ -1,0 +1,154 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - img [ref=e10]
+            - text: Dashboard
+          - link "Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - img [ref=e13]
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - img [ref=e16]
+            - text: Goals
+          - link "Wellness" [ref=e18] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - img [ref=e19]
+            - text: Wellness
+        - generic [ref=e22]:
+          - link "Content" [ref=e23] [cursor=pointer]:
+            - /url: /content/feed/
+            - img [ref=e24]
+            - text: Content
+          - link "Trajectory" [ref=e26] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - img [ref=e27]
+            - text: Trajectory
+        - link "Settings" [ref=e31] [cursor=pointer]:
+          - /url: /profile/
+          - img [ref=e32]
+          - text: Settings
+      - link "A admin Personal AI OS" [ref=e36] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e37]: A
+        - generic [ref=e38]:
+          - generic [ref=e39]: admin
+          - generic [ref=e40]: Personal AI OS
+    - generic [ref=e41]:
+      - banner [ref=e42]:
+        - heading "Dashboard" [level=1] [ref=e44]
+        - generic [ref=e45]:
+          - generic [ref=e46] [cursor=pointer]:
+            - generic [ref=e47]: Search
+            - generic [ref=e48]: ⌘K
+          - img [ref=e50] [cursor=pointer]
+          - generic "Jarvis AI Core | v1.0" [ref=e53] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic:
+              - heading [level=1]
+            - paragraph [ref=e57]: 今天还没有目标，去创建一个吧 🎯
+          - generic [ref=e58]:
+            - generic [ref=e59]: Today Focus
+            - generic [ref=e60]: 0%
+            - generic [ref=e61]: ▲ +5%
+          - generic [ref=e62]:
+            - generic [ref=e63]: Goal Health
+            - generic [ref=e64]: 0 正常 / 0 风险
+            - generic [ref=e65]: ✓ 全部正常
+          - generic [ref=e66]:
+            - generic [ref=e67]: Memory Growth
+            - generic [ref=e68]: +0条
+            - generic [ref=e69]: 本周
+          - generic [ref=e70]:
+            - generic [ref=e71]: AI Confidence
+            - generic [ref=e72]: 70%
+            - generic [ref=e73]: 学习中
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - img [ref=e77]
+                - text: Today's Plan
+              - generic [ref=e79]: 0/3 done
+            - generic [ref=e80]:
+              - link "☐ 1. LeetCode 92 35min ├─ 难度 Medium · 今日必完成 └─ 🔗 /goals/" [ref=e81] [cursor=pointer]:
+                - /url: /goals/
+                - generic [ref=e82]: ☐
+                - generic [ref=e83]:
+                  - generic [ref=e84]:
+                    - generic [ref=e85]: 1. LeetCode 92
+                    - generic [ref=e86]: 35min
+                  - generic [ref=e87]:
+                    - generic [ref=e88]:
+                      - generic [ref=e89]: ├─
+                      - generic [ref=e90]: 难度 Medium · 今日必完成
+                    - generic [ref=e91]:
+                      - generic [ref=e92]: └─
+                      - generic [ref=e93]: 🔗 /goals/
+              - link "☐ 2. 阅读 ReAct Agent 笔记 20min ├─ 上次 3天前 · 需要复习 └─ 🔗 /memory/" [ref=e94] [cursor=pointer]:
+                - /url: /memory/
+                - generic [ref=e95]: ☐
+                - generic [ref=e96]:
+                  - generic [ref=e97]:
+                    - generic [ref=e98]: 2. 阅读 ReAct Agent 笔记
+                    - generic [ref=e99]: 20min
+                  - generic [ref=e100]:
+                    - generic [ref=e101]:
+                      - generic [ref=e102]: ├─
+                      - generic [ref=e103]: 上次 3天前 · 需要复习
+                    - generic [ref=e104]:
+                      - generic [ref=e105]: └─
+                      - generic [ref=e106]: 🔗 /memory/
+              - link "☐ 3. 更新 Wellness 记录 5min └─ 🔗 /wellness/record" [ref=e107] [cursor=pointer]:
+                - /url: /wellness/record
+                - generic [ref=e108]: ☐
+                - generic [ref=e109]:
+                  - generic [ref=e110]:
+                    - generic [ref=e111]: 3. 更新 Wellness 记录
+                    - generic [ref=e112]: 5min
+                  - generic [ref=e114]:
+                    - generic [ref=e115]: └─
+                    - generic [ref=e116]: 🔗 /wellness/record
+          - generic [ref=e117]:
+            - generic [ref=e119]:
+              - img [ref=e120]
+              - text: Goal Progress
+            - generic [ref=e122]:
+              - generic [ref=e123]: 📊
+              - paragraph [ref=e124]: 还没有目标进度数据
+          - generic [ref=e125]:
+            - generic [ref=e127]:
+              - img [ref=e128]
+              - text: Memory Timeline
+            - generic [ref=e130]:
+              - generic [ref=e131]: 🧠
+              - paragraph [ref=e132]: 还没有记忆轨迹
+              - paragraph [ref=e133]: 开始学习后，Jarvis 会记录你的成长轨迹
+  - generic [ref=e134]:
+    - generic:
+      - generic:
+        - generic:
+          - generic: Morning Briefing
+        - button "Dismiss":
+          - img
+      - generic:
+        - generic:
+          - heading "Good morning ✦" [level=4]
+          - paragraph: You have 3 goals active today. LeetCode streak is at 12 days — keep it going.
+      - generic:
+        - img
+        - generic: Today · 08:00
+      - generic:
+        - button "Later"
+        - button "View Goals"
+    - button "Jarvis AI Surface" [ref=e135] [cursor=pointer]:
+      - img [ref=e136]

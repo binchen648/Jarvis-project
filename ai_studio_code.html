@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="jarvis">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Jarvis Agent Console - v2.5</title>
+    <style>
+        :root {
+            --surface-bg: #08080D;
+            --surface-card: rgba(20, 20, 30, 0.65);
+            --primary: #8B5CF6;
+            --secondary: #4F8CFF;
+            --accent: #06B6D4;
+            --text-main: #F1F1F6;
+            --text-secondary: #9191A8;
+        }
+
+        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
+
+        body {
+            background: var(--surface-bg);
+            color: var(--text-main);
+            font-family: Inter, system-ui, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Aurora 背景动画 */
+        body::before, body::after {
+            content: ""; position: fixed; pointer-events: none; filter: blur(120px); z-index: -2;
+        }
+        body::before {
+            top: -30%; left: -30%; width: 160%; height: 160%;
+            background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 25%, transparent), transparent 30%),
+                        radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+                        radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 40%);
+            animation: aurora-drift 35s ease-in-out infinite;
+        }
+
+        @keyframes aurora-drift {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(5%,-5%) scale(1.1); }
+        }
+
+        /* Glass Card 升级 */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.25);
+            transition: all .3s ease;
+        }
+
+        /* Agent Mode 按钮样式 */
+        .agent-mode {
+            padding: 8px 14px;
+            font-size: 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.03);
+            color: rgba(255,255,255,.5);
+            border: 1px solid rgba(255,255,255,.05);
+            transition: .2s;
+        }
+        .agent-mode:hover { border-color: var(--primary); }
+        .agent-mode.active {
+            background: color-mix(in srgb, var(--primary) 20%, transparent);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 10%, transparent);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .jarvis-core-sphere {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            animation: core-spin 10s linear infinite;
+            box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 30%, transparent);
+        }
+        @keyframes core-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-black/20 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
+        <div class="p-8">
+            <h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1>
+        </div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/10 text-white shadow-lg transition"><i class="bi bi-stars" style="color: var(--primary)"></i> Agent</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
+        </nav>
+        <div class="p-6 border-t border-white/5 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div>
+            <span class="text-xs text-white/60 font-medium">Alex OS</span>
+        </div>
+    </aside>
+
+    <!-- 主容器 -->
+    <main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+        
+        <!-- Header: Jarvis Core Status Bar -->
+        <header class="h-20 flex items-center justify-between px-10 border-b border-white/5">
+            <div>
+                <h2 class="text-sm font-bold text-white tracking-widest">JARVIS CORE</h2>
+                <div class="flex gap-4 mt-1">
+                    <span class="text-[10px] text-emerald-400 flex items-center gap-1">
+                        <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                    </span>
+                    <span class="text-[10px] text-white/40">Memory 43</span>
+                    <span class="text-[10px] text-white/40">Tools 12</span>
+                    <span class="text-[10px] text-white/40">Confidence 87%</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none">
+                    <option value="jarvis">Jarvis</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="sunset">Sunset</option>
+                    <option value="forest">Forest</option>
+                    <option value="rose">Rose</option>
+                </select>
+                <div class="jarvis-core-sphere"></div>
+            </div>
+        </header>
+
+        <!-- 双栏布局 -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- 左侧：对话区 -->
+            <div class="flex-1 overflow-y-auto p-10 no-scrollbar space-y-8 pb-40">
+                <div class="flex justify-end">
+                    <div class="max-w-[70%] glass-card p-4 rounded-2xl rounded-tr-sm">
+                        <p class="text-sm">Jarvis，帮我基于当前目标调整一下今晚的学习重点。</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-start">
+                    <div class="max-w-[85%] space-y-4">
+                        <div class="glass-card p-6 rounded-2xl rounded-tl-sm border-l-2 border-l-[var(--primary)]">
+                            <p class="text-[10px] text-[var(--primary)] font-mono mb-2 uppercase tracking-widest">Thought Process</p>
+                            <p class="text-sm leading-relaxed">
+                                正在分析当前进度。你距离 **LeetCode 92** 的截止时间还有 4 小时，且该题目涉及你 3 天前在 **ReAct Notes** 中标记的难点。
+                                <br><br>
+                                我已更新了你的执行序列：
+                            </p>
+                            <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                                <span class="text-xs">⚡ 执行直接跳转: LeetCode 执行环境</span>
+                                <button class="px-4 py-1.5 bg-[var(--primary)] text-white text-[10px] rounded-lg shadow-lg">进入</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：Agent 控制台侧边栏 -->
+            <aside class="w-[360px] border-l border-white/5 p-6 bg-black/10 overflow-y-auto no-scrollbar space-y-6">
+                
+                <!-- 2. Agent State Stack (新版) -->
+                <div class="glass-card p-5 rounded-3xl">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-white/40 mb-4">Agent State</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Focus Goal</span>
+                            <span class="text-xs text-[var(--primary)] font-medium">LeetCode 92</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Active Memory</span>
+                            <span class="text-xs text-[var(--accent)] font-medium">ReAct Notes</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Current Tool</span>
+                            <span class="text-xs text-cyan-400 font-mono">search_memories</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/40 text-xs">Confidence</span>
+                            <span class="text-xs text-emerald-400 font-medium">87%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Agent Activity Timeline (新版) -->
+                <div class="glass-card p-5 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-white/40">Agent Activity</h3>
+                        <i class="bi bi-activity text-[var(--primary)]"></i>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-[var(--primary)]"></div>
+                                <div class="w-px h-10 bg-white/10"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">用户询问学习计划</p>
+                                <p class="text-[10px] text-white/30">14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                                <div class="w-px h-10 bg-white/10"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">调用 get_goal_progress</p>
+                                <p class="text-[10px] text-white/30">14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-white">生成行动计划</p>
+                                <p class="text-[10px] text-white/30">14:31</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Calls History (保留作为底层记录) -->
+                <div class="p-2">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-white/20 mb-3 ml-2">Recent Logs</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-[10px] font-mono opacity-40">
+                            <span>✓ get_memories</span>
+                            <span>14:29</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] font-mono opacity-40">
+                            <span>✓ update_state</span>
+                            <span>14:28</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+
+        <!-- 3. Ask / Plan / Execute 模式 + 输入框 -->
+        <div class="absolute bottom-0 left-0 right-0 p-10 pt-0 pointer-events-none">
+            <div class="max-w-3xl mx-auto pointer-events-auto">
+                
+                <!-- Mode Switcher -->
+                <div class="flex gap-2 mb-3 justify-center">
+                    <button class="agent-mode active">Ask</button>
+                    <button class="agent-mode">Plan</button>
+                    <button class="agent-mode">Execute</button>
+                </div>
+
+                <!-- Input Bar -->
+                <div class="glass-card rounded-[2rem] p-2 flex items-center gap-3 pr-3 shadow-2xl">
+                    <div class="px-4 py-2 text-[10px] bg-white/5 rounded-full font-bold text-white/60">
+                        deepseek-v3
+                    </div>
+                    <input type="text" placeholder="› 输入指令或询问 Jarvis..." 
+                           class="flex-1 bg-transparent border-none outline-none text-sm text-white px-2 placeholder:text-white/20">
+                    <button class="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                        <i class="bi bi-arrow-up-short text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const switcher = document.getElementById("themeSwitcher");
+        switcher.addEventListener("change", e => {
+            const theme = e.target.value;
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("jarvis-theme", theme);
+        });
+
+        const saved = localStorage.getItem("jarvis-theme");
+        if (saved) {
+            document.documentElement.setAttribute("data-theme", saved);
+            switcher.value = saved;
+        }
+
+        // Mode Switcher Logic
+        document.querySelectorAll('.agent-mode').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.agent-mode').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

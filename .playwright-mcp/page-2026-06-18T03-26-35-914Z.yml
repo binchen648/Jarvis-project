@@ -1,0 +1,136 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: ✦
+        - generic [ref=e6]: Jarvis
+      - navigation [ref=e7]:
+        - generic [ref=e8]:
+          - link " Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11]: 
+            - text: Dashboard
+          - link " Agent" [ref=e12] [cursor=pointer]:
+            - /url: /chat/
+            - generic [ref=e14]: 
+            - text: Agent
+          - link "Goals" [ref=e15] [cursor=pointer]:
+            - /url: /goals/
+            - text: Goals
+          - link " Wellness" [ref=e17] [cursor=pointer]:
+            - /url: /wellness/suggestions/
+            - generic [ref=e19]: 
+            - text: Wellness
+        - generic [ref=e21]:
+          - link " Content" [ref=e22] [cursor=pointer]:
+            - /url: /content/feed/
+            - generic [ref=e24]: 
+            - text: Content
+          - link " Trajectory" [ref=e25] [cursor=pointer]:
+            - /url: /trajectory/skills/
+            - generic [ref=e27]: 
+            - text: Trajectory
+        - link " Settings" [ref=e30] [cursor=pointer]:
+          - /url: /profile/
+          - generic [ref=e32]: 
+          - text: Settings
+      - link "A admin Personal AI OS" [ref=e34] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e35]: A
+        - generic [ref=e36]:
+          - generic [ref=e37]: admin
+          - generic [ref=e38]: Personal AI OS
+    - generic [ref=e39]:
+      - banner [ref=e40]:
+        - generic [ref=e41]:
+          - text: 
+          - heading "Dashboard" [level=1] [ref=e42]
+        - generic [ref=e43]:
+          - generic [ref=e44] [cursor=pointer]:
+            - generic [ref=e45]: Search
+            - generic [ref=e46]: ⌘K
+          - generic [ref=e48] [cursor=pointer]: 
+          - generic "Jarvis AI Core | v1.0" [ref=e50] [cursor=pointer]:
+            - generic: Jarvis AI Core
+      - main [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic:
+              - generic:
+                - heading [level=1]
+            - paragraph [ref=e54]: 今天还没有目标，去创建一个吧 🎯
+          - generic [ref=e55]:
+            - generic [ref=e57]: Today Focus
+            - generic [ref=e58]: 0%
+            - generic [ref=e59]: ▲ +5%
+          - generic [ref=e60]:
+            - generic [ref=e62]: Goal Health
+            - generic [ref=e63]: 0正常 / 0风险
+            - generic [ref=e64]: ✓ 全部正常
+          - generic [ref=e65]:
+            - generic [ref=e67]: Memory Growth
+            - generic [ref=e68]: +0条
+            - generic [ref=e69]: 本周
+          - generic [ref=e70]:
+            - generic [ref=e72]: AI Confidence
+            - generic [ref=e73]: 70%
+            - generic [ref=e74]: 学习中
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - heading "Today's Plan" [level=3] [ref=e77]
+              - generic [ref=e78]: 0/3 done
+            - generic [ref=e79]:
+              - link "1 LeetCode 92 难度 Medium · 今日必完成 · 35min · 🔗 " [ref=e80] [cursor=pointer]:
+                - /url: /goals/
+                - generic [ref=e81]:
+                  - generic [ref=e82]: "1"
+                  - generic [ref=e83]:
+                    - paragraph [ref=e84]: LeetCode 92
+                    - paragraph [ref=e85]: 难度 Medium · 今日必完成 · 35min · 🔗
+                - generic [ref=e86]: 
+              - link "2 阅读 ReAct Agent 笔记 上次 3天前 · 需要复习 · 20min · 🔗 " [ref=e87] [cursor=pointer]:
+                - /url: /memory/
+                - generic [ref=e88]:
+                  - generic [ref=e89]: "2"
+                  - generic [ref=e90]:
+                    - paragraph [ref=e91]: 阅读 ReAct Agent 笔记
+                    - paragraph [ref=e92]: 上次 3天前 · 需要复习 · 20min · 🔗
+                - generic [ref=e93]: 
+              - link "3 更新 Wellness 记录 5min · 🔗 " [ref=e94] [cursor=pointer]:
+                - /url: /wellness/record
+                - generic [ref=e95]:
+                  - generic [ref=e96]: "3"
+                  - generic [ref=e97]:
+                    - paragraph [ref=e98]: 更新 Wellness 记录
+                    - paragraph [ref=e99]: 5min · 🔗
+                - generic [ref=e100]: 
+          - generic [ref=e101]:
+            - heading "Goal Progress" [level=3] [ref=e102]
+            - generic [ref=e103]:
+              - generic [ref=e104]: 📊
+              - paragraph [ref=e105]: 还没有目标进度数据
+          - generic [ref=e106]:
+            - heading "Memory Timeline" [level=3] [ref=e107]
+            - generic [ref=e108]:
+              - generic [ref=e109]: 🧠
+              - paragraph [ref=e110]: 还没有记忆轨迹
+              - paragraph [ref=e111]: 开始学习后，Jarvis 会记录你的成长轨迹
+  - generic [ref=e112]:
+    - generic:
+      - generic:
+        - generic:
+          - generic: Morning Briefing
+        - button "Dismiss":
+          - generic: 
+      - generic:
+        - generic:
+          - heading "Good morning ✦" [level=4]
+          - paragraph: You have 3 goals active today. LeetCode streak is at 12 days — keep it going.
+      - generic:
+        - generic: 
+        - generic: Today · 08:00
+      - generic:
+        - button "Later"
+        - button "View Goals"
+    - button "Jarvis AI Surface" [ref=e113] [cursor=pointer]:
+      - img [ref=e114]

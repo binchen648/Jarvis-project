@@ -1,0 +1,6 @@
+<span class="{% if goal.status == 'active' %}badge badge-success
+             {% elif goal.status == 'completed' %}badge badge-info
+             {% elif goal.status == 'abandoned' %}badge badge-ghost
+             {% endif %}">
+    {{ goal.get_status_display }}
+</span>

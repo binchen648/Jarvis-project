@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} — Jarvis{% endblock %}
+
+{% block content %}
+<div class="content-detail max-w-4xl mx-auto card border border-base-300">
+    <div class="card-body">
+        <a href="{% url 'content:feed' %}" class="btn btn-ghost btn-xs">&larr; 返回推荐</a>
+        
+        <h1 class="text-2xl font-bold mb-4">{{ content.title }}</h1>
+        
+        <div class="flex gap-4 text-base-content/60 text-sm mb-6">
+            <span>类型: {{ content.get_content_type_display }}</span>
+            {% if content.duration_minutes %}
+                <span>时长: {{ content.duration_minutes }} 分钟</span>
+            {% endif %}
+            <span>质量评分: {{ content.quality_score|floatformat:1 }}</span>
+        </div>
+        
+        {% if content.tags %}
+        <div class="mb-4">
+            {% for tag in content.tags %}
+                <span class="badge badge-ghost mr-1">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="mb-6">
+            <p>{{ content.description }}</p>
+        </div>
+        
+        {% if content.ai_summary %}
+        <div class="bg-warning/10 p-4 rounded-lg mb-6">
+            <h3 class="font-semibold mb-2">AI 摘要</h3>
+            <p>{{ content.ai_summary }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="flex gap-2">
+            <form method="post" action="{% url 'content:interact' content.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="bookmark">
+                <button type="submit" class="btn btn-primary btn-sm">收藏</button>
+            </form>
+            <form method="post" action="{% url 'content:interact' content.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="block">
+                <button type="submit" class="btn btn-outline btn-sm">不感兴趣</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

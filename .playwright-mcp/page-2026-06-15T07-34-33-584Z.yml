@@ -1,0 +1,42 @@
+- generic [ref=e2]:
+  - checkbox "打开侧边栏 关闭侧边栏" [ref=e3]
+  - generic [ref=e4]:
+    - navigation [ref=e5]:
+      - generic "打开侧边栏" [ref=e7]:
+        - img [ref=e8]
+      - link "Jarvis" [ref=e11] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - img [ref=e15]
+          - list [ref=e17]:
+            - listitem [ref=e18]: ☀️ 浅色
+            - listitem [ref=e19]: 🌙 终端
+        - link "登录" [ref=e20] [cursor=pointer]:
+          - /url: /accounts/login/
+        - link "注册" [ref=e21] [cursor=pointer]:
+          - /url: /accounts/signup/
+    - main [ref=e22]:
+      - generic [ref=e23]:
+        - heading "登录" [level=1] [ref=e24]
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]: 用户名
+            - textbox "用户名" [ref=e28]
+          - generic [ref=e29]:
+            - generic [ref=e30]: 密码
+            - textbox "密码" [ref=e31]
+            - link "忘记密码？" [ref=e34] [cursor=pointer]:
+              - /url: /accounts/password/reset/
+          - button "登录" [ref=e35]
+        - paragraph [ref=e36]:
+          - link "注册新账号" [ref=e37] [cursor=pointer]:
+            - /url: /accounts/signup/
+        - paragraph [ref=e38]:
+          - link "忘记密码？" [ref=e39] [cursor=pointer]:
+            - /url: /accounts/password/reset/
+    - contentinfo [ref=e40]: Jarvis · 暑期个人学习助手平台
+  - generic [ref=e41]:
+    - generic "关闭侧边栏"
+    - complementary [ref=e42]:
+      - generic [ref=e43]: Jarvis

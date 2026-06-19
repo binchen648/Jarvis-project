@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}编辑资料{% endblock %}
+
+{% block content %}
+<div class="card card-body bg-base-100 shadow-md max-w-md mx-auto">
+  <h1 class="text-xl font-bold mb-4">编辑资料</h1>
+
+  <form hx-post="{% url 'accounts:profile_edit' %}"
+        hx-target="body"
+        hx-push-url="true">
+    {% csrf_token %}
+
+    <div class="form-control">
+      <label class="label" for="id_bio"><span class="label-text">个人简介</span></label>
+      <textarea name="bio" id="id_bio" rows="4" placeholder="介绍一下自己..." class="textarea textarea-bordered w-full">{{ profile.bio|default:"" }}</textarea>
+    </div>
+
+    <div class="form-control">
+      <label class="label" for="id_avatar"><span class="label-text">头像链接</span></label>
+      <input type="url" name="avatar" id="id_avatar" value="{{ profile.avatar|default:"" }}" placeholder="https://example.com/avatar.jpg" class="input input-bordered w-full">
+      <p class="label"><span class="label-text-alt text-base-content/50">输入图片的 URL 地址</span></p>
+    </div>
+
+    <div class="form-control">
+      <label class="label" for="id_social_links"><span class="label-text">社交链接</span></label>
+      <textarea name="social_links" id="id_social_links" rows="3" placeholder='{"github": "https://github.com/username"}' class="textarea textarea-bordered w-full">{{ profile.social_links|default:"" }}</textarea>
+      <p class="label"><span class="label-text-alt text-base-content/50">JSON 格式，例如：{"github": "链接", "weibo": "链接"}</span></p>
+    </div>
+
+    <div class="flex gap-3 mt-6">
+      <button type="submit" class="btn btn-primary flex-1">
+        <span class="loading loading-spinner loading-sm htmx-indicator"></span>
+        <span>保存</span>
+      </button>
+      <a href="{% url 'accounts:profile_detail' %}" class="btn btn-ghost flex-1">取消</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

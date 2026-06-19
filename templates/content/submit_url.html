@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}提交内容 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">提交内容</h1>
+
+    <div class="card border border-base-300">
+        <div class="card-body">
+            <form method="post" action="{% url 'content:submit_url' %}">
+                {% csrf_token %}
+                <div class="form-control mb-4">
+                    <label class="label" for="url-input">
+                        <span class="label-text">输入你想抓取的网页 URL</span>
+                    </label>
+                    <input
+                        id="url-input"
+                        name="url"
+                        type="url"
+                        class="input input-bordered w-full"
+                        placeholder="https://example.com/article"
+                        required
+                    >
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="btn btn-primary">抓取内容</button>
+                    <a href="{% url 'content:submitted_list' %}" class="btn btn-ghost">查看已提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

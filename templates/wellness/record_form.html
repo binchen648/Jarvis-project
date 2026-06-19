@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}身心健康记录 — Jarvis{% endblock %}
+
+{% block content %}
+<div class="card card-body bg-base-100 shadow-md max-w-lg mx-auto">
+    <h1 class="text-xl font-bold mb-2">身心健康记录</h1>
+    <p class="text-sm text-base-content/60 mb-6">
+        记录您每天的心情、睡眠和运动情况，Jarvis 将根据数据为您提供个性化健康建议。
+    </p>
+
+    <form method="post" action="{% url 'wellness:record_create' %}">
+        {% csrf_token %}
+
+        <div class="form-control mb-3">
+            <label class="label" for="id_mood_score"><span class="label-text">心情评分</span></label>
+            <select name="mood_score" id="id_mood_score" class="select select-bordered w-full" required>
+                <option value="">请选择</option>
+                <option value="1">很差 😢</option>
+                <option value="2">较差 🙁</option>
+                <option value="3">一般 😐</option>
+                <option value="4">良好 🙂</option>
+                <option value="5">很好 😊</option>
+            </select>
+        </div>
+
+        <div class="form-control mb-3">
+            <label class="label" for="id_sleep_hours"><span class="label-text">睡眠时长（小时）</span></label>
+            <input type="number" name="sleep_hours" id="id_sleep_hours" class="input input-bordered w-full"
+                   step="0.5" min="0" max="24" placeholder="例如: 7.5">
+        </div>
+
+        <div class="form-control mb-3">
+            <label class="label" for="id_exercise_minutes"><span class="label-text">运动时长（分钟）</span></label>
+            <input type="number" name="exercise_minutes" id="id_exercise_minutes" class="input input-bordered w-full"
+                   min="0" max="1440" placeholder="例如: 30">
+        </div>
+
+        <div class="form-control mb-4">
+            <label class="label" for="id_note"><span class="label-text">备注</span></label>
+            <textarea name="note" id="id_note" rows="3" class="textarea textarea-bordered w-full"
+                      placeholder="可选：记录今天的状态、感受等"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-sm w-full">保存记录</button>
+    </form>
+
+    <p class="text-center text-sm mt-4 text-base-content/60">
+        <a href="{% url 'wellness:suggestion_list' %}" class="link link-primary">查看健康建议</a>
+    </p>
+</div>
+{% endblock %}

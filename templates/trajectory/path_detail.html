@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ path.title }} — Jarvis{% endblock %}
+
+{% block content %}
+<div class="path-detail">
+    <nav class="mb-4 text-sm">
+        <a href="{% url 'trajectory:path_list' %}" class="text-base-content/60 hover:text-primary">&larr; 返回路径列表</a>
+    </nav>
+
+    <h1 class="text-xl font-bold mb-2">{{ path.title }}</h1>
+
+    {% if path.goal_description %}
+        <p class="text-base-content/60 mb-4">{{ path.goal_description }}</p>
+    {% endif %}
+
+    <div class="mb-6">
+        <div class="flex justify-between text-sm text-base-content/60 mb-1">
+            <span>总体进度</span>
+            <span>{{ completed }}/{{ total }} ({{ progress_pct }}%)</span>
+        </div>
+        <div class="h-2 bg-base-300 rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full transition-all" style="width: {{ progress_pct }}%;"></div>
+        </div>
+    </div>
+
+    <div class="path-nodes flex flex-col gap-3">
+        {% for node in nodes %}
+            <div class="flex items-center gap-4 bg-base-100 border border-base-300 shadow-sm rounded-lg p-4">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0
+                    {% if node.status == 'completed' %}bg-success/20 text-success
+                    {% elif node.status == 'in_progress' %}bg-info/20 text-info
+                    {% else %}bg-base-200 text-base-content/40{% endif %}">
+                    {{ forloop.counter }}
+                </div>
+
+                <div class="flex-1">
+                    <div class="font-bold">
+                        {% if node.skill %}
+                            {{ node.skill.name }}
+                        {% else %}
+                            <span class="text-base-content/60">(技能已删除)</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex gap-3 text-xs text-base-content/60 mt-1">
+                        <span>预估 {{ node.estimated_minutes }} 分钟</span>
+                        <span class="status-badge px-1.5 py-0.5 rounded-full
+                            {% if node.status == 'completed' %}bg-success/20 text-success
+                            {% elif node.status == 'in_progress' %}bg-info/20 text-info
+                            {% else %}bg-base-200 text-base-content/60{% endif %}">
+                            {{ node.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    {% if node.status != 'completed' %}
+                        <form method="post" action="{% url 'trajectory:complete_node' node.pk %}"
+                              hx-post="{% url 'trajectory:complete_node' node.pk %}"
+                              hx-swap="none"
+                              onsubmit="setTimeout(() => location.reload(), 300);">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                标记完成
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="text-lg text-success">✓</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info shadow-sm">此路径暂无节点。</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
