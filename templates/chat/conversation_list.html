@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Jarvis OS - Agent Sessions</title>
     <style>
         :root {
@@ -53,9 +54,23 @@
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
+    
+        /* prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none !important; }
+            .glass-card { transition: none !important; }
+            .glass-card:hover { transform: none !important; }
+            .animate-pulse, .animate-ping, .animate-spin { animation: none !important; }
+            .jarvis-core-sphere { animation: none !important; }
+            [class*="hover:scale-"]:hover { transform: none !important; }
+            [class*="hover:translate"]:hover { transform: none !important; }
+            .transition, .transition-all, .transition-colors { transition: none !important; }
+            .group-hover\:translate-x-1 { transform: none !important; }
+        }</style>
 </head>
-<body class="flex h-screen">
+
+    <style>h1,h2,h3,h4{font-family:"Space Grotesk",Inter,system-ui,sans-serif}h1{font-weight:700}h2{font-weight:600}h3{font-weight:600}</style>
+    <body class="flex h-screen">
 
     <!-- 1. 侧边栏 (保持一致) -->
     <aside class="w-64 bg-black/20 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
@@ -63,20 +78,20 @@
             <h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1>
         </div>
         <nav class="flex-1 px-4 space-y-2">
-            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
             <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/10 text-white shadow-lg"><i class="bi bi-stars" style="color: var(--primary)"></i> Agent</a>
-            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
-            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
-            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
+            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
-            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/40 hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
+            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#A0A0B8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
         </nav>
         <div class="p-6">
              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[var(--secondary)] animate-pulse"></div>
@@ -91,12 +106,12 @@
             <div class="flex items-center gap-4">
                 <h2 class="text-xl font-bold text-white tracking-tight">Agent Console</h2>
                 <div class="h-4 w-px bg-white/10"></div>
-                <p class="text-xs text-white/40">管理你的 AI 会话历史</p>
+                <p class="text-xs text-[#A0A0B8]">管理你的 AI 会话历史</p>
             </div>
             
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2">
-                    <i class="bi bi-palette2 text-xs text-white/40"></i>
+                    <i class="bi bi-palette2 text-xs text-[#A0A0B8]"></i>
                     <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer">
                         <option value="jarvis" class="bg-[#08080D]">Jarvis</option>
                         <option value="ocean" class="bg-[#08080D]">Ocean</option>
@@ -108,7 +123,7 @@
                 <div class="h-4 w-px bg-white/10"></div>
                 <div class="relative">
                     <form method="get" action="/chat/" class="relative m-0 p-0">
-                    <i class="bi bi-search absolute left-3 top-2.5 text-white/20 text-xs"></i>
+                    <i class="bi bi-search absolute left-3 top-2.5 text-[#686880] text-xs"></i>
                     <input type="text" name="q" placeholder="搜索对话..." value="{{ query }}" class="bg-white/5 border border-white/10 rounded-lg px-8 py-2 text-xs focus:outline-none focus:border-[var(--primary)] transition w-48">
                     </form>
                 </div>
@@ -122,7 +137,7 @@
         <div class="flex-1 overflow-y-auto p-10 no-scrollbar">
             
             <!-- 统计/状态栏 -->
-            <div class="flex gap-8 mb-10 text-[10px] uppercase tracking-widest text-white/20 font-bold">
+            <div class="flex gap-8 mb-10 text-[10px] uppercase tracking-widest text-[#686880] font-bold">
                 <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"></span> {{ conversations|length }} 总计对话</div>
                 <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {{ total_tool_calls|default:"0" }} 工具调用</div>
                 <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span> DeepSeek-V3 引擎</div>
@@ -134,21 +149,21 @@
                 {% for conv in conversations %}
                 <a href="/chat/{{ conv.pk }}/" class="glass-card p-6 rounded-[2rem] relative group cursor-pointer no-underline text-[inherit] block{% if forloop.first %} border-t-2 border-t-[var(--primary)]{% endif %}">
                     <div class="flex justify-between items-start mb-6">
-                        <div class="w-10 h-10 rounded-2xl flex items-center justify-center{% if forloop.first %} bg-[var(--primary)]/10 text-[var(--primary)]{% else %} bg-white/5 text-white/40{% endif %}">
+                        <div class="w-10 h-10 rounded-2xl flex items-center justify-center{% if forloop.first %} bg-[var(--primary)]/10 text-[var(--primary)]{% else %} bg-white/5 text-[#A0A0B8]{% endif %}">
                             <i class="bi {% if forloop.first %}bi-chat-dots-fill{% else %}bi-chat-left-text{% endif %} text-xl"></i>
                         </div>
-                        <span class="text-[10px]{% if forloop.first %} text-[var(--primary)] font-bold{% else %} text-white/20 font-bold{% endif %}">{{ conv.updated_at|timesince }}</span>
+                        <span class="text-[10px]{% if forloop.first %} text-[var(--primary)] font-bold{% else %} text-[#686880] font-bold{% endif %}">{{ conv.updated_at|timesince }}</span>
                     </div>
                     <h3 class="text-white font-bold text-lg mb-2 truncate">{{ conv.title }}</h3>
-                    <p class="text-xs text-white/40 line-clamp-2 leading-relaxed mb-6">
+                    <p class="text-xs text-[#A0A0B8] line-clamp-2 leading-relaxed mb-6">
                         {% if conv.ai_summary %}{{ conv.ai_summary }}{% else %}AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。{% endif %}
                     </p>
                     <div class="flex justify-between items-center pt-4 border-t border-white/5">
-                        <div class="flex gap-3 text-[10px] text-white/20 font-mono">
+                        <div class="flex gap-3 text-[10px] text-[#686880] font-mono">
                             <span>{{ conv.updated_at|date:"m/d H:i" }}</span>
                             <span>{{ conv.msg_count }} 消息</span>
                         </div>
-                        <i class="bi bi-arrow-right-short text-xl text-white/20 group-hover:text-white group-hover:translate-x-1 transition"></i>
+                        <i class="bi bi-arrow-right-short text-xl text-[#686880] group-hover:text-white group-hover:translate-x-1 transition"></i>
                     </div>
                 </a>
                 {% endfor %}
@@ -158,7 +173,7 @@
                         <i class="bi bi-chat-dots text-3xl" style="color: var(--primary);"></i>
                     </div>
                     <p class="text-white/70 font-medium mb-1">还没有对话记录</p>
-                    <p class="text-xs text-white/30">点击上方"新建对话"开始第一次交谈</p>
+                    <p class="text-xs text-[#808098]">点击上方"新建对话"开始第一次交谈</p>
                 </div>
                 {% endif %}
             </div>

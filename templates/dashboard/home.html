@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Jarvis OS - Aurora V2</title>
     <style>
         /* 1. 核心变量与主题系统 */
@@ -124,9 +125,23 @@
 
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    </style>
+    
+        /* prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none !important; }
+            .glass-card { transition: none !important; }
+            .glass-card:hover { transform: none !important; }
+            .animate-pulse, .animate-ping, .animate-spin { animation: none !important; }
+            .jarvis-core-sphere { animation: none !important; }
+            [class*="hover:scale-"]:hover { transform: none !important; }
+            [class*="hover:translate"]:hover { transform: none !important; }
+            .transition, .transition-all, .transition-colors { transition: none !important; }
+            .group-hover\:translate-x-1 { transform: none !important; }
+        }</style>
 </head>
-<body class="flex h-screen overflow-hidden">
+
+    <style>h1,h2,h3,h4{font-family:"Space Grotesk",Inter,system-ui,sans-serif}h1{font-weight:700}h2{font-weight:600}h3{font-weight:600}</style>
+    <body class="flex h-screen overflow-hidden">
 
     <!-- 侧边栏 (微调以匹配新主题) -->
     <aside class="w-64 bg-black/20 backdrop-blur-2xl border-r border-white/5 flex flex-col z-10">
@@ -135,25 +150,25 @@
         </div>
                 <nav class="flex-1 px-4 space-y-2">
             <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 text-white"><i class="bi bi-grid-fill" style="color: var(--secondary)"></i> Dashboard</a>
-            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-stars" ></i> Agent</a>
-            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-brain" ></i> Memory</a>
-            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-target" ></i> Goals</a>
-            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-stars" ></i> Agent</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-brain" ></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-target" ></i> Goals</a>
+            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
-            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/50 hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
+            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
         </nav>        <div class="p-6">
             <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-900 border border-white/10"></div>
                 <div>
                     <p class="text-sm font-bold">{{ user.username|default:'Alex' }}</p>
-                    <p class="text-[10px] text-white/40">v2.0 Aurora</p>
+                    <p class="text-[10px] text-[#A0A0B8]">v2.0 Aurora</p>
                 </div>
             </div>
         </div>
@@ -165,14 +180,14 @@
         <!-- Header -->
         <header class="h-20 flex items-center justify-between px-10">
             <div class="flex flex-col">
-                <h2 class="text-xs font-medium uppercase tracking-widest text-[#9191A8]">System Status</h2>
+                <h2 class="text-xs font-medium uppercase tracking-widest text-[#A0A0B8]">System Status</h2>
                 <p class="text-[10px] text-emerald-400">● Operational / Optimal</p>
             </div>
             
             <div class="flex items-center gap-6">
                 <!-- 主题切换器 -->
                 <div class="flex items-center gap-2">
-                    <i class="bi bi-palette2 text-xs text-white/40"></i>
+                    <i class="bi bi-palette2 text-xs text-[#A0A0B8]"></i>
                     <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition cursor-pointer">
                         <option value="jarvis" class="bg-[#08080D]">Jarvis</option>
                         <option value="ocean" class="bg-[#08080D]">Ocean</option>
@@ -196,28 +211,28 @@
                     <div class="flex justify-between items-end">
                         <div>
                             <h1 class="text-4xl font-bold tracking-tight">Good Morning, {{ user.username|default:'Alex' }}.</h1>
-                            <p class="text-sm text-[#9191A8] mt-2 italic">Jarvis 建议：18:30 开始学习，今日精力高峰</p>
+                            <p class="text-sm text-[#A0A0B8] mt-2 italic">Jarvis 建议：18:30 开始学习，今日精力高峰</p>
                         </div>
-                        <span class="text-xs font-mono text-white/30">{{ today|date:'M d, Y'|upper }}</span>
+                        <span class="text-xs font-mono text-[#808098]">{{ today|date:'M d, Y'|upper }}</span>
                     </div>
                 </section>
 
                 <!-- KPI Grid -->
                 <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Today Focus</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Today Focus</p>
                         <p class="text-3xl font-bold mt-2">{{ focus_pct }}% <span class="text-[10px] text-emerald-400 ml-1 font-normal">▲ 5%</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Goal Health</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Goal Health</p>
                         <p class="text-3xl font-bold mt-2">{{ goal_health_normal }} <span class="text-sm font-normal text-emerald-400">正常</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">Memory Growth</p>
-                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] text-[#9191A8] ml-1 font-normal">条</span></p>
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Memory Growth</p>
+                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] text-[#A0A0B8] ml-1 font-normal">条</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#9191A8]">AI Confidence</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">AI Confidence</p>
                         <p class="text-3xl font-bold mt-2">{{ ai_confidence_pct }}%</p>
                     </div>
                 </section>
@@ -229,7 +244,7 @@
                         <div class="flex justify-between items-center ml-2">
                             <h3 class="text-lg font-semibold">Today's Plan</h3>
                             {% if today_plan_items %}
-                            <span class="text-xs text-[#9191A8]">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>
+                            <span class="text-xs text-[#A0A0B8]">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>
                             {% endif %}
                         </div>
                         <div class="glass-card rounded-[2.5rem] overflow-hidden">
@@ -246,17 +261,17 @@
                                         <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
                                         {% endif %}
                                         <div>
-                                            <p class="font-bold {% if item.done %}line-through text-[#9191A8]{% else %}text-white{% endif %}">{{ item.title }}</p>
-                                            <p class="text-xs text-[#9191A8] mt-0.5">{{ item.desc }} &middot; {{ item.minutes }}min</p>
+                                            <p class="font-bold {% if item.done %}line-through text-[#A0A0B8]{% else %}text-white{% endif %}">{{ item.title }}</p>
+                                            <p class="text-xs text-[#A0A0B8] mt-0.5">{{ item.desc }} &middot; {{ item.minutes }}min</p>
                                         </div>
                                     </div>
                                     {% if not item.done %}
-                                    <i class="bi bi-chevron-right text-white/20 group-hover:text-[var(--primary)] transition"></i>
+                                    <i class="bi bi-chevron-right text-[#686880] group-hover:text-[var(--primary)] transition"></i>
                                     {% endif %}
                                 </a>
                                 {% endfor %}
                             {% else %}
-                                <div class="text-center py-10 text-[#9191A8]">
+                                <div class="text-center py-10 text-[#A0A0B8]">
                                     <div class="text-3xl mb-3 opacity-40">🤖</div>
                                     <p class="text-sm">Jarvis 正在分析你的目标，稍后为你生成计划</p>
                                 </div>
@@ -272,7 +287,7 @@
                                 {% for item in goal_progress_list %}
                                 <div>
                                     <div class="flex justify-between text-xs mb-2">
-                                        <span class="text-[#9191A8]">{{ item.title }}</span>
+                                        <span class="text-[#A0A0B8]">{{ item.title }}</span>
                                         <span class="text-white">{{ item.pct }}%</span>
                                     </div>
                                     <div class="h-1 w-full bg-white/5 rounded-full">
@@ -282,7 +297,7 @@
                                 {% endfor %}
                             </div>
                             {% else %}
-                            <div class="text-center py-6 text-[#9191A8]">
+                            <div class="text-center py-6 text-[#A0A0B8]">
                                 <div class="text-2xl mb-2 opacity-40">📊</div>
                                 <p class="text-xs">还没有目标进度数据</p>
                             </div>
@@ -299,7 +314,7 @@
                                 <a href="/memory/timeline/" class="block relative no-underline text-[inherit] group/mem">
                                     <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-[var(--accent)]"></div>
                                     <p class="text-xs">{{ item.title }}</p>
-                                    <p class="text-[10px] text-[#9191A8] mt-px">{{ item.description|truncatechars:60 }}</p>
+                                    <p class="text-[10px] text-[#A0A0B8] mt-px">{{ item.description|truncatechars:60 }}</p>
                                 </a>
                                 {% endfor %}
                             </div>
@@ -307,8 +322,8 @@
                             <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
                                 <div class="relative">
                                     <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-white/10"></div>
-                                    <p class="text-xs text-[#9191A8]">还没有记忆轨迹</p>
-                                    <p class="text-[10px] text-[#5C5C72]">开始学习后，Jarvis 会记录你的成长轨迹</p>
+                                    <p class="text-xs text-[#A0A0B8]">还没有记忆轨迹</p>
+                                    <p class="text-[10px] text-[#808098]">开始学习后，Jarvis 会记录你的成长轨迹</p>
                                 </div>
                             </div>
                             {% endif %}
