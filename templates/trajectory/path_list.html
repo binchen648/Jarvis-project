@@ -1,45 +1,16 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN" data-theme="jarvis">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>Jarvis OS - Paths</title>
-<style>:root{--surface-bg:#08080D;--surface-card:rgba(20,20,30,0.65);--primary:#8B5CF6;--secondary:#4F8CFF;--accent:#06B6D4;--text-primary:#F1F1F6;--text-secondary:#9191A8}[data-theme="ocean"]{--primary:#2563EB;--secondary:#06B6D4;--accent:#67E8F9}[data-theme="sunset"]{--primary:#F97316;--secondary:#EC4899;--accent:#FACC15}[data-theme="forest"]{--primary:#22C55E;--secondary:#14B8A6;--accent:#84CC16}[data-theme="rose"]{--primary:#EC4899;--secondary:#8B5CF6;--accent:#F472B6}
-body{background:var(--surface-bg);color:var(--text-primary);font-family:"Inter",sans-serif;margin:0;overflow:hidden}
-body::before{content:"";position:fixed;top:-30%;left:-30%;width:160%;height:160%;pointer-events:none;background:radial-gradient(circle at 20%20%,color-mix(in srgb,var(--primary)30%,transparent),transparent 35%),radial-gradient(circle at 80%25%,color-mix(in srgb,var(--secondary)20%,transparent),transparent 35%),radial-gradient(circle at 60%80%,color-mix(in srgb,var(--accent)15%,transparent),transparent 40%);filter:blur(120px);animation:aurora-drift 30s ease-in-out infinite;z-index:-3}
-@keyframes aurora-drift{0%,100%{transform:translate(0,0)scale(1)}50%{transform:translate(5%,-5%)scale(1.1)}}
-.glass-card{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);transition:all .3s ease}
-.glass-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--primary)40%,transparent);box-shadow:0 0 25px color-mix(in srgb,var(--primary)10%,transparent)}
-.nav-active{background:rgba(255,255,255,0.08);color:white!important;position:relative}
-.nav-active::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--primary);box-shadow:0 0 10px var(--primary);border-radius:0 4px 4px 0}
-h1,h2,h3,h4{font-family:"Space Grotesk",sans-serif}.no-scrollbar::-webkit-scrollbar{display:none}</style></head>
-<body class="flex h-screen">
-<aside class="w-64 bg-black/30 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20"><div class="p-8"><h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1></div>
-<nav class="flex-1 px-4 space-y-2">
-<a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
-<a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
-<a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
-<a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
-<a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
-</nav><div class="h-px bg-white/5 mx-4 my-2"></div>
-<nav class="px-4 space-y-2">
-<a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
-<a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl nav-active"><i class="bi bi-diagram-3" style="color:var(--primary)"></i> Trajectory</a>
-</nav><div class="h-px bg-white/5 mx-4 my-2"></div>
-<nav class="px-4 space-y-2"><a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a></nav>
-<div class="p-6 border-t border-white/5 flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div><span class="text-xs text-[#C8C8D8] font-medium">{{ user.username|default:"Alex" }} OS</span></div>
-</aside>
-<main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+{% extends "base.html" %}
+{% block title %}Jarvis OS - Paths{% endblock %}
+{% block content_class %}layout-wide{% endblock %}
+{% block topbar_left %}<h2 class="text-xl font-bold text-white tracking-tight">学习路径</h2>{% endblock %}
+{% block content %}
 <header class="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/10 backdrop-blur-xl">
 <div class="flex items-center gap-4"><a href="/trajectory/skills/" class="text-xs hover:underline" style="color:#9191A8;">← 技能图谱</a><div class="h-4 w-px bg-white/10"></div><h2 class="text-xl font-bold text-white tracking-tight">学习路径</h2></div>
-<div class="flex items-center gap-6"><div class="flex items-center gap-2"><i class="bi bi-palette2 text-xs text-[#9191A8]"></i><select id="themeSwitcher" style="color-scheme:dark;" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition"><option value="jarvis" style="background:#08080D;color:white;">Jarvis</option><option value="ocean" style="background:#08080D;color:white;">Ocean</option><option value="sunset" style="background:#08080D;color:white;">Sunset</option><option value="forest" style="background:#08080D;color:white;">Forest</option><option value="rose" style="background:#08080D;color:white;">Rose</option></select></div></div>
+<div class="flex items-center gap-6"><div class="flex items-center gap-2"><i class="bi bi-palette2 text-xs text-[#9191A8]"></i></div></div>
 </header>
 <div class="flex-1 overflow-y-auto p-10 no-scrollbar">{% if path_progress %}<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{% for item in path_progress %}<a href="/trajectory/paths/{{ item.path.pk }}/" class="glass-card p-6 rounded-[2.5rem] group cursor-pointer no-underline text-[inherit] block">
 <div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-2xl bg-white/5 text-[#5C5C72] flex items-center justify-center"><i class="bi bi-signpost-2 text-xl"></i></div>
 <span class="text-[10px] text-[#5C5C72] font-bold">{{ item.completed }}/{{ item.total }}</span></div>
 <h3 class="text-white font-bold text-lg mb-3">{{ item.path.title }}</h3>
 <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:{{ item.progress_pct }}%;background:var(--primary)"></div></div>
-<p class="text-[10px] mt-2" style="color:#5C5C72;">{{ item.progress_pct }}% 完成</p></a>{% endfor %}</div>{% else %}<div class="text-center py-16"><p class="text-[#C8C8D8] font-medium">暂无学习路径</p></div>{% endif %}</div></main>
-<script>const switcher=document.getElementById("themeSwitcher");function applyTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("jarvis-theme",t)}if(switcher){switcher.addEventListener("change",function(e){applyTheme(e.target.value)});window.addEventListener("DOMContentLoaded",function(){var saved=localStorage.getItem("jarvis-theme")||"jarvis";applyTheme(saved);switcher.value=saved})}</script>
-</body></html>
+<p class="text-[10px] mt-2" style="color:#5C5C72;">{{ item.progress_pct }}% 完成</p></a>{% endfor %}</div>{% else %}<div class="text-center py-16"><p class="text-[#C8C8D8] font-medium">暂无学习路径</p></div>{% endif %}</div>
+{% endblock %}

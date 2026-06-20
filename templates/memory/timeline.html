@@ -1,198 +1,384 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN" data-theme="jarvis">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>Jarvis OS - Memory Center</title>
-    <style>
-        :root {
-            --surface-bg: #08080D;
-            --surface-card: rgba(20, 20, 30, 0.65);
-            --primary: #8B5CF6;
-            --secondary: #4F8CFF;
-            --accent: #06B6D4;
-            --text-primary: #F1F1F6;
-            --text-secondary: #9191A8;
-        }
-        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
-        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
-        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
-        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
-        body { background: var(--surface-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
-        body::before {
-            content: ""; position: fixed; top: -30%; left: -30%; width: 160%; height: 160%; pointer-events: none;
-            background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 35%),
-                        radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
-                        radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 40%);
-            filter: blur(120px); animation: aurora-drift 30s ease-in-out infinite; z-index: -3;
-        }
-        @keyframes aurora-drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5%,-5%) scale(1.1); } }
-        .glass-card {
-            background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.06);
-            transition: all 0.3s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-4px);
-            border-color: color-mix(in srgb, var(--primary) 40%, transparent);
-            box-shadow: 0 0 25px color-mix(in srgb, var(--primary) 10%, transparent);
-        }
-        .nav-active { background: rgba(255,255,255,0.08); color: white !important; position: relative; }
-        .nav-active::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 18px; background: var(--primary); box-shadow: 0 0 10px var(--primary); border-radius: 0 4px 4px 0; }
-        .card-goal { border-left: 3px solid var(--primary); }
-        .card-learning { border-left: 3px solid var(--secondary); }
-        .card-health { border-left: 3px solid #22C55E; }
-        .card-chat { border-left: 3px solid #E9D5FF; }
-        .card-note { border-left: 3px solid var(--accent); }
-        .filter-tag { padding: 6px 14px; font-size: 11px; border-radius: 999px; background: rgba(255,255,255,.03); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.05); transition: .2s; cursor: pointer; }
-        .filter-tag.active { background: var(--primary); color: white; border-color: var(--primary); }
-        h1,h2,h3,h4 { font-family: "Space Grotesk", sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
-</head>
-<body class="flex h-screen">
-    <aside class="w-64 bg-black/30 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
-        <div class="p-8"><h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1></div>
-        <nav class="flex-1 px-4 space-y-2">
-            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
-            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
-            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl nav-active"><i class="bi bi-brain" style="color: var(--primary)"></i> Memory</a>
-            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
-            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
-        </nav>
-        <div class="h-px bg-white/5 mx-4 my-2"></div>
-        <nav class="px-4 space-y-2">
-            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
-            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
-        </nav>
-        <div class="h-px bg-white/5 mx-4 my-2"></div>
-        <nav class="px-4 space-y-2">
-            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
-        </nav>
-        <div class="p-6 border-t border-white/5 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div>
-            <span class="text-xs text-[#C8C8D8] font-medium">{{ user.username|default:"Alex" }} OS</span>
+{% extends "base.html" %}
+{% block title %}Jarvis OS - Memory Center{% endblock %}
+{% block content_class %}layout-full{% endblock %}
+{% block topbar_left %}<h2 class="text-xl font-bold text-white tracking-tight ml-3">Memory Center</h2>{% endblock %}
+{% block topbar_right %}
+<div class="flex rounded-xl p-0.5 gap-0.5 mr-3" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06);">
+    <button id="view-timeline" class="view-toggle-btn active px-4 py-1.5 text-[11px] font-bold rounded-lg tracking-wider transition-all" data-view="timeline">
+        <i class="bi bi-list-ul mr-1.5"></i>Timeline
+    </button>
+    <button id="view-graph" class="view-toggle-btn px-4 py-1.5 text-[11px] font-bold rounded-lg tracking-wider transition-all" data-view="graph">
+        <i class="bi bi-diagram-3 mr-1.5"></i>Graph
+    </button>
+</div>
+{% endblock %}
+{% block content %}
+<!-- Timeline View (normal flow, scrolls within layout-content) -->
+<div id="memory-timeline-view" class="px-10 py-6 no-scrollbar" style="padding-bottom: 100px;">
+        <!-- 搜索 -->
+        <form method="get" action="/memory/timeline/" class="mb-6 flex gap-3">
+            {% if current_filter != 'all' %}<input type="hidden" name="filter" value="{{ current_filter }}">{% endif %}
+            <div class="relative flex-1 max-w-2xl">
+                <i class="bi bi-search absolute left-4 top-3 text-[#5C5C72] text-xs"></i>
+                <input type="text" name="q" value="{{ query }}" placeholder="搜索记忆..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-[var(--primary)] transition text-white">
+            </div>
+        </form>
+        <!-- 过滤器 -->
+        <div class="flex gap-2 mb-8 flex-wrap">
+            {% for ft in filter_types %}
+            <a href="/memory/timeline/?filter={{ ft.key }}{% if query %}&q={{ query }}{% endif %}" class="filter-tag {% if current_filter == ft.key %}active{% endif %}">
+                {% if ft.icon %}{{ ft.icon }} {% endif %}{{ ft.label }}
+            </a>
+            {% endfor %}
         </div>
-    </aside>
-    <main class="flex-1 flex flex-col relative z-10 overflow-hidden">
-        <header class="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/10 backdrop-blur-xl">
-            <h2 class="text-xl font-bold text-white tracking-tight">Memory Timeline</h2>
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <i class="bi bi-palette2 text-xs text-[#9191A8]"></i>
-                    <select id="themeSwitcher" style="color-scheme:dark;" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition">
-                        <option value="jarvis" style="background:#08080D;color:white;">Jarvis</option>
-                        <option value="ocean" style="background:#08080D;color:white;">Ocean</option>
-                        <option value="sunset" style="background:#08080D;color:white;">Sunset</option>
-                        <option value="forest" style="background:#08080D;color:white;">Forest</option>
-                        <option value="rose" style="background:#08080D;color:white;">Rose</option>
-                    </select>
+        <!-- 时间线 -->
+        {% if grouped_events %}
+            {% for group in grouped_events %}
+            <div class="mb-12">
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="text-xs font-bold" style="color: {% if forloop.first %}#C8C8D8{% else %}#5C5C72{% endif %};">{{ group.date_label }}</span>
+                    <div class="h-px flex-1 bg-white/5"></div>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[var(--secondary)]" style="animation: spin 8s linear infinite;"></div>
-            </div>
-        </header>
-        <div class="flex-1 overflow-y-auto px-10 py-6 no-scrollbar" style="padding-bottom: 80px;">
-            <!-- 搜索 -->
-            <form method="get" action="/memory/timeline/" class="mb-6 flex gap-3">
-                {% if current_filter != 'all' %}<input type="hidden" name="filter" value="{{ current_filter }}">{% endif %}
-                <div class="relative flex-1 max-w-2xl">
-                    <i class="bi bi-search absolute left-4 top-3 text-[#5C5C72] text-xs"></i>
-                    <input type="text" name="q" value="{{ query }}" placeholder="搜索记忆..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-[var(--primary)] transition text-white">
-                </div>
-            </form>
-            <!-- 过滤器 -->
-            <div class="flex gap-2 mb-8 flex-wrap">
-                {% for ft in filter_types %}
-                <a href="/memory/timeline/?filter={{ ft.key }}{% if query %}&q={{ query }}{% endif %}" class="filter-tag {% if current_filter == ft.key %}active{% endif %}">
-                    {% if ft.icon %}{{ ft.icon }} {% endif %}{{ ft.label }}
-                </a>
-                {% endfor %}
-            </div>
-            <!-- 时间线 -->
-            {% if grouped_events %}
-                {% for group in grouped_events %}
-                <div class="mb-12">
-                    <div class="flex items-center gap-4 mb-8">
-                        <span class="text-xs font-bold" style="color: {% if forloop.first %}#C8C8D8{% else %}#5C5C72{% endif %};">{{ group.date_label }}</span>
-                        <div class="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div class="space-y-6 ml-4 border-l border-white/10 pl-10 relative">
-                        {% for event in group.events %}
-                        <div class="relative">
-                            <div class="absolute -left-[45px] top-4 w-2.5 h-2.5 rounded-full {{ event.mockup_category }}" style="background: {% if event.mockup_category == 'goal' %}var(--primary){% elif event.mockup_category == 'learning' %}var(--secondary){% elif event.mockup_category == 'health' %}#22C55E{% elif event.mockup_category == 'chat' %}#E9D5FF{% else %}var(--accent){% endif %};"></div>
-                            <div class="glass-card p-6 rounded-[2rem] card-{{ event.mockup_category }}" style="{% if not forloop.parentloop.first %}opacity:0.7{% endif %}">
-                                <div class="flex justify-between items-start">
-                                    <h4 class="font-bold text-sm">{{ event.mockup_icon }} {{ event.title }}</h4>
+                <div class="space-y-6 ml-4 border-l border-white/10 pl-10 relative">
+                    {% for event in group.events %}
+                    <div class="relative">
+                        <div class="absolute -left-[45px] top-4 w-2.5 h-2.5 rounded-full {{ event.mockup_category }}" style="background: {% if event.mockup_category == 'goal' %}var(--primary){% elif event.mockup_category == 'learning' %}var(--secondary){% elif event.mockup_category == 'health' %}#22C55E{% elif event.mockup_category == 'chat' %}#E9D5FF{% else %}var(--accent){% endif %};"></div>
+                        <div class="glass-card p-6 rounded-[2rem] card-{{ event.mockup_category }}" style="{% if not forloop.parentloop.first %}opacity:0.7{% endif %}">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm">{{ event.mockup_icon }} {{ event.title }}</h4>
+                                <div class="flex items-center gap-2">
                                     <span class="text-[10px]" style="color: #5C5C72;">{{ event.happened_at|time:"H:i" }}</span>
+                                    <!-- ⋮ Menu -->
+                                    <div class="relative group/menu">
+                                        <button class="p-1 rounded-lg opacity-0 group-hover:opacity-100 transition hover:bg-white/5 text-[#686880]" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('hidden')">
+                                            <i class="bi bi-three-dots-vertical text-xs"></i>
+                                        </button>
+                                        <div class="absolute right-0 top-full mt-1 w-40 py-1 rounded-xl hidden z-20" style="background:rgba(8,8,13,0.96);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(18px);" onclick="event.stopPropagation()">
+                                            <a href="/memory/{{ event.pk }}/" class="flex items-center gap-2 px-3 py-2 text-xs text-[#A0A0B8] hover:text-white hover:bg-white/5 transition"><i class="bi bi-eye"></i> View Detail</a>
+                                            <form method="POST" action="/memory/{{ event.pk }}/send-to-agent/" class="block">{% csrf_token %}<button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-[#A0A0B8] hover:text-white hover:bg-white/5 transition"><i class="bi bi-stars" style="color:var(--primary);"></i> Send to Agent</button></form>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-xs mt-1" style="color: #9191A8;">
-                                    {{ event.mockup_label }}
-                                    {% if event.description %} &middot; {{ event.description|truncatechars:60 }}{% endif %}
-                                </p>
-                                {% if event.ai_annotation %}
-                                <p class="text-[10px] mt-3" style="color: var(--accent);">{{ event.ai_annotation }}</p>
-                                {% endif %}
                             </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-                {% if has_next %}
-                <div class="flex justify-center py-10">
-                    <a href="/memory/timeline/?page={{ next_page }}{% if query %}&q={{ query }}{% endif %}{% if current_filter != 'all' %}&filter={{ current_filter }}{% endif %}" class="text-[10px] uppercase tracking-widest hover:text-white transition" style="color: #5C5C72;">→ 加载更早记忆 ({{ remaining_count }}条)</a>
-                </div>
-                {% endif %}
-            {% else %}
-                <div class="flex flex-col items-center justify-center h-full text-center" style="padding-top: 20vh;">
-                    <div class="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-6 glass-card mx-auto">
-                        <i class="bi bi-brain text-3xl" style="color: var(--primary);"></i>
-                    </div>
-                    <p class="text-base font-medium mb-1" style="color: #C8C8D8;">还没有记忆记录</p>
-                    <p class="text-sm mb-6" style="color: #9191A8;">Jarvis 会在你学习和使用过程中自动记录重要的事件和进展</p>
-                    <div class="flex gap-3">
-                        <a href="/chat/" class="glass-card px-5 py-2.5 rounded-2xl text-xs hover:scale-105 transition" style="color: #9191A8;">💬 去和 Agent 对话</a>
-                        <a href="/goals/" class="glass-card px-5 py-2.5 rounded-2xl text-xs hover:scale-105 transition" style="color: #9191A8;">🎯 创建第一个目标</a>
-                    </div>
-                </div>
-            {% endif %}
-            <!-- Stats 底部面板 -->
-            <div class="fixed bottom-0 left-0 right-0 p-6 z-50" style="margin-left: 256px; right: 0;">
-                <div class="max-w-4xl mx-auto glass-card rounded-2xl p-4 flex items-center justify-between border-t border-white/10 shadow-2xl">
-                    <div class="flex gap-8 items-center">
-                        <div><p class="text-[10px] uppercase" style="color: #5C5C72;">本周新增</p><p class="text-lg font-bold" style="color: var(--primary);">+{{ this_week_count }} <span class="text-[10px] font-normal" style="color: #9191A8;">条</span></p></div>
-                        <div class="w-px h-8 bg-white/5"></div>
-                        <div class="flex gap-6">
-                            <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">🎯 目标</p><p class="text-sm font-semibold">{{ type_counts.goal|default:"0" }}</p></div>
-                            <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">🧠 学习</p><p class="text-sm font-semibold">{{ type_counts.learning|default:"0" }}</p></div>
-                            <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">❤️ 健康</p><p class="text-sm font-semibold">{{ type_counts.health|default:"0" }}</p></div>
+                            <p class="text-xs mt-1" style="color: #9191A8;">
+                                {{ event.mockup_label }}
+                                {% if event.description %} &middot; {{ event.description|truncatechars:60 }}{% endif %}
+                            </p>
+                            {% if event.ai_annotation %}
+                            <p class="text-[10px] mt-3" style="color: var(--accent);">{{ event.ai_annotation }}</p>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[10px] uppercase" style="color: #5C5C72;">🧠 总计记忆</p>
-                        <p class="text-lg font-bold">{{ total_count }} <span class="text-[10px] font-normal" style="color: #9191A8;">条</span></p>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            {% endfor %}
+            {% if has_next %}
+            <div class="flex justify-center py-10">
+                <a href="/memory/timeline/?page={{ next_page }}{% if query %}&q={{ query }}{% endif %}{% if current_filter != 'all' %}&filter={{ current_filter }}{% endif %}" class="text-[10px] uppercase tracking-widest hover:text-white transition" style="color: #5C5C72;">→ 加载更早记忆 ({{ remaining_count }}条)</a>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="flex flex-col items-center justify-center h-full text-center" style="padding-top: 20vh;">
+                <div class="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-6 glass-card mx-auto">
+                    <i class="bi bi-brain text-3xl" style="color: var(--primary);"></i>
+                </div>
+                <p class="text-base font-medium mb-1" style="color: #C8C8D8;">还没有记忆记录</p>
+                <p class="text-sm mb-6" style="color: #9191A8;">Jarvis 会在你学习和使用过程中自动记录重要的事件和进展</p>
+                <div class="flex gap-3">
+                    <a href="/chat/" class="glass-card px-5 py-2.5 rounded-2xl text-xs hover:scale-105 transition" style="color: #9191A8;">💬 去和 Agent 对话</a>
+                    <a href="/goals/" class="glass-card px-5 py-2.5 rounded-2xl text-xs hover:scale-105 transition" style="color: #9191A8;">🎯 创建第一个目标</a>
+                </div>
+            </div>
+        {% endif %}
+        <!-- Stats 底部面板 -->
+        <div class="glass-card rounded-2xl p-4 flex items-center justify-between border-t border-white/10 shadow-2xl mt-8">
+            <div class="flex gap-8 items-center">
+                <div><p class="text-[10px] uppercase" style="color: #5C5C72;">本周新增</p><p class="text-lg font-bold" style="color: var(--primary);">+{{ this_week_count }} <span class="text-[10px] font-normal" style="color: #9191A8;">条</span></p></div>
+                <div class="w-px h-8 bg-white/5"></div>
+                <div class="flex gap-6">
+                    <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">🎯 目标</p><p class="text-sm font-semibold">{{ type_counts.goal|default:"0" }}</p></div>
+                    <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">🧠 学习</p><p class="text-sm font-semibold">{{ type_counts.learning|default:"0" }}</p></div>
+                    <div class="text-center"><p class="text-[10px]" style="color: #5C5C72;">❤️ 健康</p><p class="text-sm font-semibold">{{ type_counts.health|default:"0" }}</p></div>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] uppercase" style="color: #5C5C72;">🧠 总计记忆</p>
+                <p class="text-lg font-bold">{{ total_count }} <span class="text-[10px] font-normal" style="color: #9191A8;">条</span></p>
+            </div>
         </div>
-    </main>
-    <script>
-        const switcher = document.getElementById('themeSwitcher');
-        function applyTheme(t) {
-            document.documentElement.setAttribute('data-theme', t);
-            localStorage.setItem('jarvis-theme', t);
+    </div>
+
+    <!-- ════ GRAPH VIEW ════ -->
+    <div id="memory-graph-view" class="absolute inset-0 hidden">
+        <!-- Graph Toolbar -->
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 px-5 py-2.5 rounded-2xl" style="background: rgba(8,8,13,0.8); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.06);">
+            <span class="text-[10px] font-bold tracking-wider text-[#686880]">COGNITIVE GRAPH</span>
+            <div class="w-px h-4 bg-white/10"></div>
+            <div class="flex gap-3 text-[10px]">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:#8B5CF6;"></span> Skill</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:#F59E0B;"></span> Interest</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:#22C55E;"></span> Memory</span>
+            </div>
+            <div class="w-px h-4 bg-white/10"></div>
+            <button id="graph-reset" class="text-[10px] text-[#686880] hover:text-white transition"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+        </div>
+        <!-- Cytoscape Container -->
+        <div id="cy" class="w-full h-full" style="background: radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.05), transparent 70%);"></div>
+        <!-- Graph Inspector -->
+        <div id="graph-inspector" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden px-6 py-4 rounded-2xl min-w-[320px] max-w-lg" style="background: rgba(8,8,13,0.92); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08);">
+            <div class="flex items-center justify-between mb-2">
+                <span id="inspector-title" class="text-sm font-bold text-white"></span>
+                <button id="inspector-close" class="text-[#686880] hover:text-white transition text-xs"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="inspector-body" class="text-xs text-[#A0A0B8] space-y-1"></div>
+        </div>
+    </div>
+
+<!-- Cytoscape.js from CDN -->
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    // ── View Toggle ──
+    const timelineView = document.getElementById('memory-timeline-view');
+    const graphView = document.getElementById('memory-graph-view');
+    const toggleBtns = document.querySelectorAll('.view-toggle-btn');
+    let cy = null;
+
+    function switchView(view) {
+        toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+        timelineView.classList.toggle('hidden', view !== 'timeline');
+        graphView.classList.toggle('hidden', view !== 'graph');
+
+        if (view === 'graph') {
+            initGraph();
         }
-        if (switcher) {
-            switcher.addEventListener('change', function(e) { applyTheme(e.target.value); });
-            window.addEventListener('DOMContentLoaded', function() {
-                var saved = localStorage.getItem('jarvis-theme') || 'jarvis';
-                applyTheme(saved);
-                switcher.value = saved;
+    }
+
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
+    // ── Graph Initialization ──
+    function initGraph() {
+        if (cy) { cy.resize(); cy.fit(); return; }
+
+        fetch('/memory/graph-data/')
+            .then(r => r.json())
+            .then(data => {
+                const elements = [
+                    ...data.nodes.map(n => ({
+                        group: 'nodes',
+                        data: { ...n.data },
+                        position: n.position || undefined
+                    })),
+                    ...data.edges.map(e => ({
+                        group: 'edges',
+                        data: { ...e.data }
+                    }))
+                ];
+
+                cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    elements: elements,
+                    style: [
+                        {
+                            selector: 'node',
+                            style: {
+                                'background-color': 'data(color)',
+                                'label': 'data(label)',
+                                'color': '#e0e0e0',
+                                'font-size': '11px',
+                                'font-family': 'Inter, sans-serif',
+                                'text-valign': 'bottom',
+                                'text-halign': 'center',
+                                'text-margin-y': 8,
+                                'width': 'mapData(weight, 0, 5, 24, 48)',
+                                'height': 'mapData(weight, 0, 5, 24, 48)',
+                                'border-width': 2,
+                                'border-color': 'rgba(255,255,255,0.12)',
+                                'min-zoomed-font-size': 8,
+                            }
+                        },
+                        {
+                            selector: 'node[type = "skill"]',
+                            style: {
+                                'shape': 'round-rectangle',
+                                'width': 'label',
+                                'padding': '12px',
+                                'background-color': 'data(color)',
+                                'background-opacity': 0.25,
+                                'border-color': 'data(color)',
+                                'border-width': 1.5,
+                                'text-valign': 'center',
+                                'text-margin-y': 0,
+                                'font-weight': '600',
+                                'font-size': '12px',
+                            }
+                        },
+                        {
+                            selector: 'node[type = "interest"]',
+                            style: {
+                                'shape': 'diamond',
+                                'width': 36,
+                                'height': 36,
+                                'background-color': 'data(color)',
+                                'background-opacity': 0.35,
+                                'border-color': 'data(color)',
+                                'border-width': 2,
+                            }
+                        },
+                        {
+                            selector: 'node[type = "event"]',
+                            style: {
+                                'shape': 'ellipse',
+                                'width': 28,
+                                'height': 28,
+                                'background-color': 'data(color)',
+                                'background-opacity': 0.2,
+                                'border-color': 'data(color)',
+                                'border-width': 1.5,
+                                'font-size': '10px',
+                            }
+                        },
+                        {
+                            selector: 'edge',
+                            style: {
+                                'width': 1.5,
+                                'line-color': 'data(color)',
+                                'target-arrow-color': 'data(color)',
+                                'target-arrow-shape': 'triangle-backcurve',
+                                'curve-style': 'bezier',
+                                'arrow-scale': 0.7,
+                                'opacity': 0.4,
+                            }
+                        },
+                        {
+                            selector: 'edge[label = "prerequisite"]',
+                            style: {
+                                'line-style': 'solid',
+                                'opacity': 0.5,
+                            }
+                        },
+                        {
+                            selector: 'node:selected',
+                            style: {
+                                'border-width': 3,
+                                'border-color': '#fff',
+                                'shadow-blur': 20,
+                                'shadow-color': 'data(color)',
+                                'shadow-opacity': 0.6,
+                            }
+                        },
+                        {
+                            selector: 'node:active',
+                            style: {
+                                'overlay-opacity': 0
+                            }
+                        }
+                    ],
+                    layout: {
+                        name: 'cose',
+                        animate: true,
+                        animationDuration: 800,
+                        refresh: 1,
+                        fit: true,
+                        padding: 60,
+                        nodeRepulsion: () => 8000,
+                        idealEdgeLength: () => 120,
+                        edgeElasticity: () => 100,
+                        nestingFactor: 0.1,
+                        gravity: 0.25,
+                        numIter: 1000,
+                        tile: true,
+                    },
+                    minZoom: 0.3,
+                    maxZoom: 3,
+                    wheelSensitivity: 0.3,
+                });
+
+                // Node click → inspector
+                cy.on('tap', 'node', function(evt) {
+                    const node = evt.target;
+                    const d = node.data();
+                    const insp = document.getElementById('graph-inspector');
+                    document.getElementById('inspector-title').textContent = d.label;
+
+                    let body = '';
+                    if (d.type === 'skill') {
+                        const diffLabels = {1:'入门',2:'初级',3:'中级',4:'高级',5:'专家'};
+                        const statusLabels = {'not_started':'未开始','learning':'学习中','completed':'已完成','struggling':'有困难'};
+                        body = `
+                            <div class="flex gap-4">
+                                <span>难度: ${diffLabels[d.difficulty]||d.difficulty}</span>
+                                <span>类别: ${d.category||'—'}</span>
+                                <span>学时: ${d.estimated_hours||'?'}h</span>
+                            </div>
+                            ${d.status ? `<div class="mt-1">状态: <span style="color:${d.color}">${statusLabels[d.status]||d.status}</span></div>` : ''}
+                            ${d.predicted_days ? `<div class="mt-1">预计完成: ${d.predicted_days} 天</div>` : ''}
+                        `;
+                    } else if (d.type === 'interest') {
+                        body = `<div>权重: ${d.weight} · 来源: ${d.source||'auto'}</div>`;
+                    } else if (d.type === 'event') {
+                        body = `
+                            <div>类型: ${d.event_type}</div>
+                            <div>时间: ${d.timestamp ? new Date(d.timestamp).toLocaleString() : '—'}</div>
+                            ${d.pk ? `<div class="mt-2"><a href="/memory/${d.pk}/" class="text-[var(--primary)] hover:underline">查看详情 →</a></div>` : ''}
+                        `;
+                    }
+                    document.getElementById('inspector-body').innerHTML = body;
+                    insp.classList.remove('hidden');
+                });
+
+                // Tap background → hide inspector
+                cy.on('tap', function(evt) {
+                    if (evt.target === cy) {
+                        document.getElementById('graph-inspector').classList.add('hidden');
+                    }
+                });
+
+                // Reset zoom
+                document.getElementById('graph-reset').addEventListener('click', () => {
+                    cy.fit(60);
+                    cy.center();
+                });
+            })
+            .catch(err => {
+                console.error('Graph data failed:', err);
+                document.getElementById('cy').innerHTML = '<div class="flex items-center justify-center h-full text-[#686880] text-sm">Failed to load graph data</div>';
             });
-        }
-    </script>
-</body>
-</html>
+    }
+
+    // Resize graph on tab visibility
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && cy) cy.resize();
+    });
+
+    // ── Close all dropdowns on outside click ──
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.group\\/menu > div:not(.hidden)').forEach(function(d) {
+            if (!d.contains(e.target) && !d.previousElementSibling.contains(e.target)) {
+                d.classList.add('hidden');
+            }
+        });
+    });
+
+})();
+</script>
+
+<style>
+/* View Toggle */
+.view-toggle-btn { color: #686880; cursor: pointer; }
+.view-toggle-btn.active { background: rgba(139,92,246,0.2); color: white; }
+.view-toggle-btn:not(.active):hover { background: rgba(255,255,255,0.05); color: #A0A0B8; }
+
+/* Graph container fix */
+#cy { position: absolute; top: 0; left: 0; }
+#memory-graph-view { z-index: 5; }
+#memory-timeline-view { z-index: 1; transition: opacity 0.25s ease; }
+#memory-timeline-view.hidden { display: none; }
+#memory-graph-view.hidden { display: none; }
+</style>
+{% endblock %}
