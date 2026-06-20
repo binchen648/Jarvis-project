@@ -1,0 +1,29 @@
+/* Jarvis OS — Aurora Background Engine */
+body::before {
+  content: ""; position: fixed; top: -30%; left: -30%; width: 160%; height: 160%; pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 35%),
+    radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+    radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 40%);
+  filter: blur(120px); animation: aurora-drift 40s ease-in-out infinite; z-index: -3;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 35%),
+    radial-gradient(circle at 30% 70%, color-mix(in srgb, var(--secondary) 12%, transparent), transparent 40%);
+  filter: blur(150px); animation: aurora-reverse 60s ease-in-out infinite; z-index: -2;
+}
+@keyframes aurora-drift {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  25% { transform: translate(-3%,3%) scale(1.06); }
+  50% { transform: translate(4%,-4%) scale(1.12); }
+  75% { transform: translate(-2%,-3%) scale(1.06); }
+}
+@keyframes aurora-reverse {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(5%,4%) scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none !important; }
+}

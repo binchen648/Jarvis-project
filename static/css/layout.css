@@ -1,0 +1,56 @@
+/* Jarvis OS — Layout System */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+.layout-shell { display: flex; min-height: 100vh; width: 100%; }
+.layout-sidebar {
+  width: var(--sidebar-width, 256px);
+  min-height: 100vh;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255,255,255,.05);
+  display: flex; flex-direction: column; z-index: 20;
+  overflow: hidden; flex-shrink: 0;
+}
+.layout-main { flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10; overflow: hidden; width: 100%; }
+.layout-content { flex: 1; overflow-y: auto; width: 100%; }
+.layout-panel { width: 360px; flex-shrink: 0; overflow-y: auto; border-left: 1px solid rgba(255,255,255,.05); }
+
+/* Content widths - standardized */
+.layout-wide { width: 100%; padding: 32px 40px; }
+.layout-medium { max-width: 800px; margin: 0 auto; padding: 40px; }
+.layout-narrow { max-width: 600px; margin: 0 auto; padding: 40px; }
+.layout-full { width: 100%; padding: 0; }
+.layout-header { height: var(--topbar-height, 80px); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,.06); background: rgba(8,8,13,0.6); backdrop-filter: blur(18px); }
+
+.nav-active { background: rgba(255,255,255,0.08); color: white !important; position: relative; }
+.nav-active::before {
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 18px; background: var(--primary);
+  box-shadow: 0 0 10px var(--primary); border-radius: 0 4px 4px 0;
+}
+
+h1, h2, h3, h4 { font-family: "Space Grotesk", "Inter", sans-serif; letter-spacing: -0.02em; }
+body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text-primary); background: var(--surface-bg); overflow: hidden; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+input, select, textarea {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 10px 14px; color: white; font-size: 14px;
+  outline: none; width: 100%; box-sizing: border-box; font-family: inherit;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+select { cursor: pointer; }
+label { display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-secondary); font-weight: 500; }
+
+/* ── Graph View ── */
+#cy .cytoscape-node { transition: all 0.2s ease; }
+#graph-inspector { animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Jarvis Core Status ── */
+.jarvis-core { user-select: none; }
+.jarvis-core .core-stat { font-variant-numeric: tabular-nums; }
+.jarvis-orb { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.jarvis-orb:hover { transform: scale(1.15) !important; filter: brightness(1.2); }

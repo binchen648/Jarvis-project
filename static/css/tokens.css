@@ -1,0 +1,18 @@
+/* Jarvis OS — Design Tokens */
+:root {
+  --surface-bg: #08080D;
+  --surface-card: rgba(20, 20, 30, 0.65);
+  --primary: #8B5CF6;
+  --secondary: #4F8CFF;
+  --accent: #06B6D4;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --text-primary: #F1F1F6;
+  --text-secondary: #9191A8;
+  --text-tertiary: #5C5C72;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --sidebar-width: 256px;
+  --topbar-height: 80px;
+}

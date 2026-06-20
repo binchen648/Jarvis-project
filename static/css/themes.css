@@ -1,0 +1,5 @@
+/* Jarvis OS — Themes */
+[data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+[data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+[data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+[data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
