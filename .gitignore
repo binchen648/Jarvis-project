@@ -48,3 +48,4 @@ demo.db
 backups/
 *.sql
 *.sql.gz
+.tmp/
