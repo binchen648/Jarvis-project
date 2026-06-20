@@ -1,31 +1,9 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="jarvis">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>注册 - Jarvis</title>
-<style>
-:root{--surface-bg:#08080D;--surface-card:rgba(20,20,30,0.65);--primary:#8B5CF6;--secondary:#4F8CFF;--accent:#06B6D4;--text-primary:#F1F1F6;--text-secondary:#9191A8}
-[data-theme="ocean"]{--primary:#2563EB;--secondary:#06B6D4;--accent:#67E8F9}
-[data-theme="sunset"]{--primary:#F97316;--secondary:#EC4899;--accent:#FACC15}
-[data-theme="forest"]{--primary:#22C55E;--secondary:#14B8A6;--accent:#84CC16}
-[data-theme="rose"]{--primary:#EC4899;--secondary:#8B5CF6;--accent:#F472B6}
-body{background:var(--surface-bg);color:var(--text-primary);font-family:"Inter",sans-serif;margin:0;overflow:hidden}
-body::before{content:"";position:fixed;top:-30%;left:-30%;width:160%;height:160%;pointer-events:none;background:radial-gradient(circle at 20%20%,color-mix(in srgb,var(--primary)30%,transparent),transparent 35%),radial-gradient(circle at 80%25%,color-mix(in srgb,var(--secondary)20%,transparent),transparent 35%),radial-gradient(circle at 60%80%,color-mix(in srgb,var(--accent)15%,transparent),transparent 40%);filter:blur(120px);animation:aurora-drift 30s ease-in-out infinite;z-index:-3}
-@keyframes aurora-drift{0%,100%{transform:translate(0,0)scale(1)}50%{transform:translate(5%,-5%)scale(1.1)}}
-.glass-card{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);transition:all .3s ease}
-.glass-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--primary)40%,transparent);box-shadow:0 0 25px color-mix(in srgb,var(--primary)10%,transparent)}
-h1,h2,h3,h4{font-family:"Space Grotesk",sans-serif}.no-scrollbar::-webkit-scrollbar{display:none}
-input,select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;color:white;font-size:14px;outline:none;width:100%;box-sizing:border-box}
-input:focus,select:focus{border-color:var(--primary)}
-label{display:block;font-size:12px;margin-bottom:6px;color:#9191A8;font-weight:500}
-.btn-primary{background:var(--primary);color:white;text-align:center;padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;border:none;cursor:pointer;width:100%}
-.btn-primary:hover{transform:scale(1.03)}</style></head>
-<body class="flex h-screen">
-<div class="flex-1 flex items-center justify-center relative overflow-hidden">
-<div class="max-w-md w-full px-6 z-10">
-<div class="text-center mb-8"><h1 class="text-3xl font-bold italic tracking-tighter" style="color:var(--primary);">JARVIS</h1><p class="text-xs mt-2" style="color:#9191A8;">Personal AI Operating System</p></div>
+{% extends "base.html" %}
+{% block sidebar %}{% endblock %}
+{% block content_class %}layout-wide{% endblock %}
+{% block title %}Sign Up - Jarvis{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-full">
 <div class="glass-card p-8 rounded-[2.5rem]">
 <h2 class="text-xl font-bold mb-6 text-center">注册</h2>
 {% if form.non_field_errors %}<div class="p-3 rounded-xl mb-4 text-xs" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#EF4444;">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>{% endif %}
@@ -35,11 +13,4 @@ label{display:block;font-size:12px;margin-bottom:6px;color:#9191A8;font-weight:5
 </form>
 <p class="text-xs text-center mt-6" style="color:#9191A8;">已有账号？<a href="{% url 'account_login' %}" style="color:var(--primary);">登录</a></p>
 </div></div></div>
-<div class="absolute bottom-8 right-8 z-50"><div class="w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative" style="background:var(--primary)"><div class="absolute inset-0 rounded-full animate-ping opacity-20" style="background:var(--primary)"></div><i class="bi bi-stars text-xl"></i></div></div>
-<div class="absolute top-6 right-6 z-50"><div class="flex items-center gap-2"><i class="bi bi-palette2 text-xs text-[#9191A8]"></i><select id="themeSwitcher" style="color-scheme:dark;" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition"><option value="jarvis" style="background:#08080D;color:white;">Jarvis</option><option value="ocean" style="background:#08080D;color:white;">Ocean</option><option value="sunset" style="background:#08080D;color:white;">Sunset</option><option value="forest" style="background:#08080D;color:white;">Forest</option><option value="rose" style="background:#08080D;color:white;">Rose</option></select></div></div>
-<script>
-var switcher=document.getElementById("themeSwitcher");
-function applyTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("jarvis-theme",t)}
-if(switcher){switcher.addEventListener("change",function(e){applyTheme(e.target.value)});window.addEventListener("DOMContentLoaded",function(){var saved=localStorage.getItem("jarvis-theme")||"jarvis";applyTheme(saved);switcher.value=saved})}
-</script>
-</body></html>
+{% endblock %}
