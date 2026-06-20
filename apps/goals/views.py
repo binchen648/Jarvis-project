@@ -85,6 +85,7 @@ def goal_list(request):
 
     return render(request, 'goals/goal_list.html', {
         'goal_data': goal_data,
+        'active_count': Goal.objects.filter(user=request.user, status='active').count(),
         'current_status': status_filter,
     })
 
@@ -101,7 +102,12 @@ def goal_create(request):
             messages.success(request, '目标创建成功！')
             return redirect('goals:goal_detail', pk=goal.pk)
     else:
-        form = GoalForm()
+        initial = {}
+        if request.GET.get('title'):
+            initial['title'] = request.GET['title'][:300]
+        if request.GET.get('description'):
+            initial['description'] = request.GET['description'][:2000]
+        form = GoalForm(initial=initial)
 
     return render(request, 'goals/goal_form.html', {
         'form': form,

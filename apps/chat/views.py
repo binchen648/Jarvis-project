@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from .models import Conversation
 
@@ -87,6 +88,24 @@ def new_conversation(request):
     conv = Conversation.objects.create(
         user=request.user,
         title=f"对话 {now.strftime('%m/%d %H:%M')}",
+    )
+    return redirect('chat:conversation_detail', pk=conv.pk)
+
+
+@login_required
+@require_POST
+def discuss_content(request, content_id):
+    """Content → Agent: 从内容创建 Agent 对话."""
+    from apps.content.models import ProcessedContent
+    content = get_object_or_404(ProcessedContent, id=content_id)
+    conv = Conversation.objects.create(
+        user=request.user,
+        title=f"内容: {content.title[:40]}"
+    )
+    from .models import Message
+    Message.objects.create(
+        conversation=conv, role='user',
+        content=f"关于这篇内容:\n\n标题: {content.title}\n\n{content.description[:500]}\n\n来源: {content.url or 'N/A'}\n\n请帮我分析这篇内容并给出学习建议。"
     )
     return redirect('chat:conversation_detail', pk=conv.pk)
 
