@@ -1,0 +1,85 @@
+
+        /* 1. 主题变量系统 - 确保括号闭合 */
+        :root {
+            --surface-bg: #08080D;
+            --surface-card: rgba(20, 20, 30, 0.65);
+            --primary: #8B5CF6;
+            --secondary: #4F8CFF;
+            --accent: #06B6D4;
+            --text-main: #F1F1F6;
+            --text-secondary: #9191A8;
+        }
+
+        [data-theme="ocean"] {
+            --primary: #2563EB;
+            --secondary: #06B6D4;
+            --accent: #67E8F9;
+        }
+
+        [data-theme="sunset"] {
+            --primary: #F97316;
+            --secondary: #EC4899;
+            --accent: #FACC15;
+        }
+
+        [data-theme="forest"] {
+            --primary: #22C55E;
+            --secondary: #14B8A6;
+            --accent: #84CC16;
+        }
+
+        [data-theme="rose"] {
+            --primary: #EC4899;
+            --secondary: #8B5CF6;
+            --accent: #F472B6;
+        }
+
+        /* 2. 全局基础样式 */
+        body { 
+            background: var(--surface-bg); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* 3. 极光背景 - 增加颜色混合联动 */
+        body::before {
+            content: ""; position: fixed; top: -30%; left: -30%; width: 160%; height: 160%; pointer-events: none;
+            background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 35%),
+                        radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+                        radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 40%);
+            filter: blur(120px); animation: aurora-drift 30s ease-in-out infinite; z-index: -3;
+        }
+
+        @keyframes aurora-drift {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(5%,-5%) scale(1.1); }
+        }
+
+        /* 4. 玻璃卡片 - 颜色联动 */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.06);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+            box-shadow: 0 0 25px color-mix(in srgb, var(--primary) 10%, transparent);
+        }
+
+        /* 5. 侧边栏激活项 */
+        .nav-active {
+            background: rgba(255, 255, 255, 0.08);
+            color: white !important;
+            position: relative;
+        }
+        .nav-active::before {
+            content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            width: 3px; height: 18px; background: var(--primary);
+            box-shadow: 0 0 10px var(--primary); border-radius: 0 4px 4px 0;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    

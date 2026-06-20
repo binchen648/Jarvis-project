@@ -1,98 +1,161 @@
-{% extends "base.html" %}
-
-{% block title %}{{ goal.title }} — Jarvis{% endblock %}
-
-{% block content %}
-<div class="space-y-6">
-    <div class="mb-6">
-        <a href="{% url 'goals:goal_list' %}" class="text-sm text-base-content/60 hover:text-base-content">&larr; 返回目标列表</a>
-    </div>
-
-    <div class="border border-base-300 rounded-lg p-5 bg-base-100 mb-6">
-        <div class="flex justify-between items-start">
-            <h1 class="text-2xl font-semibold mb-2">{{ goal.title }}</h1>
-            <div id="status-badge-{{ goal.pk }}">
-                {% include "goals/_status_badge.html" %}
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="jarvis">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Jarvis OS - Goal Detail</title>
+    <style>
+        :root { --surface-bg: #08080D; --surface-card: rgba(20,20,30,0.65); --primary: #8B5CF6; --secondary: #4F8CFF; --accent: #06B6D4; --text-primary: #F1F1F6; --text-secondary: #9191A8; }
+        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
+        body { background: var(--surface-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
+        body::before { content: ""; position: fixed; top: -30%;left: -30%;width: 160%;height: 160%;pointer-events: none; background: radial-gradient(circle at 20% 20%,color-mix(in srgb,var(--primary) 30%,transparent),transparent 35%),radial-gradient(circle at 80% 25%,color-mix(in srgb,var(--secondary) 20%,transparent),transparent 35%),radial-gradient(circle at 60% 80%,color-mix(in srgb,var(--accent) 15%,transparent),transparent 40%); filter: blur(120px); animation: aurora-drift 30s ease-in-out infinite; z-index: -3; }
+        @keyframes aurora-drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5%,-5%) scale(1.1); } }
+        .glass-card { background: linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.06); transition: all 0.3s ease; }
+        .glass-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb,var(--primary) 40%,transparent); box-shadow: 0 0 25px color-mix(in srgb,var(--primary) 10%,transparent); }
+        .nav-active { background: rgba(255,255,255,0.08); color: white !important; position: relative; }
+        .nav-active::before { content: ""; position: absolute; left: 0;top: 50%;transform: translateY(-50%); width: 3px;height: 18px; background: var(--primary); box-shadow: 0 0 10px var(--primary); border-radius: 0 4px 4px 0; }
+        h1,h2,h3,h4 { font-family: "Space Grotesk", sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .status-active { color: #22C55E; }
+        .status-completed { color: #9191A8; }
+    </style>
+</head>
+<body class="flex h-screen">
+    <aside class="w-64 bg-black/30 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
+        <div class="p-8"><h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1></div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
+            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl nav-active"><i class="bi bi-target" style="color: var(--primary)"></i> Goals</a>
+            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+        </nav>
+        <div class="h-px bg-white/5 mx-4 my-2"></div>
+        <nav class="px-4 space-y-2">
+            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+        </nav>
+        <div class="h-px bg-white/5 mx-4 my-2"></div>
+        <nav class="px-4 space-y-2">
+            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
+        </nav>
+        <div class="p-6 border-t border-white/5 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div>
+            <span class="text-xs text-[#C8C8D8] font-medium">{{ user.username|default:"Alex" }} OS</span>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+        <header class="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/10 backdrop-blur-xl">
+            <div class="flex items-center gap-4">
+                <a href="/goals/" class="text-xs hover:underline" style="color: #9191A8;">← 返回目标列表</a>
+                <div class="h-4 w-px bg-white/10"></div>
+                <h2 class="text-xl font-bold text-white tracking-tight">{{ goal.title|truncatechars:30 }}</h2>
             </div>
-        </div>
-
-        <div class="flex flex-wrap gap-3 text-sm text-base-content/60 mb-3">
-            <span>类型: {{ goal.get_goal_type_display }}</span>
-            {% if goal.target_value %}
-                <span>目标: {{ goal.target_value }}{{ goal.target_unit }}</span>
-            {% endif %}
-            <span>周期: {{ goal.get_category_display }}</span>
-            {% if goal.is_recurring %}<span>循环</span>{% endif %}
-            {% if goal.deadline %}
-                <span>截止: {{ goal.deadline|date:"Y-m-d" }}</span>
-            {% endif %}
-            <span>创建: {{ goal.created_at|date:"Y-m-d" }}</span>
-        </div>
-
-        {% if goal.description %}
-            <p class="text-base-content text-sm leading-relaxed mb-3">{{ goal.description }}</p>
-        {% endif %}
-
-        <div class="flex gap-2 mt-3 flex-wrap">
-            <a href="{% url 'goals:goal_edit' goal.pk %}" class="btn btn-primary btn-sm">编辑目标</a>
-            <form method="post" action="{% url 'goals:update_status' goal.pk %}"
-                  hx-post="{% url 'goals:update_status' goal.pk %}"
-                  hx-target="#status-badge-{{ goal.pk }}"
-                  hx-swap="innerHTML"
-                  class="inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-ghost btn-sm">切换状态</button>
-            </form>
-        </div>
-    </div>
-
-    {% if progress_records %}
-    <div class="mb-6">
-        <h2 class="text-lg font-semibold mb-3">进度记录</h2>
-        <div class="border border-base-300 rounded-lg overflow-hidden">
-            <table class="w-full border-collapse text-sm">
-                <thead class="bg-base-200">
-                    <tr>
-                        <th class="px-3 py-2 text-left border-b border-base-300">时间</th>
-                        <th class="px-3 py-2 text-right border-b border-base-300">进度</th>
-                        <th class="px-3 py-2 text-left border-b border-base-300">备注</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for pr in progress_records %}
-                    <tr>
-                        <td class="px-3 py-2 border-b border-base-300 text-base-content/60">{{ pr.recorded_at|date:"m/d H:i" }}</td>
-                        <td class="px-3 py-2 text-right border-b border-base-300">{{ pr.progress_percent|floatformat:0 }}%</td>
-                        <td class="px-3 py-2 border-b border-base-300">{{ pr.note|default:"—" }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
-
-    <div>
-        <div class="flex justify-between items-center mb-3">
-            <h2 class="text-lg font-semibold">学习记录（共 {{ total_minutes }} 分钟）</h2>
-            <a href="{% url 'goals:log_session' %}" class="btn btn-primary btn-sm">记录学习</a>
-        </div>
-
-        {% if sessions %}
-            {% for session in sessions %}
-                <div class="border border-base-300 rounded-md p-3 mb-2 bg-base-100">
-                    <div class="flex justify-between text-sm">
-                        <span class="font-medium">{{ session.date|date:"Y-m-d" }}</span>
-                        <span class="text-primary font-semibold">{{ session.duration_minutes }} 分钟</span>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-palette2 text-xs text-[#9191A8]"></i>
+                    <select id="themeSwitcher" style="color-scheme:dark;" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition">
+                        <option value="jarvis" style="background:#08080D;color:white;">Jarvis</option>
+                        <option value="ocean" style="background:#08080D;color:white;">Ocean</option>
+                        <option value="sunset" style="background:#08080D;color:white;">Sunset</option>
+                        <option value="forest" style="background:#08080D;color:white;">Forest</option>
+                        <option value="rose" style="background:#08080D;color:white;">Rose</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <div class="flex-1 overflow-y-auto p-10 no-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Goal Header Card -->
+                <div class="glass-card p-8 rounded-[2.5rem]"{% if goal.status == 'active' %} style="border-top: 2px solid var(--primary)"{% endif %}>
+                    <div class="flex justify-between items-start mb-4">
+                        <h1 class="text-2xl font-bold text-white">{{ goal.title }}</h1>
+                        <span class="text-[10px] font-bold px-3 py-1 rounded-full {% if goal.status == 'active' %}bg-[var(--primary)]/10 text-[var(--primary)]{% elif goal.status == 'completed' %}bg-[#22C55E]/10 text-[#22C55E]{% else %}bg-white/5 text-[#5C5C72]{% endif %}">{{ goal.get_status_display }}</span>
                     </div>
-                    {% if session.note %}
-                        <p class="text-xs text-base-content/60 mt-1">{{ session.note }}</p>
+                    <div class="flex flex-wrap gap-3 text-xs text-[#9191A8] mb-4">
+                        <span>{{ goal.get_goal_type_display }}</span>
+                        {% if goal.deadline %}<span>截止 {{ goal.deadline|date:"Y-m-d" }}</span>{% endif %}
+                        <span>{{ goal.get_category_display }}</span>
+                        {% if goal.is_recurring %}<span>循环</span>{% endif %}
+                    </div>
+                    {% if goal.description %}
+                    <p class="text-sm text-[#9191A8] leading-relaxed mb-6">{{ goal.description }}</p>
+                    {% endif %}
+                    <div class="flex gap-3 mt-4 pt-6 border-t border-white/5">
+                        <a href="/goals/{{ goal.pk }}/edit/" class="text-xs px-4 py-2 rounded-lg font-bold shadow-lg hover:scale-105 transition" style="background: var(--primary); color: white;">编辑目标</a>
+                        <a href="/goals/session/log/" class="text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition" style="color: #9191A8; border: 1px solid rgba(255,255,255,0.06);">记录学习</a>
+                    </div>
+                </div>
+                <!-- Stats -->
+                <div class="glass-card p-6 rounded-[2.5rem]">
+                    <div class="flex gap-8 items-center">
+                        <div><p class="text-[10px] uppercase" style="color: #5C5C72;">学习总时长</p><p class="text-lg font-bold">{{ total_minutes }} <span class="text-[10px] font-normal" style="color: #9191A8;">分钟</span></p></div>
+                        <div class="w-px h-8 bg-white/5"></div>
+                        <div><p class="text-[10px] uppercase" style="color: #5C5C72;">学习次数</p><p class="text-lg font-bold">{{ sessions|length }} <span class="text-[10px] font-normal" style="color: #9191A8;">次</span></p></div>
+                    </div>
+                </div>
+                <!-- Progress Records -->
+                {% if progress_records %}
+                <div class="glass-card p-6 rounded-[2.5rem]">
+                    <h3 class="text-sm font-semibold mb-4">进度记录</h3>
+                    <div class="space-y-3">
+                        {% for pr in progress_records %}
+                        <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-b-0">
+                            <div>
+                                <div class="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full" style="width: {{ pr.progress_percent|floatformat:0 }}%; background: var(--primary);"></div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-semibold">{{ pr.progress_percent|floatformat:0 }}%</span>
+                                <span class="text-[10px] text-[#5C5C72] ml-2">{{ pr.recorded_at|date:"m/d H:i" }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                <!-- Sessions -->
+                <div class="glass-card p-6 rounded-[2.5rem]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold">学习记录</h3>
+                        <a href="/goals/session/log/" class="text-[10px] hover:underline" style="color: var(--accent);">+ 记录学习</a>
+                    </div>
+                    {% if sessions %}
+                    <div class="space-y-3">
+                        {% for session in sessions %}
+                        <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-b-0">
+                            <div>
+                                <p class="text-xs text-white">{{ session.date|date:"Y-m-d" }}</p>
+                                {% if session.note %}<p class="text-[10px] text-[#9191A8] mt-0.5">{{ session.note }}</p>{% endif %}
+                            </div>
+                            <span class="text-xs font-semibold" style="color: var(--primary);">{{ session.duration_minutes }} 分钟</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-[#9191A8]">暂无学习记录。</p>
                     {% endif %}
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-base-content/60 text-sm">暂无学习记录。开始学习后记得记录哦！</p>
-        {% endif %}
-    </div>
-</div>
-{% endblock %}
+            </div>
+        </div>
+    </main>
+    <script>
+        const switcher = document.getElementById('themeSwitcher');
+        function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('jarvis-theme', t); }
+        if (switcher) {
+            switcher.addEventListener('change', function(e) { applyTheme(e.target.value); });
+            window.addEventListener('DOMContentLoaded', function() {
+                var saved = localStorage.getItem('jarvis-theme') || 'jarvis';
+                applyTheme(saved); switcher.value = saved;
+            });
+        }
+    </script>
+</body>
+</html>

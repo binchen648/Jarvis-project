@@ -1,0 +1,80 @@
+import os
+os.chdir(r"D:\Jarvis project")
+
+# Build the template from parts to avoid escaping issues
+parts = []
+
+parts.append('''<!DOCTYPE html>
+<html lang="zh-CN" data-theme="jarvis">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Jarvis OS - Edit Profile</title>
+<style>
+:root{--surface-bg:#08080D;--surface-card:rgba(20,20,30,0.65);--primary:#8B5CF6;--secondary:#4F8CFF;--accent:#06B6D4;--text-main:#F1F1F6;--text-secondary:#9191A8}
+[data-theme="ocean"]{--primary:#2563EB;--secondary:#06B6D4;--accent:#67E8F9}
+[data-theme="sunset"]{--primary:#F97316;--secondary:#EC4899;--accent:#FACC15}
+[data-theme="forest"]{--primary:#22C55E;--secondary:#14B8A6;--accent:#84CC16}
+[data-theme="rose"]{--primary:#EC4899;--secondary:#8B5CF6;--accent:#F472B6}
+body{background:var(--surface-bg);color:var(--text-main);font-family:"Inter",sans-serif;margin:0;overflow:hidden}
+body::before{content:"";position:fixed;top:-30%;left:-30%;width:160%;height:160%;pointer-events:none;background:radial-gradient(circle at 20%20%,color-mix(in srgb,var(--primary)30%,transparent),transparent 35%),radial-gradient(circle at 80%25%,color-mix(in srgb,var(--secondary)20%,transparent),transparent 35%),radial-gradient(circle at 60%80%,color-mix(in srgb,var(--accent)15%,transparent),transparent 40%);filter:blur(120px);animation:aurora-drift 30s ease-in-out infinite;z-index:-3}
+@keyframes aurora-drift{0%,100%{transform:translate(0,0)scale(1)}50%{transform:translate(5%,-5%)scale(1.1)}}
+.glass-card{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.015));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);transition:all .3s ease}
+.glass-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--primary)40%,transparent);box-shadow:0 0 25px color-mix(in srgb,var(--primary)10%,transparent)}
+.nav-active{background:rgba(255,255,255,0.08);color:white!important;position:relative}
+.nav-active::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--primary);box-shadow:0 0 10px var(--primary);border-radius:0 4px 4px 0}
+h1,h2,h3,h4{font-family:"Space Grotesk",sans-serif}.no-scrollbar::-webkit-scrollbar{display:none}
+input,textarea,select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;color:white;font-size:14px;outline:none;width:100%;box-sizing:border-box}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+select{cursor:pointer}
+label{display:block;font-size:12px;margin-bottom:6px;color:#9191A8;font-weight:500}
+</style></head>
+<body class="flex h-screen">
+''')
+
+parts.append('''<aside class="w-64 bg-black/30 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
+<div class="p-8"><h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1></div>
+<nav class="flex-1 px-4 space-y-2">
+<a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-grid-fill"></i> Dashboard</a>
+<a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
+<a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+<a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
+<a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+</nav><div class="h-px bg-white/5 mx-4 my-2"></div>
+<nav class="px-4 space-y-2">
+<a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+<a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+</nav><div class="h-px bg-white/5 mx-4 my-2"></div>
+<nav class="px-4 space-y-2"><a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl nav-active"><i class="bi bi-gear" style="color:var(--primary)"></i> Settings</a></nav>
+<div class="p-6 border-t border-white/5 flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div><span class="text-xs text-[#C8C8D8] font-medium">''')
+
+parts.append('''{{ user.username|default:"Alex" }} OS</span></div></aside>
+<main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+<header class="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/10 backdrop-blur-xl">
+<div class="flex items-center gap-4"><a href="/profile/" class="text-xs hover:underline" style="color:#9191A8;">\u2190 \u8fd4\u56de</a><div class="h-4 w-px bg-white/10"></div><h2 class="text-xl font-bold text-white tracking-tight">\u7f16\u8f91\u8d44\u6599</h2></div>
+<div class="flex items-center gap-6"><div class="flex items-center gap-2"><i class="bi bi-palette2 text-xs text-[#9191A8]"></i><select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition"><option value="jarvis">Jarvis</option><option value="ocean">Ocean</option><option value="sunset">Sunset</option><option value="forest">Forest</option><option value="rose">Rose</option></select></div></div>
+</header>
+<div class="flex-1 overflow-y-auto p-10 no-scrollbar"><div class="max-w-2xl mx-auto"><div class="glass-card p-8 rounded-[2.5rem]">
+''')
+
+parts.append('''<form method="post">{% csrf_token %}
+{% for field in form %}<div class="mb-5"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<p class="text-xs mt-1" style="color:#EF4444;">{% for e in field.errors %}{{ e }}{% endfor %}</p>{% endif %}</div>{% endfor %}
+<div class="flex gap-3 mt-8"><button type="submit" class="flex-1 text-xs px-4 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition" style="background:var(--primary);color:white;">\u4fdd\u5b58\u4fee\u6539</button>
+<a href="/profile/" class="flex-1 text-xs px-4 py-3 rounded-xl font-bold text-center transition" style="color:#9191A8;border:1px solid rgba(255,255,255,0.06);">\u53d6\u6d88</a></div></form>
+</div></div></div></main>
+''')
+
+parts.append('''<script>
+var switcher=document.getElementById("themeSwitcher");
+function applyTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("jarvis-theme",t)}
+if(switcher){switcher.addEventListener("change",function(e){applyTheme(e.target.value)});window.addEventListener("DOMContentLoaded",function(){var saved=localStorage.getItem("jarvis-theme")||"jarvis";applyTheme(saved);switcher.value=saved})}
+</script>
+</body></html>''')
+
+content = "".join(parts)
+with open("templates/userprofile/profile_edit.html", "w", encoding="utf-8") as f:
+    f.write(content)
+print("Written OK")

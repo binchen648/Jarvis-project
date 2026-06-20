@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+      - link " Wellness" [ref=e12] [cursor=pointer]:
+        - /url: /wellness/suggestions/
+        - generic [ref=e13]: 
+        - text: Wellness
+    - navigation [ref=e15]:
+      - link " Content" [ref=e16] [cursor=pointer]:
+        - /url: /content/feed/
+        - generic [ref=e17]: 
+        - text: Content
+      - link " Trajectory" [ref=e18] [cursor=pointer]:
+        - /url: /trajectory/skills/
+        - generic [ref=e19]: 
+        - text: Trajectory
+    - navigation [ref=e21]:
+      - link " Settings" [ref=e22] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e23]: 
+        - text: Settings
+    - generic [ref=e26]: admin OS
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "Agent Console" [level=2] [ref=e30]
+        - paragraph [ref=e32]: 管理你的 AI 会话历史
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: 
+          - combobox [ref=e36] [cursor=pointer]:
+            - option "Jarvis (Default)"
+            - option "Ocean (Blue)" [selected]
+            - option "Sunset (Orange)"
+            - option "Forest (Green)"
+            - option "Rose (Pink)"
+        - generic [ref=e38]:
+          - generic [ref=e39]: 
+          - textbox "搜索对话..." [ref=e40]
+        - link " 新建对话" [ref=e41] [cursor=pointer]:
+          - /url: /chat/new/
+          - generic [ref=e42]: 
+          - text: 新建对话
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]: 3 总计对话
+        - generic [ref=e47]: 0 工具调用
+        - generic [ref=e49]: DeepSeek-V3 引擎
+      - generic [ref=e51]:
+        - 'link " 2 日，6 小时 对话 06/17 04:09 AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。 06/17 12:09 0 消息" [ref=e52] [cursor=pointer]':
+          - /url: /chat/1/
+          - generic [ref=e53]:
+            - generic [ref=e55]: 
+            - generic [ref=e56]: 2 日，6 小时
+          - heading "对话 06/17 04:09" [level=3] [ref=e57]
+          - paragraph [ref=e58]: "AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。"
+          - generic [ref=e59]:
+            - generic [ref=e60]: 06/17 12:09
+            - generic [ref=e61]: 0 消息
+        - 'link " 2 日，6 小时 对话 06/17 04:09 AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。 06/17 12:09 0 消息" [ref=e62] [cursor=pointer]':
+          - /url: /chat/2/
+          - generic [ref=e63]:
+            - generic [ref=e65]: 
+            - generic [ref=e66]: 2 日，6 小时
+          - heading "对话 06/17 04:09" [level=3] [ref=e67]
+          - paragraph [ref=e68]: "AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。"
+          - generic [ref=e69]:
+            - generic [ref=e70]: 06/17 12:09
+            - generic [ref=e71]: 0 消息
+        - 'link " 2 日，1 小时 对话 06/17 08:27 AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。 06/17 16:27 0 消息" [ref=e72] [cursor=pointer]':
+          - /url: /chat/3/
+          - generic [ref=e73]:
+            - generic [ref=e75]: 
+            - generic [ref=e76]: 2 日，1 小时
+          - heading "对话 06/17 08:27" [level=3] [ref=e77]
+          - paragraph [ref=e78]: "AI 摘要: 尚未生成。点击继续对话以让 Jarvis 总结上下文。"
+          - generic [ref=e79]:
+            - generic [ref=e80]: 06/17 16:27
+            - generic [ref=e81]: 0 消息
+        - generic [ref=e85] [cursor=pointer]: 

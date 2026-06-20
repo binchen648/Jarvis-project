@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+      - link " Wellness" [ref=e12] [cursor=pointer]:
+        - /url: /wellness/suggestions/
+        - generic [ref=e13]: 
+        - text: Wellness
+    - navigation [ref=e15]:
+      - link " Content" [ref=e16] [cursor=pointer]:
+        - /url: /content/feed/
+        - generic [ref=e17]: 
+        - text: Content
+      - link " Trajectory" [ref=e18] [cursor=pointer]:
+        - /url: /trajectory/skills/
+        - generic [ref=e19]: 
+        - text: Trajectory
+    - navigation [ref=e21]:
+      - link " Settings" [ref=e22] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e23]: 
+        - text: Settings
+    - generic [ref=e26]: admin OS
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "System Status" [level=2] [ref=e30]
+        - paragraph [ref=e31]: ● Operational / Optimal
+      - generic [ref=e33]:
+        - generic [ref=e34]: 
+        - combobox [ref=e35] [cursor=pointer]:
+          - option "Jarvis"
+          - option "Ocean" [selected]
+          - option "Sunset"
+          - option "Forest"
+          - option "Rose"
+    - generic [ref=e39]:
+      - heading "Good Evening, admin." [level=1] [ref=e43]
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - paragraph [ref=e46]: Today Focus
+          - paragraph [ref=e47]: 0% ▲ 5%
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: Goal Health
+          - paragraph [ref=e50]: 0 正常
+        - generic [ref=e51]:
+          - paragraph [ref=e52]: Memory Growth
+          - paragraph [ref=e53]: +0 条
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: AI Confidence
+          - paragraph [ref=e56]: 70%
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - heading "Today's Plan" [level=3] [ref=e60]
+            - generic [ref=e61]: 3/3 tasks
+          - generic [ref=e62]:
+            - link "1 LeetCode 92 难度 Medium · 今日必完成 · 35min " [ref=e63] [cursor=pointer]:
+              - /url: /goals/
+              - generic [ref=e64]:
+                - generic [ref=e65]: "1"
+                - generic [ref=e66]:
+                  - paragraph [ref=e67]: LeetCode 92
+                  - paragraph [ref=e68]: 难度 Medium · 今日必完成 · 35min
+              - generic [ref=e69]: 
+            - link "2 阅读 ReAct Agent 笔记 上次 3天前 · 需要复习 · 20min " [ref=e70] [cursor=pointer]:
+              - /url: /memory/
+              - generic [ref=e71]:
+                - generic [ref=e72]: "2"
+                - generic [ref=e73]:
+                  - paragraph [ref=e74]: 阅读 ReAct Agent 笔记
+                  - paragraph [ref=e75]: 上次 3天前 · 需要复习 · 20min
+              - generic [ref=e76]: 
+            - link "3 更新 Wellness 记录 · 5min " [ref=e77] [cursor=pointer]:
+              - /url: /wellness/record
+              - generic [ref=e78]:
+                - generic [ref=e79]: "3"
+                - generic [ref=e80]:
+                  - paragraph [ref=e81]: 更新 Wellness 记录
+                  - paragraph [ref=e82]: · 5min
+              - generic [ref=e83]: 
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - heading "Goal Progress" [level=3] [ref=e86]
+            - paragraph [ref=e88]: 还没有目标进度数据
+          - generic [ref=e89]:
+            - generic [ref=e91]:
+              - heading "Memory Timeline" [level=3] [ref=e92]
+              - link "查看全部 →" [ref=e93] [cursor=pointer]:
+                - /url: /memory/timeline/
+            - generic [ref=e95]:
+              - paragraph [ref=e97]: 还没有记忆轨迹
+              - paragraph [ref=e98]: 开始学习后，Jarvis 会记录你的成长轨迹
+    - generic [ref=e102] [cursor=pointer]: 

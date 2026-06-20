@@ -6,278 +6,162 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>Jarvis OS - Aurora V2</title>
+    <title>Jarvis OS - Dashboard</title>
     <style>
-        /* 1. 核心变量与主题系统 */
         :root {
             --surface-bg: #08080D;
             --surface-card: rgba(20, 20, 30, 0.65);
             --primary: #8B5CF6;
             --secondary: #4F8CFF;
             --accent: #06B6D4;
-            --text-main: #F1F1F6;
+            --text-primary: #F1F1F6;
             --text-secondary: #9191A8;
         }
-
-        [data-theme="ocean"] {
-            --primary: #2563EB;
-            --secondary: #06B6D4;
-            --accent: #67E8F9;
-        }
-
-        [data-theme="sunset"] {
-            --primary: #F97316;
-            --secondary: #EC4899;
-            --accent: #FACC15;
-        }
-
-        [data-theme="forest"] {
-            --primary: #22C55E;
-            --secondary: #14B8A6;
-            --accent: #84CC16;
-        }
-
-        [data-theme="rose"] {
-            --primary: #EC4899;
-            --secondary: #8B5CF6;
-            --accent: #F472B6;
-        }
-
-        /* 2. 基础布局 */
-        body {
-            background: var(--surface-bg);
-            color: var(--text-main);
-            font-family: Inter, system-ui, sans-serif;
-            overflow-x: hidden;
-            position: relative;
-            margin: 0;
-            height: 100vh;
-        }
-
-        /* 3. Aurora 背景系统 */
+        [data-theme="ocean"] { --primary: #2563EB; --secondary: #06B6D4; --accent: #67E8F9; }
+        [data-theme="sunset"] { --primary: #F97316; --secondary: #EC4899; --accent: #FACC15; }
+        [data-theme="forest"] { --primary: #22C55E; --secondary: #14B8A6; --accent: #84CC16; }
+        [data-theme="rose"] { --primary: #EC4899; --secondary: #8B5CF6; --accent: #F472B6; }
+        body { background: var(--surface-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
         body::before {
-            content: "";
-            position: fixed;
-            top: -30%; left: -30%;
-            width: 160%; height: 160%;
-            pointer-events: none;
-            background: 
-                radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 25%, transparent), transparent 30%),
-                radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
-                radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 40%);
-            filter: blur(120px);
-            animation: aurora-drift 35s ease-in-out infinite;
-            z-index: -3;
+            content: ""; position: fixed; top: -30%; left: -30%; width: 160%; height: 160%; pointer-events: none;
+            background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 35%),
+                        radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--secondary) 20%, transparent), transparent 35%),
+                        radial-gradient(circle at 60% 80%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 40%);
+            filter: blur(120px); animation: aurora-drift 30s ease-in-out infinite; z-index: -3;
         }
-
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background: 
-                radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 30%),
-                radial-gradient(circle at 30% 70%, color-mix(in srgb, var(--secondary) 10%, transparent), transparent 35%);
-            filter: blur(150px);
-            animation: aurora-reverse 60s ease-in-out infinite;
-            z-index: -2;
-        }
-
-        @keyframes aurora-drift {
-            0% { transform: translate(0,0) scale(1); }
-            25% { transform: translate(-5%,4%) scale(1.08); }
-            50% { transform: translate(5%,-5%) scale(1.15); }
-            75% { transform: translate(-3%,-4%) scale(1.08); }
-            100% { transform: translate(0,0) scale(1); }
-        }
-
-        @keyframes aurora-reverse {
-            0% { transform: translate(0,0) scale(1); }
-            50% { transform: translate(6%,5%) scale(1.2); }
-            100% { transform: translate(0,0) scale(1); }
-        }
-
-        /* 4. Glass Card 升级版 */
+        @keyframes aurora-drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(5%,-5%) scale(1.1); } }
         .glass-card {
             background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-            backdrop-filter: blur(18px);
-            border: 1px solid rgba(255,255,255,.06);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.25);
-            transition: all .3s ease;
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.06);
+            transition: all 0.3s ease;
         }
-
         .glass-card:hover {
-            transform: translateY(-2px);
-            border-color: color-mix(in srgb, var(--primary) 40%, rgba(255,255,255,.05));
-            box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 15%, transparent), 0 15px 40px color-mix(in srgb, var(--primary) 8%, transparent);
+            transform: translateY(-4px);
+            border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+            box-shadow: 0 0 25px color-mix(in srgb, var(--primary) 10%, transparent);
         }
-
-        /* 5. Jarvis Core 动画 */
-        .jarvis-core {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 50%, transparent);
-            animation: spin 8s linear infinite;
-        }
-
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    
-        /* prefers-reduced-motion */
-        @media (prefers-reduced-motion: reduce) {
-            body::before, body::after { animation: none !important; }
-            .glass-card { transition: none !important; }
-            .glass-card:hover { transform: none !important; }
-            .animate-pulse, .animate-ping, .animate-spin { animation: none !important; }
-            .jarvis-core-sphere { animation: none !important; }
-            [class*="hover:scale-"]:hover { transform: none !important; }
-            [class*="hover:translate"]:hover { transform: none !important; }
-            .transition, .transition-all, .transition-colors { transition: none !important; }
-            .group-hover\:translate-x-1 { transform: none !important; }
-        }</style>
+        .nav-active { background: rgba(255,255,255,0.08); color: white !important; position: relative; }
+        .nav-active::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 18px; background: var(--primary); box-shadow: 0 0 10px var(--primary); border-radius: 0 4px 4px 0; }
+        h1,h2,h3,h4 { font-family: "Space Grotesk", sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-
-    <style>h1,h2,h3,h4{font-family:"Space Grotesk",Inter,system-ui,sans-serif}h1{font-weight:700}h2{font-weight:600}h3{font-weight:600}</style>
-    <body class="flex h-screen overflow-hidden">
-
-    <!-- 侧边栏 (微调以匹配新主题) -->
-    <aside class="w-64 bg-black/20 backdrop-blur-2xl border-r border-white/5 flex flex-col z-10">
-        <div class="p-8">
-            <h1 class="text-2xl font-bold tracking-tighter italic text-white">JARVIS</h1>
-        </div>
-                <nav class="flex-1 px-4 space-y-2">
-            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 text-white"><i class="bi bi-grid-fill" style="color: var(--secondary)"></i> Dashboard</a>
-            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-stars" ></i> Agent</a>
-            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-brain" ></i> Memory</a>
-            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-target" ></i> Goals</a>
-            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
+<body class="flex h-screen">
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-black/30 backdrop-blur-3xl border-r border-white/5 flex flex-col z-20">
+        <div class="p-8"><h1 class="text-2xl font-bold italic text-white tracking-tighter">JARVIS</h1></div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-2xl nav-active"><i class="bi bi-grid-fill" style="color: var(--secondary)"></i> Dashboard</a>
+            <a href="/chat/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-stars"></i> Agent</a>
+            <a href="/memory/timeline/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-brain"></i> Memory</a>
+            <a href="/goals/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-target"></i> Goals</a>
+            <a href="/wellness/suggestions/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-heart"></i> Wellness</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
-            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
+            <a href="/content/feed/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-book"></i> Content</a>
+            <a href="/trajectory/skills/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-diagram-3"></i> Trajectory</a>
         </nav>
         <div class="h-px bg-white/5 mx-4 my-2"></div>
         <nav class="px-4 space-y-2">
-            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#B0B0C8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
-        </nav>        <div class="p-6">
-            <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-900 border border-white/10"></div>
-                <div>
-                    <p class="text-sm font-bold">{{ user.username|default:'Alex' }}</p>
-                    <p class="text-[10px] text-[#A0A0B8]">v2.0 Aurora</p>
-                </div>
-            </div>
+            <a href="/profile/" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-[#9191A8] hover:bg-white/5 transition"><i class="bi bi-gear"></i> Settings</a>
+        </nav>
+        <div class="p-6 border-t border-white/5 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-zinc-800 border border-white/10"></div>
+            <span class="text-xs text-[#C8C8D8] font-medium">{{ user.username|default:"Alex" }} OS</span>
         </div>
     </aside>
-
     <!-- 主内容区 -->
-    <main class="flex-1 flex flex-col z-10">
-        
-        <!-- Header -->
-        <header class="h-20 flex items-center justify-between px-10">
+    <main class="flex-1 flex flex-col relative z-10 overflow-hidden">
+        <header class="h-20 flex items-center justify-between px-10 border-b border-white/5 bg-black/10 backdrop-blur-xl">
             <div class="flex flex-col">
-                <h2 class="text-xs font-medium uppercase tracking-widest text-[#A0A0B8]">System Status</h2>
+                <h2 class="text-xs font-medium uppercase tracking-widest text-[#9191A8]">System Status</h2>
                 <p class="text-[10px] text-emerald-400">● Operational / Optimal</p>
             </div>
-            
             <div class="flex items-center gap-6">
-                <!-- 主题切换器 -->
                 <div class="flex items-center gap-2">
-                    <i class="bi bi-palette2 text-xs text-[#A0A0B8]"></i>
-                    <select id="themeSwitcher" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/20 transition cursor-pointer">
-                        <option value="jarvis" class="bg-[#08080D]">Jarvis</option>
-                        <option value="ocean" class="bg-[#08080D]">Ocean</option>
-                        <option value="sunset" class="bg-[#08080D]">Sunset</option>
-                        <option value="forest" class="bg-[#08080D]">Forest</option>
-                        <option value="rose" class="bg-[#08080D]">Rose</option>
+                    <i class="bi bi-palette2 text-xs text-[#9191A8]"></i>
+                    <select id="themeSwitcher" style="color-scheme:dark;" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white outline-none cursor-pointer focus:border-[var(--primary)] transition">
+                        <option value="jarvis" style="background:#08080D;color:white;">Jarvis</option>
+                        <option value="ocean" style="background:#08080D;color:white;">Ocean</option>
+                        <option value="sunset" style="background:#08080D;color:white;">Sunset</option>
+                        <option value="forest" style="background:#08080D;color:white;">Forest</option>
+                        <option value="rose" style="background:#08080D;color:white;">Rose</option>
                     </select>
                 </div>
-
                 <div class="h-8 w-px bg-white/10 mx-2"></div>
-                <div class="jarvis-core"></div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[var(--secondary)]" style="animation: spin 8s linear infinite;"></div>
             </div>
         </header>
-
-        <!-- 内容区 -->
         <div class="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
             <div class="max-w-6xl mx-auto space-y-10 pt-4">
-                
-                <!-- Welcome Section -->
+                <!-- Welcome -->
                 <section>
                     <div class="flex justify-between items-end">
                         <div>
-                            <h1 class="text-4xl font-bold tracking-tight">Good Morning, {{ user.username|default:'Alex' }}.</h1>
-                            <p class="text-sm text-[#A0A0B8] mt-2 italic">Jarvis 建议：18:30 开始学习，今日精力高峰</p>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-morning hidden">Good Morning, {{ user.username|default:'Alex' }}.</h1>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-afternoon hidden">Good Afternoon, {{ user.username|default:'Alex' }}.</h1>
+                            <h1 class="text-4xl font-bold tracking-tight greeting-evening hidden">Good Evening, {{ user.username|default:'Alex' }}.</h1>
+                            {% if top_goal %}
+                            <p class="text-sm mt-2 italic" style="color: var(--accent);">Jarvis 建议：{{ ai_suggestion }}</p>
+                            {% endif %}
                         </div>
-                        <span class="text-xs font-mono text-[#808098]">{{ today|date:'M d, Y'|upper }}</span>
+                        <span class="text-xs font-mono" style="color: #5C5C72;">{{ today|date:'M d, Y'|upper }}</span>
                     </div>
                 </section>
-
-                <!-- KPI Grid -->
+                <!-- KPI -->
                 <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Today Focus</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Today Focus</p>
                         <p class="text-3xl font-bold mt-2">{{ focus_pct }}% <span class="text-[10px] text-emerald-400 ml-1 font-normal">▲ 5%</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Goal Health</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Goal Health</p>
                         <p class="text-3xl font-bold mt-2">{{ goal_health_normal }} <span class="text-sm font-normal text-emerald-400">正常</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">Memory Growth</p>
-                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] text-[#A0A0B8] ml-1 font-normal">条</span></p>
+                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Memory Growth</p>
+                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] ml-1 font-normal" style="color: #9191A8;">条</span></p>
                     </div>
                     <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A0A0B8]">AI Confidence</p>
+                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">AI Confidence</p>
                         <p class="text-3xl font-bold mt-2">{{ ai_confidence_pct }}%</p>
                     </div>
                 </section>
-
                 <!-- Main Grid -->
                 <section class="grid grid-cols-12 gap-8">
                     <!-- Today's Plan -->
                     <div class="col-span-12 lg:col-span-8 space-y-4">
                         <div class="flex justify-between items-center ml-2">
                             <h3 class="text-lg font-semibold">Today's Plan</h3>
-                            {% if today_plan_items %}
-                            <span class="text-xs text-[#A0A0B8]">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>
-                            {% endif %}
+                            {% if today_plan_items %}<span class="text-xs" style="color: #9191A8;">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>{% endif %}
                         </div>
                         <div class="glass-card rounded-[2.5rem] overflow-hidden">
                             {% if today_plan_items %}
-                                {% for item in today_plan_items %}
-                                <a href="{{ item.link }}"
-                                   class="p-8 flex items-center justify-between group {% if not forloop.last %}border-b border-white/5{% endif %} no-underline text-[inherit] transition hover:bg-white/[0.02] cursor-pointer">
-                                    <div class="flex items-center gap-6">
-                                        {% if item.done %}
-                                        <div class="w-12 h-12 rounded-2xl bg-[var(--primary)] flex items-center justify-center text-white shadow-lg">
-                                            <i class="bi bi-check-lg text-xl"></i>
-                                        </div>
-                                        {% else %}
-                                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
-                                        {% endif %}
-                                        <div>
-                                            <p class="font-bold {% if item.done %}line-through text-[#A0A0B8]{% else %}text-white{% endif %}">{{ item.title }}</p>
-                                            <p class="text-xs text-[#A0A0B8] mt-0.5">{{ item.desc }} &middot; {{ item.minutes }}min</p>
-                                        </div>
-                                    </div>
-                                    {% if not item.done %}
-                                    <i class="bi bi-chevron-right text-[#686880] group-hover:text-[var(--primary)] transition"></i>
+                            {% for item in today_plan_items %}
+                            <a href="{{ item.link }}" class="p-8 flex items-center justify-between group {% if not forloop.last %}border-b border-white/5{% endif %} no-underline text-[inherit] transition hover:bg-white/[0.02] cursor-pointer">
+                                <div class="flex items-center gap-6">
+                                    {% if item.done %}
+                                    <div class="w-12 h-12 rounded-2xl bg-[var(--primary)] flex items-center justify-center text-white shadow-lg"><i class="bi bi-check-lg text-xl"></i></div>
+                                    {% else %}
+                                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
                                     {% endif %}
-                                </a>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-10 text-[#A0A0B8]">
-                                    <div class="text-3xl mb-3 opacity-40">🤖</div>
-                                    <p class="text-sm">Jarvis 正在分析你的目标，稍后为你生成计划</p>
+                                    <div>
+                                        <p class="font-bold {% if item.done %}line-through text-white/40{% endif %}">{{ item.title }}</p>
+                                        <p class="text-xs mt-0.5" style="color: #9191A8;">{{ item.desc }} &middot; {{ item.minutes }}min</p>
+                                    </div>
                                 </div>
+                                {% if not item.done %}<i class="bi bi-chevron-right text-lg group-hover:translate-x-1 transition" style="color: var(--primary)"></i>{% endif %}
+                            </a>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center py-10" style="color: #9191A8;">
+                                <div class="text-3xl mb-3 opacity-40">🤖</div>
+                                <p class="text-sm">Jarvis 正在分析你的目标，稍后为你生成计划</p>
+                            </div>
                             {% endif %}
+                        </div>
                     </div>
-
                     <!-- Progress & Timeline -->
                     <div class="col-span-12 lg:col-span-4 space-y-8">
                         <div class="glass-card p-8 rounded-[2.5rem]">
@@ -286,10 +170,7 @@
                             <div class="space-y-6">
                                 {% for item in goal_progress_list %}
                                 <div>
-                                    <div class="flex justify-between text-xs mb-2">
-                                        <span class="text-[#A0A0B8]">{{ item.title }}</span>
-                                        <span class="text-white">{{ item.pct }}%</span>
-                                    </div>
+                                    <div class="flex justify-between text-xs mb-2"><span style="color: #9191A8;">{{ item.title }}</span><span>{{ item.pct }}%</span></div>
                                     <div class="h-1 w-full bg-white/5 rounded-full">
                                         <div class="h-full rounded-full transition-all duration-1000" style="width: {{ item.pct }}%; background: {% if item.pct < 30 %}var(--color-error){% else %}var(--primary){% endif %};"></div>
                                     </div>
@@ -297,24 +178,22 @@
                                 {% endfor %}
                             </div>
                             {% else %}
-                            <div class="text-center py-6 text-[#A0A0B8]">
-                                <div class="text-2xl mb-2 opacity-40">📊</div>
-                                <p class="text-xs">还没有目标进度数据</p>
-                            </div>
+                            <div class="text-center py-6" style="color: #9191A8;"><p class="text-xs">还没有目标进度数据</p></div>
                             {% endif %}
                         </div>
-
-                        <div class="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group"><div class="flex items-center justify-between mb-4">
+                        <div class="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
+                            <div class="absolute -right-10 -top-10 w-32 h-32 blur-3xl opacity-10 group-hover:opacity-20 transition" style="background: var(--accent);"></div>
+                            <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-sm font-semibold">Memory Timeline</h3>
-                                <a href="/memory/timeline/" class="text-[10px] text-[var(--accent)] hover:underline">查看全部 →</a>
+                                <a href="/memory/timeline/" class="text-[10px] hover:underline" style="color: var(--accent);">查看全部 →</a>
                             </div>
                             {% if memory_recent_items %}
                             <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
                                 {% for item in memory_recent_items %}
-                                <a href="/memory/timeline/" class="block relative no-underline text-[inherit] group/mem">
-                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-[var(--accent)]"></div>
+                                <a href="/memory/timeline/" class="block relative no-underline text-[inherit]">
+                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full" style="background: var(--accent);"></div>
                                     <p class="text-xs">{{ item.title }}</p>
-                                    <p class="text-[10px] text-[#A0A0B8] mt-px">{{ item.description|truncatechars:60 }}</p>
+                                    <p class="text-[10px] mt-px" style="color: #9191A8;">{{ item.description|truncatechars:60 }}</p>
                                 </a>
                                 {% endfor %}
                             </div>
@@ -322,8 +201,8 @@
                             <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
                                 <div class="relative">
                                     <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-white/10"></div>
-                                    <p class="text-xs text-[#A0A0B8]">还没有记忆轨迹</p>
-                                    <p class="text-[10px] text-[#808098]">开始学习后，Jarvis 会记录你的成长轨迹</p>
+                                    <p class="text-xs" style="color: #9191A8;">还没有记忆轨迹</p>
+                                    <p class="text-[10px]" style="color: #5C5C72;">开始学习后，Jarvis 会记录你的成长轨迹</p>
                                 </div>
                             </div>
                             {% endif %}
@@ -332,43 +211,28 @@
                 </section>
             </div>
         </div>
-    </main>
-
-    <!-- AI Surface 底部入口 -->
-    <div class="fixed bottom-8 right-8 z-50">
-        <div class="w-14 h-14 bg-[var(--primary)] rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(0,0,0,0.5)] cursor-pointer hover:scale-110 transition shadow-glow relative">
-            <div class="absolute inset-0 rounded-full bg-[var(--primary)] opacity-20 animate-ping"></div>
-            <i class="bi bi-stars text-xl"></i>
+        <!-- 悬浮球 -->
+        <div class="absolute bottom-8 right-8 z-50">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative" style="background: var(--primary);">
+                <div class="absolute inset-0 rounded-full animate-ping opacity-20" style="background: var(--primary);"></div>
+                <i class="bi bi-stars text-xl"></i>
+            </div>
         </div>
-    </div>
-
-    <!-- JS 逻辑 -->
+    </main>
     <script>
-        const switcher = document.getElementById("themeSwitcher");
-
-        // 主题切换监听
-        switcher.addEventListener("change", e => {
-            const theme = e.target.value;
-            document.documentElement.setAttribute("data-theme", theme);
-            localStorage.setItem("jarvis-theme", theme);
-        });
-
-        // 初始化加载已存主题
-        const saved = localStorage.getItem("jarvis-theme");
-        if (saved) {
-            document.documentElement.setAttribute("data-theme", saved);
-            switcher.value = saved;
+        const switcher = document.getElementById('themeSwitcher');
+        function applyTheme(t) {
+            document.documentElement.setAttribute('data-theme', t);
+            localStorage.setItem('jarvis-theme', t);
         }
-
-        // 简单的鼠标悬停互动背景
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 20;
-            const y = (e.clientY / window.innerHeight - 0.5) * 20;
-            document.body.style.setProperty('--mouse-x', `${x}px`);
-            document.body.style.setProperty('--mouse-y', `${y}px`);
-        });
-    </script>
-<script>
+        if (switcher) {
+            switcher.addEventListener('change', function(e) { applyTheme(e.target.value); });
+            window.addEventListener('DOMContentLoaded', function() {
+                var saved = localStorage.getItem('jarvis-theme') || 'jarvis';
+                applyTheme(saved);
+                switcher.value = saved;
+            });
+        }
         (function() {
             var hour = new Date().getHours();
             var el;

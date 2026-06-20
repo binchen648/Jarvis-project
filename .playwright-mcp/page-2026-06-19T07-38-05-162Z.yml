@@ -1,0 +1,113 @@
+- generic [ref=e1]:
+  - complementary [ref=e2]:
+    - heading "JARVIS" [level=1] [ref=e4]
+    - navigation [ref=e5]:
+      - link " Dashboard" [active] [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: 
+        - text: Dashboard
+      - link " Agent" [ref=e8] [cursor=pointer]:
+        - /url: /chat/
+        - generic [ref=e9]: 
+        - text: Agent
+      - link "Memory" [ref=e10] [cursor=pointer]:
+        - /url: /memory/timeline/
+        - text: Memory
+      - link "Goals" [ref=e11] [cursor=pointer]:
+        - /url: /goals/
+        - text: Goals
+      - link " Wellness" [ref=e12] [cursor=pointer]:
+        - /url: /wellness/suggestions/
+        - generic [ref=e13]: 
+        - text: Wellness
+    - navigation [ref=e15]:
+      - link " Content" [ref=e16] [cursor=pointer]:
+        - /url: /content/feed/
+        - generic [ref=e17]: 
+        - text: Content
+      - link " Trajectory" [ref=e18] [cursor=pointer]:
+        - /url: /trajectory/skills/
+        - generic [ref=e19]: 
+        - text: Trajectory
+    - navigation [ref=e21]:
+      - link " Settings" [ref=e22] [cursor=pointer]:
+        - /url: /profile/
+        - generic [ref=e23]: 
+        - text: Settings
+    - generic [ref=e26]: admin OS
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "JARVIS CORE" [level=2] [ref=e30]
+        - generic [ref=e31]:
+          - generic [ref=e32]: Active
+          - generic [ref=e34]: Memory 43
+          - generic [ref=e35]: Tools 12
+          - generic [ref=e36]: Confidence 87%
+      - generic [ref=e38]:
+        - generic [ref=e39]: 
+        - combobox [ref=e40] [cursor=pointer]:
+          - option "Jarvis" [selected]
+          - option "Ocean"
+          - option "Sunset"
+          - option "Forest"
+          - option "Rose"
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e47]:
+          - generic [ref=e49]: 
+          - paragraph [ref=e50]: 开始与 Jarvis 对话
+          - paragraph [ref=e51]:
+            - text: 输入任何问题，Jarvis 会运用工具与记忆
+            - text: 为你深度分析并生成回答
+          - generic [ref=e54]: System Online
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - button "Ask" [ref=e58] [cursor=pointer]
+            - button "Plan" [ref=e59] [cursor=pointer]
+            - button "Execute" [ref=e60] [cursor=pointer]
+          - generic [ref=e61]:
+            - generic [ref=e62]: deepseek-v3
+            - textbox "› 输入指令或询问 Jarvis..." [ref=e63]
+            - button "" [ref=e64] [cursor=pointer]:
+              - generic [ref=e65]: 
+      - complementary [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Agent State" [level=3] [ref=e68]
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]: Focus Goal
+              - generic [ref=e72]: LeetCode 92
+            - generic [ref=e73]:
+              - generic [ref=e74]: Active Memory
+              - generic [ref=e75]: ReAct Notes
+            - generic [ref=e76]:
+              - generic [ref=e77]: Current Tool
+              - generic [ref=e78]: search_memories
+            - generic [ref=e79]:
+              - generic [ref=e80]: Confidence
+              - generic [ref=e81]: 87%
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - heading "Agent Activity" [level=3] [ref=e84]
+            - generic [ref=e85]: 
+          - generic [ref=e86]:
+            - generic [ref=e91]:
+              - paragraph [ref=e92]: 用户询问学习计划
+              - paragraph [ref=e93]: 14:30
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: 调用 get_goal_progress
+              - paragraph [ref=e100]: 14:30
+            - generic [ref=e104]:
+              - paragraph [ref=e105]: 生成行动计划
+              - paragraph [ref=e106]: 14:31
+        - generic [ref=e107]:
+          - paragraph [ref=e108]: Recent Logs
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - generic [ref=e111]: ✓ get_memories
+              - generic [ref=e112]: 14:29
+            - generic [ref=e113]:
+              - generic [ref=e114]: ✓ update_state
+              - generic [ref=e115]: 14:28
+  - generic [ref=e119] [cursor=pointer]: 

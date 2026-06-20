@@ -1,0 +1,26 @@
+
+        const switcher = document.getElementById('themeSwitcher');
+        
+        // 1. 设置并应用主题的函数
+        function applyTheme(themeName) {
+            // 设置 HTML 根节点的 data-theme
+            document.documentElement.setAttribute('data-theme', themeName);
+            // 保存到本地存储，实现跨页面联动
+            localStorage.setItem('jarvis-theme', themeName);
+            console.log('主题切换成功:', themeName);
+        }
+
+        if (switcher) {
+            // 2. 监听下拉框变化
+            switcher.addEventListener('change', (e) => {
+                applyTheme(e.target.value);
+            });
+
+            // 3. 页面初始化加载逻辑
+            window.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('jarvis-theme') || 'jarvis';
+                applyTheme(savedTheme);
+                switcher.value = savedTheme; // 让下拉框显示正确的选项
+            });
+        }
+    
