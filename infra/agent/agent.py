@@ -251,6 +251,51 @@ class Agent:
             if ctx.get('skills'):
                 today_parts.append(f"学习中技能{len(ctx['skills'])}个")
             memory_context['today_context'] = '，'.join(today_parts) if today_parts else ''
+
+            # Enrich today_context with detailed info (goals, memories, interactions)
+            try:
+                from django.utils import timezone
+                today = timezone.localdate()
+                now = timezone.now()
+                detail_parts = []
+
+                # Active goals with progress
+                from apps.goals.models import Goal, GoalProgress
+                active_goals = Goal.objects.filter(user=self.user, status='active').order_by('-created_at')[:3]
+                if active_goals:
+                    goal_lines = []
+                    for g in active_goals:
+                        lp = GoalProgress.objects.filter(goal=g).order_by('-recorded_at').first()
+                        pct = int(lp.progress_percent) if lp else 0
+                        days = (g.deadline - today).days if g.deadline else None
+                        progress_str = f"{pct}%"
+                        if days is not None:
+                            progress_str += f"，还剩{days}天"
+                        goal_lines.append(f"{g.title} ({progress_str})")
+                    detail_parts.append("【目标进度】" + "；".join(goal_lines))
+
+                # Recent memory (last 24h)
+                from apps.memory.models import TrajectoryEvent
+                recent = TrajectoryEvent.objects.filter(
+                    user=self.user, happened_at__gte=now - timezone.timedelta(hours=24)
+                ).order_by('-happened_at')[:3]
+                if recent:
+                    event_lines = [f"{e.title[:30]}（{e.event_type}）" for e in recent]
+                    detail_parts.append("【今日记忆】" + "；".join(event_lines))
+
+                # Content interactions today
+                from apps.trajectory.models import UserContentInteraction
+                interactions_today = UserContentInteraction.objects.filter(
+                    user=self.user, created_at__gte=now - timezone.timedelta(hours=24)
+                ).count()
+                if interactions_today:
+                    detail_parts.append(f"【内容交互】{interactions_today}次")
+
+                detailed_context = "；".join(detail_parts)
+                if detailed_context:
+                    memory_context['today_context'] = detailed_context
+            except Exception as e:
+                logger.warning("Failed to enrich today_context: %s", e)
         except Exception:
             logger.warning("Failed to build memory context for agent")
 
