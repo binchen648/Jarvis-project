@@ -49,3 +49,5 @@ backups/
 *.sql
 *.sql.gz
 .tmp/
+
+.server.pid
