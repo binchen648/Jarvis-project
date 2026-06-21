@@ -38,6 +38,9 @@ class UserPersona(models.Model):
     # 画像元数据
     version = models.IntegerField(default=0, verbose_name='画像版本')
     last_built_at = models.DateTimeField(null=True, blank=True, verbose_name='最后构建时间')
+    last_signal_at = models.DateTimeField(
+        null=True, blank=True, verbose_name='最后信号时间'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -76,6 +79,7 @@ class MemoryEntry(models.Model):
         ('conversation', '对话记录'),
         ('insight', '学习洞察'),
         ('wellness', '身心健康'),
+        ('persona_history', '画像历史'),
     ]
 
     user = models.ForeignKey(

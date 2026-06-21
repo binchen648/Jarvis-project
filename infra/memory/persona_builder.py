@@ -24,51 +24,76 @@ def build_persona(user):
     """Build or update persona for a user. Returns UserPersona."""
     from infra.llm.models import UserPersona
 
-    # Collect raw signals
+    # ── Incremental check ──────────────────────────────────────────
+    try:
+        persona = UserPersona.objects.get(user=user)
+        if persona.last_signal_at is not None:
+            latest_signal = _get_last_signal_at(user)
+            if latest_signal is not None and latest_signal <= persona.last_signal_at:
+                logger.info("Skipping persona build for user %d — no new signals", user.pk)
+                return persona
+    except UserPersona.DoesNotExist:
+        pass
+
+    # ── Collect signals ────────────────────────────────────────────
     raw_signals = _collect_signals(user)
 
-    # Generate summary — try LLM first, rule-based fallback
+    # ── Generate summary ──────────────────────────────────────────
     try:
         from infra.llm.llm_service import summarize_to_persona
         summary = summarize_to_persona(raw_signals)
     except Exception:
         summary = _generate_summary(raw_signals)
-
-    # If LLM returned something empty or too short, fall back
     if not summary or len(summary) < 10:
         summary = _generate_summary(raw_signals)
 
-    # Check if persona already exists to determine version increment
+    # ── Save version history (before updating) ─────────────────────
     try:
-        existing = UserPersona.objects.get(user=user)
-        new_version = existing.version + 1
+        old = UserPersona.objects.get(user=user)
+        if old.persona_summary:
+            try:
+                from infra.memory.memory_service import store_memory
+                store_memory(
+                    user=user, level=3, memory_type='persona_history',
+                    content=old.persona_summary,
+                    metadata={
+                        'version': old.version,
+                        'snapshot_at': timezone.now().isoformat(),
+                        'interests': old.interests,
+                    },
+                    weight=1.0,
+                )
+            except Exception:
+                pass  # memory_service not available, skip history
+        new_version = old.version + 1
         created = False
     except UserPersona.DoesNotExist:
         new_version = 1
         created = True
 
-    # Update or create persona
+    # ── Get latest signal timestamp ────────────────────────────────
+    last_signal = _get_last_signal_at(user)
+
+    # ── Update or create persona ──────────────────────────────────
     persona, created = UserPersona.objects.update_or_create(
         user=user,
         defaults={
             'persona_summary': summary,
             'interests': raw_signals.get('interests', []),
             'version': new_version,
+            'last_signal_at': last_signal,
             'last_built_at': timezone.now(),
         }
     )
 
-    # 写入 MemoryService（Hermes-inspired 记忆积累）
+    # ── Store L1/L2 memories ──────────────────────────────────────
     try:
         from infra.memory.memory_service import store_memory
         # L1: Persona summary
         store_memory(
-            user=user,
-            level=1,
-            memory_type='persona_summary',
-            content=summary,
+            user=user, level=1, memory_type='persona_summary',
+            content=summary, weight=5.0,
             metadata={'version': new_version, 'source': 'persona_builder'},
-            weight=5.0,
         )
         # L2: Interests
         for interest in raw_signals.get('interests', []):
@@ -95,7 +120,6 @@ def build_persona(user):
                 weight=2.0,
             )
     except ImportError:
-        # memory_service 尚未就绪
         pass
     except Exception as e:
         logger.warning("Failed to store memories after persona build: %s", e)
@@ -218,6 +242,42 @@ def _generate_summary(signals):
         parts.append(f"当前目标: {'; '.join(signals['recent_goals'][:3])}")
 
     return "，".join(parts) if parts else "新用户，正在收集学习数据中。"
+
+
+def _get_last_signal_at(user):
+    """Get the latest signal timestamp across all data sources."""
+    from django.utils import timezone
+    latest = None
+
+    # GoalSession (date field — convert to datetime)
+    from apps.goals.models import GoalSession as GS
+    gs = GS.objects.filter(user=user).order_by('-date').first()
+    if gs:
+        ts = timezone.make_aware(timezone.datetime.combine(gs.date, timezone.datetime.min.time()))
+        if latest is None or ts > latest:
+            latest = ts
+
+    # WellnessRecord (record_date field — convert to datetime)
+    from apps.wellness.models import WellnessRecord as WR
+    wr = WR.objects.filter(user=user).order_by('-record_date').first()
+    if wr:
+        ts = timezone.make_aware(timezone.datetime.combine(wr.record_date, timezone.datetime.min.time()))
+        if latest is None or ts > latest:
+            latest = ts
+
+    # UserInterest
+    from apps.trajectory.models import UserInterest as UI
+    ui = UI.objects.filter(user=user).order_by('-last_updated').first()
+    if ui and (latest is None or ui.last_updated > latest):
+        latest = ui.last_updated
+
+    # Goal
+    from apps.goals.models import Goal as G
+    g = G.objects.filter(user=user).order_by('-updated_at').first()
+    if g and (latest is None or g.updated_at > latest):
+        latest = g.updated_at
+
+    return latest
 
 
 def get_persona_context(user):

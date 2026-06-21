@@ -57,7 +57,7 @@ app.conf.beat_schedule = {
     # Phase 4 — persona
     'build-all-personas': {
         'task': 'infra.llm.tasks.build_all_personas',
-        'schedule': crontab(hour=3, minute=0),  # daily 03:00
+        'schedule': crontab(hour='*/6'),  # every 6 hours
     },
     # Event bus — advance pending events
     'process_events': {
