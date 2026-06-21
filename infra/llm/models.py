@@ -109,3 +109,48 @@ class MemoryEntry(models.Model):
 
     def __str__(self):
         return f"{self.user}-L{self.level}/{self.memory_type}"
+
+
+class SurfaceEvent(models.Model):
+    """AI Surface event — unified model for all surface cards (Alert, Suggestion, Reminder, Briefing, Summary)."""
+    TYPE_CHOICES = [
+        ('alert', 'Goal Alert'),
+        ('suggestion', 'Smart Suggestion'),
+        ('reminder', 'Memory Reminder'),
+        ('briefing', 'Morning Briefing'),
+        ('summary', 'Evening Summary'),
+    ]
+    PRIORITY_CHOICES = [
+        (1, 'P1 - Alert'),
+        (2, 'P2 - Suggestion'),
+        (3, 'P3 - Reminder'),
+        (4, 'P4 - Briefing'),
+        (5, 'P5 - Summary'),
+    ]
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('shown', 'Shown'),
+        ('dismissed', 'Dismissed'),
+        ('expired', 'Expired'),
+    ]
+
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='surface_events')
+    event_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=5)
+    title = models.CharField(max_length=200)
+    body = models.TextField(blank=True)
+    action_url = models.CharField(max_length=500, blank=True)
+    payload = models.JSONField(default=dict, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'llm_surface_event'
+        ordering = ['priority', '-created_at']
+        indexes = [
+            models.Index(fields=['user', 'status']),
+            models.Index(fields=['user', 'event_type']),
+        ]
+
+    def __str__(self):
+        return f"[{self.get_event_type_display()}] {self.title[:40]}"

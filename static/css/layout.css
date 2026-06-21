@@ -54,3 +54,73 @@ label { display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-s
 .jarvis-core .core-stat { font-variant-numeric: tabular-nums; }
 .jarvis-orb { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .jarvis-orb:hover { transform: scale(1.15) !important; filter: brightness(1.2); }
+
+/* ── Pulse Orb — 7-state machine ── */
+.jarvis-orb[data-state="idle"] {
+  background: var(--primary) !important;
+  animation: pulse-breath 4s ease-in-out infinite;
+}
+.jarvis-orb[data-state="thinking"] {
+  background: #8B5CF6 !important;
+  animation: pulse-fast 1s ease-in-out infinite;
+}
+.jarvis-orb[data-state="alert"] {
+  background: #EF4444 !important;
+  animation: pulse-alert 0.8s ease-in-out infinite;
+}
+.jarvis-orb[data-state="reminder"] {
+  background: #06B6D4 !important;
+  animation: pulse-breath 3s ease-in-out infinite;
+}
+.jarvis-orb[data-state="summary"] {
+  background: #F59E0B !important;
+  animation: pulse-breath 4s ease-in-out infinite;
+}
+.jarvis-orb[data-state="error"] {
+  background: #F97316 !important;
+  animation: pulse-fast 0.5s ease-in-out infinite;
+}
+.jarvis-orb[data-state="executing"] {
+  background: #F59E0B !important;
+  animation: pulse-executing 0.6s ease-in-out infinite;
+}
+
+@keyframes pulse-breath {
+  0%, 100% { box-shadow: 0 0 8px var(--primary); transform: scale(1); }
+  50% { box-shadow: 0 0 24px var(--primary); transform: scale(1.05); }
+}
+@keyframes pulse-fast {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+@keyframes pulse-alert {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 12px #EF4444; }
+  50% { transform: scale(1.15); box-shadow: 0 0 32px #EF4444; }
+}
+@keyframes pulse-executing {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 6px #F59E0B; }
+  50% { transform: scale(1.2); box-shadow: 0 0 30px #F59E0B; }
+}
+
+/* ── AI Surface Overlay ── */
+#ai-surface-overlay {
+  animation: surfaceSlideUp 0.25s ease-out;
+}
+@keyframes surfaceSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.surface-card {
+  background: rgba(8,8,13,0.94);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  width: 340px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.surface-card:hover {
+  border-color: rgba(255,255,255,0.15);
+  transform: translateX(-4px);
+}

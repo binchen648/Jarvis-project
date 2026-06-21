@@ -50,11 +50,11 @@
 <div class="w-px h-3.5 bg-white/10 mx-1.5"></div>
 <span class="text-[10px] text-emerald-400/90 font-medium">Active</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] font-mono" style="color:var(--primary);">c87%</span>
+<span class="text-[10px] font-mono core-confidence" style="color:var(--primary);">c87%</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] text-[#808098] font-mono">m43</span>
+<span class="text-[10px] text-[#808098] font-mono core-memory">m43</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] text-[#808098] font-mono">t12</span>
+<span class="text-[10px] text-[#808098] font-mono core-goals">t12</span>
 </div>
 {% block topbar_left %}{% endblock %}</div>
 <div class="flex items-center gap-6">
@@ -62,7 +62,11 @@
 {% block topbar_right %}{% endblock %}</div></header>
 <div class="layout-content no-scrollbar"><div class="{% block content_class %}layout-full{% endblock %}">{% block content %}{% endblock %}</div></div></div></div>
 <div class="absolute bottom-8 right-8 z-50">
-<div class="jarvis-orb w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative group" style="background:var(--primary)">
+<!-- AI Surface Overlay — positioned above FAB -->
+<div id="ai-surface-overlay" class="fixed bottom-28 right-8 z-50 hidden space-y-2" style="max-width: 360px;">
+  <div id="surface-card-container"></div>
+</div>
+<div class="jarvis-orb w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative group" data-state="idle" style="background:var(--primary)">
 <div class="absolute inset-0 rounded-full animate-ping opacity-20" style="background:var(--primary)"></div>
 <div class="absolute -inset-3 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500" style="background:radial-gradient(circle,var(--primary),transparent 70%);"></div>
 <i class="bi bi-stars text-xl relative z-10"></i>
@@ -73,6 +77,175 @@
 var switcher=document.getElementById("themeSwitcher");
 function applyTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem("jarvis-theme",t)}
 if(switcher){switcher.addEventListener("change",function(e){applyTheme(e.target.value)});window.addEventListener("DOMContentLoaded",function(){var saved=localStorage.getItem("jarvis-theme")||"jarvis";applyTheme(saved);switcher.value=saved})}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   AI Surface — polling, rendering, auto-show, dismiss
+   ══════════════════════════════════════════════════════════════════════════ */
+
+var DISMISS_KEY = 'jarvis_surface_dismissed';  // localStorage key
+var DISMISS_TTL = 5 * 60 * 1000;              // 5 minutes in ms
+var POLL_INTERVAL = 30000;                     // 30 seconds
+
+/* ── Helpers ──────────────────────────────────────────────────────────── */
+
+function isDismissedRecently(surfaceType) {
+  try {
+    var data = JSON.parse(localStorage.getItem(DISMISS_KEY) || '{}');
+    var ts = data[surfaceType];
+    return ts && (Date.now() - ts) < DISMISS_TTL;
+  } catch(e) { return false; }
+}
+
+function markDismissed(surfaceType) {
+  try {
+    var data = JSON.parse(localStorage.getItem(DISMISS_KEY) || '{}');
+    data[surfaceType] = Date.now();
+    localStorage.setItem(DISMISS_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+/* ── Surface Card Rendering ───────────────────────────────────────────── */
+
+function renderSurfaceCard(surface) {
+  var iconMap = {
+    alert: 'bi-exclamation-triangle',
+    suggestion: 'bi-lightbulb',
+    reminder: 'bi-bell',
+    briefing: 'bi-sun',
+    summary: 'bi-moon-stars'
+  };
+  var colorMap = {
+    alert: '#EF4444',
+    suggestion: '#8B5CF6',
+    reminder: '#06B6D4',
+    briefing: '#22C55E',
+    summary: '#F59E0B'
+  };
+  var icon = iconMap[surface.type] || 'bi-stars';
+  var color = colorMap[surface.type] || 'var(--primary)';
+
+  return '<div class="surface-card" data-type="' + surface.type + '" data-surface-id="' + surface.id + '" style="border-left: 3px solid ' + color + ';">' +
+    '<div class="flex items-start justify-between">' +
+    '<div class="flex items-center gap-2"><i class="bi ' + icon + '" style="color:' + color + ';"></i><span class="text-xs font-bold text-white">' + surface.title + '</span></div>' +
+    '<button onclick="dismissSurface(this)" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>' +
+    '</div>' +
+    (surface.body ? '<p class="text-[11px] text-[#A0A0B8] mt-1">' + surface.body + '</p>' : '') +
+    '</div>';
+}
+
+/* ── Show / Hide Overlay ──────────────────────────────────────────────── */
+
+function showSurfaceOverlay(surface) {
+  var overlay = document.getElementById('ai-surface-overlay');
+  var container = document.getElementById('surface-card-container');
+  if (!overlay || !container) return;
+
+  // Don't re-show if already dismissed recently for this type
+  if (isDismissedRecently(surface.type)) return;
+
+  container.innerHTML = renderSurfaceCard(surface);
+  overlay.classList.remove('hidden');
+
+  // Mark as shown (so next poll doesn't re-trigger immediately)
+  // but DON'T mark as dismissed — only the X button does that
+}
+
+function hideSurfaceOverlay() {
+  var overlay = document.getElementById('ai-surface-overlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+/* ── Dismiss ──────────────────────────────────────────────────────────── */
+
+function dismissSurface(btn) {
+  var card = btn.closest('.surface-card');
+  if (!card) return;
+
+  var surfaceId = card.getAttribute('data-surface-id');
+  var surfaceType = card.getAttribute('data-type');
+
+  // POST to dismiss endpoint
+  fetch('/api/surface/' + surfaceId + '/dismiss/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  }).catch(function() {});
+
+  // Store in localStorage to prevent re-show within 5 min
+  markDismissed(surfaceType);
+
+  // Remove card with animation
+  card.style.transition = 'opacity 0.2s, transform 0.2s';
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(20px)';
+  setTimeout(function() {
+    card.remove();
+    // Hide overlay if empty
+    var container = document.getElementById('surface-card-container');
+    if (container && !container.children.length) {
+      hideSurfaceOverlay();
+    }
+  }, 200);
+}
+
+/* ── Core Status Polling ──────────────────────────────────────────────── */
+
+var _lastSurfaceId = null;  // track to avoid re-showing same surface
+
+function updateCoreStatus(data) {
+  // Update confidence
+  var confEl = document.querySelector('.jarvis-core .core-confidence');
+  if (confEl) confEl.textContent = 'c' + Math.round(data.confidence * 100) + '%';
+
+  // Update memory count
+  var memEl = document.querySelector('.jarvis-core .core-memory');
+  if (memEl) memEl.textContent = 'm' + data.memory_count;
+
+  // Update active goals
+  var goalEl = document.querySelector('.jarvis-core .core-goals');
+  if (goalEl) goalEl.textContent = 't' + data.active_goals;
+
+  // Update active tool
+  var toolEl = document.querySelector('.jarvis-core .core-tool');
+  if (toolEl) {
+    toolEl.textContent = data.active_tool || '';
+    toolEl.style.display = data.active_tool ? '' : 'none';
+  }
+
+  // Update orb state
+  var orb = document.querySelector('.jarvis-orb');
+  if (orb) {
+    orb.setAttribute('data-state', data.state || 'idle');
+  }
+
+  // Auto-show surface if available and not dismissed
+  if (data.next_surface) {
+    var surf = data.next_surface;
+    // Only auto-show if it's a new surface or different type
+    if (surf.id !== _lastSurfaceId && !isDismissedRecently(surf.type)) {
+      _lastSurfaceId = surf.id;
+      showSurfaceOverlay(surf);
+    }
+  }
+}
+
+function pollCoreStatus() {
+  fetch('/api/core-status/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) { updateCoreStatus(data); })
+  .catch(function() {});
+}
+
+/* ── Init: immediate fetch on login + interval polling ────────────────── */
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Immediate fetch on page load (auto-show briefing on login)
+  pollCoreStatus();
+
+  // Then poll every 30 seconds
+  setInterval(pollCoreStatus, POLL_INTERVAL);
+});
 </script>
 {% block extra_js %}{% endblock %}
 </body></html>

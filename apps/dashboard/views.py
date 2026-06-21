@@ -78,8 +78,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # ── Health Streak Days ──────────────────────────────────────────
         record_dates = set(
             WellnessRecord.objects.filter(
-                user=user, record_date__lte=today
-            ).values_list("record_date", flat=True)
+                user=user,
+                record_date__gte=today - timedelta(days=365),
+                record_date__lte=today,
+            ).values_list("record_date", flat=True)[:366]
         )
         streak = 0
         check_date = today
@@ -240,3 +242,120 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             ctx["memory_recent_items"] = []
 
         return ctx
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+@login_required
+def dismiss_surface(request, surface_id):
+    """API: POST /api/surface/<id>/dismiss/ — mark a SurfaceEvent as dismissed."""
+    from infra.llm.models import SurfaceEvent
+
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        event = SurfaceEvent.objects.get(id=surface_id, user=request.user)
+    except SurfaceEvent.DoesNotExist:
+        return JsonResponse({"error": "Surface not found"}, status=404)
+
+    event.status = "dismissed"
+    event.save(update_fields=["status"])
+
+    return JsonResponse({"ok": True, "dismissed_id": surface_id})
+
+
+@login_required
+def core_status(request):
+    """API: 返回核心状态数据 (pulse orb state machine)."""
+    try:
+        import re
+
+        from apps.goals.models import Goal
+        from apps.trajectory.models import TrajectoryEvent
+        from apps.chat.models import Message
+        from infra.llm.models import SurfaceEvent
+        from django.utils.timesince import timesince
+
+        user = request.user
+
+        active_goals = Goal.objects.filter(user=user, status="active").count()
+        memory_count = TrajectoryEvent.objects.filter(user=user).count()
+
+        # Confidence: int (0-99) → float (0.0-1.0)
+        raw_confidence = min(50 + active_goals * 5 + memory_count * 3, 99)
+        confidence = raw_confidence / 100.0
+
+        # Active tool: most recent tool name from last 10 assistant messages
+        active_tool = ""
+        tool_pattern = re.compile(
+            r'(?:使用工具|tool_call|调用)\s*[:：]?\s*(\w+)', re.IGNORECASE
+        )
+        recent_msgs = Message.objects.filter(
+            conversation__user=user, role="assistant"
+        ).order_by("-created_at")[:10]
+        for msg in recent_msgs:
+            match = tool_pattern.search(msg.content)
+            if match:
+                active_tool = match.group(1)
+                break
+
+        # Surface count: pending SurfaceEvents
+        surface_count = SurfaceEvent.objects.filter(user=user, status="pending").count()
+
+        # Last activity: most recent TrajectoryEvent.happened_at
+        last_traj = TrajectoryEvent.objects.filter(user=user).order_by("-happened_at").first()
+        if last_traj:
+            last_activity = timesince(last_traj.happened_at).split(",")[0] + " ago"
+        else:
+            last_activity = ""
+
+        # Next surface: highest-priority pending SurfaceEvent
+        next_surface_obj = SurfaceEvent.objects.filter(
+            user=user, status="pending"
+        ).order_by("priority", "-created_at").first()
+        if next_surface_obj:
+            next_surface = {
+                "id": next_surface_obj.id,
+                "type": next_surface_obj.event_type,
+                "priority": next_surface_obj.priority,
+                "title": next_surface_obj.title,
+                "body": next_surface_obj.body,
+            }
+        else:
+            next_surface = None
+
+        # ── Orb state priority ─────────────────────────────────────────────────
+        state = "idle"
+        if next_surface and next_surface["priority"] <= 2:
+            state = "alert"
+        elif active_tool:
+            state = "executing"
+
+        return JsonResponse({
+            "state": state,
+            "confidence": confidence,
+            "memory_count": memory_count,
+            "active_tool": active_tool,
+            "active_goals": active_goals,
+            "surface_count": surface_count,
+            "last_activity": last_activity,
+            "next_surface": next_surface,
+        })
+    except Exception as e:
+        logger.exception("core_status failed: %s", e)
+        return JsonResponse({
+            "state": "error",
+            "confidence": 0.0,
+            "memory_count": 0,
+            "active_tool": "",
+            "active_goals": 0,
+            "surface_count": 0,
+            "last_activity": "",
+            "next_surface": None,
+        })
