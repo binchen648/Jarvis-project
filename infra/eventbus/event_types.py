@@ -11,3 +11,6 @@ PATH_NODE_COMPLETED = 'path_node.completed'
 
 # Chat
 CHAT_MESSAGE_SENT = 'chat.message_sent'
+
+# Memory / Trajectory
+MEMORY_CREATED = 'memory.created'

@@ -7,6 +7,7 @@ from .event_types import (
     GOAL_CREATED,
     GOAL_SESSION_CREATED,
     GOAL_STATUS_CHANGED,
+    MEMORY_CREATED,
     WELLNESS_RECORDED,
     PATH_NODE_COMPLETED,
 )
@@ -72,6 +73,7 @@ def emit_goal_event(sender, instance, created, **kwargs):
     # Always emit status event with current status; consumers deduplicate if needed
     emit_event(GOAL_STATUS_CHANGED, user=instance.user, payload={
         'goal_id': instance.pk,
+        'title': instance.title,
         'status': instance.status,
     })
 
@@ -93,3 +95,19 @@ def emit_chat_message(sender, instance, created, **kwargs):
         'content_preview': instance.content[:200],
         'tokens_used': instance.tokens_used,
     })
+
+
+@receiver(post_save, sender='trajectory.TrajectoryEvent')
+def emit_memory_created(sender, instance, created, **kwargs):
+    """Auto-emit MEMORY_CREATED event when a TrajectoryEvent is created."""
+    if not created:
+        return
+    emit_event(
+        event_type=MEMORY_CREATED,
+        user=instance.user,
+        payload={
+            'trajectory_event_id': instance.pk,
+            'event_type': instance.event_type,
+            'title': instance.title,
+        },
+    )

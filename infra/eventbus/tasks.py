@@ -23,8 +23,8 @@ def process_pending_events(self):
             event.status = 'processing'
             event.save(update_fields=['status'])
 
-            # TODO: 根据 event_type 派发到具体处理器
-            # 后续可在此添加 event_type → handler 映射
+            from .consumers import dispatch
+            dispatch(event)
 
             event.status = 'completed'
             event.processed_at = timezone.now()
