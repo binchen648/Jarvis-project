@@ -171,6 +171,8 @@
     });
 
     // ── Graph Initialization ──
+    var _graphListenersAttached = false;
+
     function initGraph() {
         if (cy) { cy.resize(); cy.fit(); return; }
 
@@ -363,33 +365,26 @@
                     }
                 });
 
-                // Reset zoom
-                document.getElementById('graph-reset').addEventListener('click', () => {
-                    cy.fit(60);
-                    cy.center();
-                });
+                // Reset zoom — attach listener once
+                if (!_graphListenersAttached) {
+                    _graphListenersAttached = true;
+                    document.getElementById('graph-reset').addEventListener('click', () => {
+                        if (!cy) return;
+                        cy.fit(60);
+                        cy.center();
+                    });
+                    document.getElementById('graph-reset-layout').addEventListener('click', function() {
+                        if (!cy) return;
+                        try { localStorage.removeItem(POS_KEY); } catch(e) {}
+                        cy.layout({
+                            name: 'cose', animate: true, animationDuration: 500,
+                            fit: true, padding: 60,
+                        }).run();
+                    });
+                }
 
                 // Drag → save positions to localStorage
                 cy.on('dragfree', 'node', function(evt) {
-                    var positions = {};
-                    cy.nodes().forEach(function(n) {
-                        positions[n.id()] = { x: n.position('x'), y: n.position('y') };
-                    });
-                    try {
-                        localStorage.setItem(POS_KEY, JSON.stringify(positions));
-                    } catch(e) {}
-                });
-
-                // Reset layout → clear saved positions + re-run cose
-                document.getElementById('graph-reset-layout').addEventListener('click', function() {
-                    try { localStorage.removeItem(POS_KEY); } catch(e) {}
-                    cy.layout({
-                        name: 'cose',
-                        animate: true,
-                        animationDuration: 500,
-                        fit: true,
-                        padding: 60,
-                    }).run();
                 });
             })
             .catch(err => {
