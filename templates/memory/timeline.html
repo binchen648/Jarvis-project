@@ -149,6 +149,14 @@
 
     function switchView(view) {
         toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+        
+        // Destroy Cytoscape instance when leaving graph view (stops all event capture)
+        if (view !== 'graph' && cy) {
+            cy.destroy();
+            cy = null;
+            document.getElementById('cy').innerHTML = '';
+        }
+        
         timelineView.classList.toggle('hidden', view !== 'timeline');
         graphView.classList.toggle('hidden', view !== 'graph');
 
@@ -282,13 +290,13 @@
                     layout: {
                         name: 'cose',
                         animate: true,
-                        animationDuration: 800,
+                        animationDuration: 500,
                         refresh: 1,
                         fit: true,
                         padding: 60,
-                        nodeRepulsion: () => 8000,
-                        idealEdgeLength: () => 120,
-                        edgeElasticity: () => 100,
+                        nodeRepulsion: function() { return 8000; },
+                        idealEdgeLength: function() { return 120; },
+                        edgeElasticity: function() { return 100; },
                         nestingFactor: 0.1,
                         gravity: 0.25,
                         numIter: 1000,
@@ -375,10 +383,11 @@
 .view-toggle-btn:not(.active):hover { background: rgba(255,255,255,0.05); color: #A0A0B8; }
 
 /* Graph container fix */
-#cy { position: absolute; top: 0; left: 0; }
+#cy { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
 #memory-graph-view { z-index: 5; }
 #memory-timeline-view { z-index: 1; transition: opacity 0.25s ease; }
 #memory-timeline-view.hidden { display: none; }
-#memory-graph-view.hidden { display: none; }
+#memory-graph-view.hidden { display: none; pointer-events: none; }
+#memory-graph-view:not(.hidden) { pointer-events: auto; }
 </style>
 {% endblock %}
