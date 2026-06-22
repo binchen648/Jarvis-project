@@ -1,0 +1,439 @@
+{% comment %}
+  Jarvis OS — Reusable Right-Click Context Menu Component
+  
+  Usage:
+    Add data-context-menu='{"type":"goal","id":1,"selection":[]}' to any element.
+    The menu will automatically:
+    1. Listen for right-click events
+    2. Fetch available actions from /api/actions/?type=X
+    3. Display grouped actions (ask/save/connect/copy)
+    4. Execute actions via POST /api/actions/execute
+{% endcomment %}
+
+<style>
+  /* ════════════════════════════════════════════════════════════════════════
+     Context Menu — Glass Card
+     ════════════════════════════════════════════════════════════════════════ */
+  .jarvis-context-menu {
+    position: fixed;
+    z-index: 9999;
+    min-width: 180px;
+    max-width: 240px;
+    padding: 6px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.92), rgba(12, 12, 18, 0.95));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 8px 32px rgba(0, 0, 0, 0.5),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+    pointer-events: none;
+    transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  .jarvis-context-menu.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+  }
+
+  /* ── Group Label ────────────────────────────────────────────────────── */
+  .ctx-group-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px 4px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    user-select: none;
+  }
+
+  .ctx-group-label i {
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* ── Action Item ────────────────────────────────────────────────────── */
+  .ctx-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    user-select: none;
+  }
+
+  .ctx-action:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+  }
+
+  .ctx-action:active {
+    background: rgba(255, 255, 255, 0.08);
+    transform: scale(0.98);
+  }
+
+  .ctx-action i {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 0.12s ease;
+  }
+
+  .ctx-action:hover i {
+    opacity: 1;
+  }
+
+  /* ── Divider ────────────────────────────────────────────────────────── */
+  .ctx-divider {
+    height: 1px;
+    margin: 4px 8px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ── Loading State ──────────────────────────────────────────────────── */
+  .ctx-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .ctx-spinner {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: ctx-spin 0.6s linear infinite;
+  }
+
+  @keyframes ctx-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Toast ──────────────────────────────────────────────────────────── */
+  .jarvis-context-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 10000;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.95), rgba(12, 12, 18, 0.98));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .jarvis-context-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Reduced Motion ─────────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .jarvis-context-menu,
+    .jarvis-context-toast {
+      transition: none !important;
+    }
+    .jarvis-context-menu {
+      transform: none !important;
+    }
+    .jarvis-context-menu.visible {
+      transform: none !important;
+    }
+    .ctx-spinner {
+      animation: none !important;
+    }
+  }
+</style>
+
+<!-- Context Menu Container -->
+<div id="jarvis-ctx-menu" class="jarvis-context-menu" role="menu" aria-label="Context menu"></div>
+
+<!-- Toast Container -->
+<div id="jarvis-ctx-toast" class="jarvis-context-toast" role="status" aria-live="polite"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Constants
+     ════════════════════════════════════════════════════════════════════════ */
+  var MENU_ID = 'jarvis-ctx-menu';
+  var TOAST_ID = 'jarvis-ctx-toast';
+  var ACTION_ICONS = {
+    // Ask group
+    'ask_jarvis': 'bi-chat-dots',
+    'ask_summary': 'bi-card-text',
+    'ask_analyze': 'bi-search',
+    'ask_suggest': 'bi-lightbulb',
+    // Save group
+    'save_bookmark': 'bi-bookmark-plus',
+    'save_pin': 'bi-pin-angle',
+    'save_archive': 'bi-archive',
+    // Connect group
+    'connect_link': 'bi-link-45deg',
+    'connect_tag': 'bi-tags',
+    'connect_share': 'bi-share',
+    // Copy group
+    'copy_title': 'bi-type',
+    'copy_id': 'bi-hash',
+    'copy_link': 'bi-box-arrow-up-right',
+    'copy_json': 'bi-braces'
+  };
+  var SECTION_META = {
+    'ask':    { icon: 'bi-stars',     label: '🧠 Ask Jarvis' },
+    'save':   { icon: 'bi-bookmark',  label: '📌 Save' },
+    'connect':{ icon: 'bi-link-45deg', label: '🔗 Connect' },
+    'copy':   { icon: 'bi-clipboard', label: '📋 Copy' }
+  };
+
+  /* ════════════════════════════════════════════════════════════════════════
+     State
+     ════════════════════════════════════════════════════════════════════════ */
+  var menu = document.getElementById(MENU_ID);
+  var toast = document.getElementById(TOAST_ID);
+  var currentSource = null;
+  var isLoading = false;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Toast
+     ════════════════════════════════════════════════════════════════════════ */
+  var _toastTimer = null;
+  function showToast(message) {
+    if (_toastTimer) clearTimeout(_toastTimer);
+    toast.textContent = message;
+    toast.classList.add('show');
+    _toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Position Menu
+     ════════════════════════════════════════════════════════════════════════ */
+  function positionMenu(x, y) {
+    menu.style.left = '0px';
+    menu.style.top = '0px';
+    var rect = menu.getBoundingClientRect();
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var left = x;
+    var top = y;
+    if (x + rect.width > vw - 12) left = vw - rect.width - 12;
+    if (y + rect.height > vh - 12) top = vh - rect.height - 12;
+    if (left < 12) left = 12;
+    if (top < 12) top = 12;
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Show / Hide
+     ════════════════════════════════════════════════════════════════════════ */
+  function showMenu(x, y, source) {
+    currentSource = source;
+    menu.innerHTML = '<div class="ctx-loading"><div class="ctx-spinner"></div><span>Loading…</span></div>';
+    positionMenu(x, y);
+    menu.classList.add('visible');
+    fetchActions(source.type);
+  }
+
+  function hideMenu() {
+    menu.classList.remove('visible');
+    currentSource = null;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Fetch Actions
+     ════════════════════════════════════════════════════════════════════════ */
+  function fetchActions(type) {
+    fetch('/api/actions/?type=' + encodeURIComponent(type), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      renderActions(data.actions || data);
+    })
+    .catch(function() {
+      menu.innerHTML = '<div class="ctx-loading" style="color:var(--danger);">Failed to load actions</div>';
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Render Actions (grouped)
+     ════════════════════════════════════════════════════════════════════════ */
+  function renderActions(actions) {
+    if (!actions || !actions.length) {
+      menu.innerHTML = '<div class="ctx-loading">No actions available</div>';
+      return;
+    }
+
+    // Group by section
+    var groups = {};
+    var order = ['ask', 'save', 'connect', 'copy'];
+    actions.forEach(function(action) {
+      var section = action.section || 'ask';
+      if (!groups[section]) groups[section] = [];
+      groups[section].push(action);
+    });
+
+    var html = '';
+    order.forEach(function(section) {
+      if (!groups[section] || !groups[section].length) return;
+      var meta = SECTION_META[section] || { icon: 'bi-circle', label: section };
+
+      // Divider before group (except first)
+      if (html) html += '<div class="ctx-divider"></div>';
+
+      // Group label
+      html += '<div class="ctx-group-label"><i class="bi ' + meta.icon + '"></i>' + meta.label + '</div>';
+
+      // Action items
+      groups[section].forEach(function(action) {
+        var icon = ACTION_ICONS[action.action] || action.icon || 'bi-circle';
+        html += '<div class="ctx-action" role="menuitem" data-action="' + action.action + '">';
+        html += '<i class="bi ' + icon + '"></i>';
+        html += '<span>' + (action.label || action.action) + '</span>';
+        html += '</div>';
+      });
+    });
+
+    menu.innerHTML = html;
+
+    // Bind clicks
+    var items = menu.querySelectorAll('.ctx-action');
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener('click', function() {
+        executeAction(this.getAttribute('data-action'));
+      });
+    }
+
+    // Re-position after content loads
+    var rect = menu.getBoundingClientRect();
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    if (rect.right > vw - 12) {
+      menu.style.left = (vw - rect.width - 12) + 'px';
+    }
+    if (rect.bottom > vh - 12) {
+      menu.style.top = (vh - rect.height - 12) + 'px';
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Execute Action
+     ════════════════════════════════════════════════════════════════════════ */
+  function executeAction(action) {
+    if (isLoading || !currentSource) return;
+    isLoading = true;
+
+    // Visual feedback
+    var items = menu.querySelectorAll('.ctx-action');
+    for (var i = 0; i < items.length; i++) {
+      items[i].style.pointerEvents = 'none';
+      items[i].style.opacity = '0.4';
+    }
+
+    fetch('/api/actions/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        action: action,
+        source: currentSource
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      isLoading = false;
+      hideMenu();
+
+      if (data.redirect) {
+        window.location.href = data.redirect;
+      } else if (data.message) {
+        showToast(data.message);
+      } else {
+        showToast('Action completed');
+      }
+    })
+    .catch(function() {
+      isLoading = false;
+      hideMenu();
+      showToast('Action failed');
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     Event Listeners
+     ════════════════════════════════════════════════════════════════════════ */
+
+  // Right-click on [data-context-menu] elements
+  document.addEventListener('contextmenu', function(e) {
+    var target = e.target.closest('[data-context-menu]');
+    if (!target) return;
+
+    e.preventDefault();
+    var data;
+    try {
+      data = JSON.parse(target.getAttribute('data-context-menu'));
+    } catch(err) {
+      return;
+    }
+
+    showMenu(e.clientX, e.clientY, data);
+  });
+
+  // Click outside closes menu
+  document.addEventListener('click', function(e) {
+    if (menu.classList.contains('visible') && !menu.contains(e.target)) {
+      hideMenu();
+    }
+  });
+
+  // Escape closes menu
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && menu.classList.contains('visible')) {
+      hideMenu();
+    }
+  });
+
+  // Prevent native context menu on [data-context-menu] elements
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('[data-context-menu]')) {
+      e.preventDefault();
+    }
+  }, true);
+
+})();
+</script>

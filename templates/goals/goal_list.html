@@ -13,7 +13,7 @@
                 {% if goal_data %}
                 {% for item in goal_data %}
                 {% with goal=item.goal %}
-                <a href="/goals/{{ goal.pk }}/" class="glass-card p-6 rounded-[2.5rem] group cursor-pointer no-underline text-[inherit] block"{% if goal.status == 'active' %} style="border-top: 2px solid var(--primary)"{% endif %}>
+                <a href="/goals/{{ goal.pk }}/" class="glass-card p-6 rounded-[2.5rem] group cursor-pointer no-underline text-[inherit] block" data-context-menu='{"type":"goal","id":{{ goal.pk }},"selection":[]}'{% if goal.status == 'active' %} style="border-top: 2px solid var(--primary)"{% endif %}>
                     <div class="flex justify-between items-start mb-4">
                         <div class="w-10 h-10 rounded-2xl flex items-center justify-center {% if goal.status == 'active' %}bg-[var(--primary)]/10 text-[var(--primary)]{% elif goal.status == 'completed' %}bg-[#22C55E]/10 text-[#22C55E]{% else %}bg-white/5 text-[#5C5C72]{% endif %}">
                             <i class="bi {% if goal.goal_type == 'reading' %}bi-book{% elif goal.goal_type == 'coding' %}bi-code-slash{% elif goal.goal_type == 'project' %}bi-diagram-3{% elif goal.goal_type == 'study' %}bi-mortarboard{% else %}bi-target{% endif %} text-xl"></i>
