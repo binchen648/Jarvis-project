@@ -16,6 +16,7 @@
 {% block extra_css %}{% endblock %}
 </head>
 <body class="flex h-screen">
+<div id="aurora-container"></div>
 <div class="layout-shell">
 {% block sidebar %}
 <aside class="layout-sidebar">
@@ -50,11 +51,13 @@
 <div class="w-px h-3.5 bg-white/10 mx-1.5"></div>
 <span class="text-[10px] text-emerald-400/90 font-medium">Active</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] font-mono core-confidence" style="color:var(--primary);">c87%</span>
+<span class="text-[10px] font-mono core-confidence" style="color:var(--primary);">c—</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] text-[#808098] font-mono core-memory">m43</span>
+<span class="text-[10px] text-[#808098] font-mono core-memory">m—</span>
 <span class="text-[10px] text-[#555]">·</span>
-<span class="text-[10px] text-[#808098] font-mono core-goals">t12</span>
+<span class="text-[10px] text-[#808098] font-mono core-goals">g—</span>
+<span class="text-[10px] text-[#555]" style="display:none;">·</span>
+<span class="text-[10px] text-[#808098] font-mono core-tool" style="display:none;"></span>
 </div>
 {% block topbar_left %}{% endblock %}</div>
 <div class="flex items-center gap-6">
@@ -79,118 +82,173 @@ function applyTheme(t){document.documentElement.setAttribute("data-theme",t);loc
 if(switcher){switcher.addEventListener("change",function(e){applyTheme(e.target.value)});window.addEventListener("DOMContentLoaded",function(){var saved=localStorage.getItem("jarvis-theme")||"jarvis";applyTheme(saved);switcher.value=saved})}
 
 /* ══════════════════════════════════════════════════════════════════════════
-   AI Surface — polling, rendering, auto-show, dismiss
+   AI Surface Stack — stacked card overlay via /api/surfaces/
    ══════════════════════════════════════════════════════════════════════════ */
 
-var DISMISS_KEY = 'jarvis_surface_dismissed';  // localStorage key
-var DISMISS_TTL = 5 * 60 * 1000;              // 5 minutes in ms
-var POLL_INTERVAL = 30000;                     // 30 seconds
+var DISMISS_KEY = 'jarvis_surface_dismissed';
+var DISMISS_TTL = 5 * 60 * 1000;
+var POLL_INTERVAL = 30000;
+
+/* ── Type → Color / Icon Mapping ─────────────────────────────────────── */
+
+var SURFACE_ICON_MAP = {
+  alert: 'bi-exclamation-triangle',
+  reminder: 'bi-bell',
+  suggestion: 'bi-lightbulb',
+  briefing: 'bi-sun',
+  summary: 'bi-moon-stars'
+};
+var SURFACE_COLOR_MAP = {
+  alert: '#EF4444',
+  reminder: '#06B6D4',
+  suggestion: '#8B5CF6',
+  briefing: '#22C55E',
+  summary: '#F59E0B'
+};
 
 /* ── Helpers ──────────────────────────────────────────────────────────── */
 
-function isDismissedRecently(surfaceType) {
+function isDismissedRecently(surfaceId) {
   try {
     var data = JSON.parse(localStorage.getItem(DISMISS_KEY) || '{}');
-    var ts = data[surfaceType];
+    var ts = data[surfaceId];
     return ts && (Date.now() - ts) < DISMISS_TTL;
   } catch(e) { return false; }
 }
 
-function markDismissed(surfaceType) {
+function markDismissed(surfaceId) {
   try {
     var data = JSON.parse(localStorage.getItem(DISMISS_KEY) || '{}');
-    data[surfaceType] = Date.now();
+    data[surfaceId] = Date.now();
     localStorage.setItem(DISMISS_KEY, JSON.stringify(data));
   } catch(e) {}
 }
 
-/* ── Surface Card Rendering ───────────────────────────────────────────── */
+/* ── Toast Notification ──────────────────────────────────────────────── */
+
+function showToast(msg, type) {
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:100px;right:24px;z-index:9999;padding:8px 16px;border-radius:12px;font-size:12px;color:white;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:opacity 0.3s,transform 0.3s;opacity:0;transform:translateY(8px);pointer-events:none;';
+  t.style.background = type === 'error' ? '#EF4444' : '#22C55E';
+  document.body.appendChild(t);
+  requestAnimationFrame(function() {
+    t.style.opacity = '1';
+    t.style.transform = 'translateY(0)';
+  });
+  setTimeout(function() {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(8px)';
+    setTimeout(function() { t.remove(); }, 300);
+  }, 3000);
+}
+
+/* ── Surface Card Rendering ─────────────────────────────────────────── */
 
 function renderSurfaceCard(surface) {
-  var iconMap = {
-    alert: 'bi-exclamation-triangle',
-    suggestion: 'bi-lightbulb',
-    reminder: 'bi-bell',
-    briefing: 'bi-sun',
-    summary: 'bi-moon-stars'
-  };
-  var colorMap = {
-    alert: '#EF4444',
-    suggestion: '#8B5CF6',
-    reminder: '#06B6D4',
-    briefing: '#22C55E',
-    summary: '#F59E0B'
-  };
-  var icon = iconMap[surface.type] || 'bi-stars';
-  var color = colorMap[surface.type] || 'var(--primary)';
+  var icon = SURFACE_ICON_MAP[surface.type] || 'bi-stars';
+  var color = SURFACE_COLOR_MAP[surface.type] || 'var(--primary)';
+  var sourceStr = surface.source ? JSON.stringify(surface.source).replace(/"/g, '&quot;') : '{}';
 
-  return '<div class="surface-card" data-type="' + surface.type + '" data-surface-id="' + surface.id + '" style="border-left: 3px solid ' + color + ';">' +
+  var ctaHtml = '';
+  if (surface.cta) {
+    ctaHtml = '<button onclick="executeSurfaceAction(this)" ' +
+      'data-action="' + (surface.cta.action || '') + '" ' +
+      'data-source=\'' + sourceStr + '\' ' +
+      'class="mt-2 text-[10px] px-3 py-1.5 rounded-lg font-bold hover:scale-105 transition" ' +
+      'style="background:' + color + ';color:white;">' +
+      '<i class="bi bi-' + (surface.cta.icon || 'arrow-right') + ' mr-1"></i>' +
+      (surface.cta.label || '执行') +
+      '</button>';
+  }
+
+  return '<div class="surface-card" data-surface-id="' + surface.id + '" style="border-left: 3px solid ' + color + ';">' +
     '<div class="flex items-start justify-between">' +
-    '<div class="flex items-center gap-2"><i class="bi ' + icon + '" style="color:' + color + ';"></i><span class="text-xs font-bold text-white">' + surface.title + '</span></div>' +
-    '<button onclick="dismissSurface(this)" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>' +
+    '<div class="flex items-center gap-2">' +
+    '<i class="bi ' + icon + '" style="color:' + color + '"></i>' +
+    '<span class="text-xs font-bold text-white">' + surface.title + '</span>' +
     '</div>' +
-    (surface.body ? '<p class="text-[11px] text-[#A0A0B8] mt-1">' + surface.body + '</p>' : '') +
+    '<button onclick="dismissSurface(this)" class="text-[#686880] hover:text-white text-xs">' +
+    '<i class="bi bi-x-lg"></i>' +
+    '</button>' +
+    '</div>' +
+    '<p class="text-[11px] text-[#A0A0B8] mt-1">' + surface.description + '</p>' +
+    ctaHtml +
     '</div>';
 }
 
-/* ── Show / Hide Overlay ──────────────────────────────────────────────── */
+/* ── Fetch & Render Surfaces ─────────────────────────────────────────── */
 
-function showSurfaceOverlay(surface) {
+function fetchAndRenderSurfaces() {
   var overlay = document.getElementById('ai-surface-overlay');
   var container = document.getElementById('surface-card-container');
   if (!overlay || !container) return;
 
-  // Don't re-show if already dismissed recently for this type
-  if (isDismissedRecently(surface.type)) return;
-
-  container.innerHTML = renderSurfaceCard(surface);
+  container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
+    '<p class="text-[10px] text-[#686880]">加载中...</p></div>';
   overlay.classList.remove('hidden');
 
-  // Mark as shown (so next poll doesn't re-trigger immediately)
-  // but DON'T mark as dismissed — only the X button does that
+  fetch('/api/surfaces/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var surfaces = (data.surfaces || []).filter(function(s) {
+      return !isDismissedRecently(s.id);
+    });
+
+    if (!surfaces.length) {
+      container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
+        '<p class="text-xs text-[#686880]">暂无待处理事件</p>' +
+        '<p class="text-[10px] text-[#555] mt-1">Jarvis 会在需要时通知你</p></div>';
+      return;
+    }
+
+    // Show max 5 cards, sorted by priority
+    surfaces.sort(function(a, b) { return (a.priority || 99) - (b.priority || 99); });
+    surfaces = surfaces.slice(0, 5);
+
+    var html = '';
+    surfaces.forEach(function(s) { html += renderSurfaceCard(s); });
+    container.innerHTML = html;
+  })
+  .catch(function() {
+    container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
+      '<p class="text-[10px] text-[#EF4444]">加载失败，请重试</p></div>';
+  });
 }
 
-function hideSurfaceOverlay() {
-  var overlay = document.getElementById('ai-surface-overlay');
-  if (overlay) overlay.classList.add('hidden');
-}
+/* ── Toggle Overlay ──────────────────────────────────────────────────── */
 
 function toggleSurfaceOverlay() {
   var overlay = document.getElementById('ai-surface-overlay');
   if (!overlay) return;
-  overlay.classList.toggle('hidden');
-  // If opening, trigger a fresh poll to get latest surfaces
-  if (!overlay.classList.contains('hidden')) {
-    pollCoreStatus(function(data) {
-      // If no surfaces after poll, show empty state
-      var container = document.getElementById('surface-card-container');
-      if (container && !data.next_surface) {
-        container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
-          '<p class="text-xs text-[#686880]">暂无待处理事件</p>' +
-          '<p class="text-[10px] text-[#555] mt-1">Jarvis 会在需要时通知你</p>' +
-          '</div>';
-      }
-    });
+
+  if (overlay.classList.contains('hidden')) {
+    fetchAndRenderSurfaces();
+  } else {
+    overlay.classList.add('hidden');
   }
 }
 
-/* ── Dismiss ──────────────────────────────────────────────────────────── */
+/* ── Dismiss Surface ─────────────────────────────────────────────────── */
 
 function dismissSurface(btn) {
   var card = btn.closest('.surface-card');
   if (!card) return;
 
   var surfaceId = card.getAttribute('data-surface-id');
-  var surfaceType = card.getAttribute('data-type');
 
   // POST to dismiss endpoint
   fetch('/api/surface/' + surfaceId + '/dismiss/', {
     method: 'POST',
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  }).then(function(r) {
+    if (!r.ok) throw new Error('dismiss failed');
   }).catch(function() {});
 
   // Store in localStorage to prevent re-show within 5 min
-  markDismissed(surfaceType);
+  markDismissed(surfaceId);
 
   // Remove card with animation
   card.style.transition = 'opacity 0.2s, transform 0.2s';
@@ -206,45 +264,78 @@ function dismissSurface(btn) {
   }, 200);
 }
 
+function hideSurfaceOverlay() {
+  var overlay = document.getElementById('ai-surface-overlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+/* ── Execute Surface Action ──────────────────────────────────────────── */
+
+function executeSurfaceAction(btn) {
+  var action = btn.getAttribute('data-action');
+  var sourceStr = btn.getAttribute('data-source');
+  var source;
+  try { source = JSON.parse(sourceStr); } catch(e) { source = {}; }
+
+  // Disable button during request
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+
+  fetch('/api/actions/execute', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify({ action: action, source: source })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+
+    if (data.redirect) {
+      window.location.href = data.redirect;
+    } else if (data.message) {
+      showToast(data.message, 'success');
+      // Dismiss the card after successful action
+      dismissSurface(btn);
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    showToast('操作失败: ' + (err.message || '请重试'), 'error');
+  });
+}
+
 /* ── Core Status Polling ──────────────────────────────────────────────── */
 
-var _lastSurfaceId = null;  // track to avoid re-showing same surface
-
 function updateCoreStatus(data) {
-  // Update confidence
   var confEl = document.querySelector('.jarvis-core .core-confidence');
   if (confEl) confEl.textContent = 'c' + Math.round(data.confidence * 100) + '%';
 
-  // Update memory count
   var memEl = document.querySelector('.jarvis-core .core-memory');
   if (memEl) memEl.textContent = 'm' + data.memory_count;
 
-  // Update active goals
   var goalEl = document.querySelector('.jarvis-core .core-goals');
-  if (goalEl) goalEl.textContent = 't' + data.active_goals;
+  if (goalEl) goalEl.textContent = 'g' + data.active_goals;
 
-  // Update active tool
   var toolEl = document.querySelector('.jarvis-core .core-tool');
+  var toolSep = toolEl ? toolEl.previousElementSibling : null;
   if (toolEl) {
-    toolEl.textContent = data.active_tool || '';
-    toolEl.style.display = data.active_tool ? '' : 'none';
-  }
-
-  // Update orb state
-  var orb = document.querySelector('.jarvis-orb');
-  if (orb) {
-    orb.setAttribute('data-state', data.state || 'idle');
-  }
-
-  // Auto-show surface if available and not dismissed
-  if (data.next_surface) {
-    var surf = data.next_surface;
-    // Only auto-show if it's a new surface or different type
-    if (surf.id !== _lastSurfaceId && !isDismissedRecently(surf.type)) {
-      _lastSurfaceId = surf.id;
-      showSurfaceOverlay(surf);
+    if (data.active_tool) {
+      toolEl.textContent = data.active_tool;
+      toolEl.style.display = '';
+      if (toolSep) toolSep.style.display = '';
+    } else {
+      toolEl.style.display = 'none';
+      if (toolSep) toolSep.style.display = 'none';
     }
   }
+
+  var orb = document.querySelector('.jarvis-orb');
+  if (orb) orb.setAttribute('data-state', data.state || 'idle');
 }
 
 function pollCoreStatus(callback) {
@@ -259,13 +350,10 @@ function pollCoreStatus(callback) {
   .catch(function() {});
 }
 
-/* ── Init: immediate fetch on login + interval polling ────────────────── */
+/* ── Init ────────────────────────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Immediate fetch on page load (auto-show briefing on login)
   pollCoreStatus();
-
-  // Then poll every 30 seconds
   setInterval(pollCoreStatus, POLL_INTERVAL);
 });
 </script>

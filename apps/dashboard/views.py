@@ -279,7 +279,7 @@ def core_status(request):
         from apps.goals.models import Goal
         from apps.trajectory.models import TrajectoryEvent
         from apps.chat.models import Message
-        from infra.llm.models import SurfaceEvent
+        from infra.actions.surface_service import get_pending_count, get_pending_events
         from django.utils.timesince import timesince
 
         user = request.user
@@ -305,8 +305,8 @@ def core_status(request):
                 active_tool = match.group(1)
                 break
 
-        # Surface count: pending SurfaceEvents
-        surface_count = SurfaceEvent.objects.filter(user=user, status="pending").count()
+        # Pending count (from surface_service)
+        pending_count = get_pending_count(user)
 
         # Last activity: most recent TrajectoryEvent.happened_at
         last_traj = TrajectoryEvent.objects.filter(user=user).order_by("-happened_at").first()
@@ -315,27 +315,20 @@ def core_status(request):
         else:
             last_activity = ""
 
-        # Next surface: highest-priority pending SurfaceEvent
-        next_surface_obj = SurfaceEvent.objects.filter(
-            user=user, status="pending"
-        ).order_by("priority", "-created_at").first()
-        if next_surface_obj:
-            next_surface = {
-                "id": next_surface_obj.id,
-                "type": next_surface_obj.event_type,
-                "priority": next_surface_obj.priority,
-                "title": next_surface_obj.title,
-                "body": next_surface_obj.body,
-            }
-        else:
-            next_surface = None
-
         # ── Orb state priority ─────────────────────────────────────────────────
         state = "idle"
-        if next_surface and next_surface["priority"] <= 2:
-            state = "alert"
-        elif active_tool:
+        if active_tool:
             state = "executing"
+        elif pending_count > 0:
+            # Check if any are priority 1 (alerts)
+            events = get_pending_events(user)
+            highest_priority = min([e['priority'] for e in events]) if events else 99
+            if highest_priority <= 1:
+                state = "alert"
+            elif highest_priority <= 2:
+                state = "reminder"
+            else:
+                state = "idle"
 
         return JsonResponse({
             "state": state,
@@ -343,9 +336,8 @@ def core_status(request):
             "memory_count": memory_count,
             "active_tool": active_tool,
             "active_goals": active_goals,
-            "surface_count": surface_count,
+            "pending_count": pending_count,
             "last_activity": last_activity,
-            "next_surface": next_surface,
         })
     except Exception as e:
         logger.exception("core_status failed: %s", e)
@@ -355,10 +347,17 @@ def core_status(request):
             "memory_count": 0,
             "active_tool": "",
             "active_goals": 0,
-            "surface_count": 0,
+            "pending_count": 0,
             "last_activity": "",
-            "next_surface": None,
         })
+
+
+@login_required
+def surface_list(request):
+    """GET /api/surfaces/ — return all pending surface events, sorted by priority."""
+    from infra.actions.surface_service import get_pending_events
+    events = get_pending_events(request.user)
+    return JsonResponse({'surfaces': events, 'count': len(events)})
 
 
 @login_required
