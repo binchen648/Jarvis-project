@@ -57,8 +57,9 @@ def get_pending_events(user):
     except Exception:
         logger.warning('Expiring goals query failed for user %d', user.pk)
     
-    # Sort by priority (lower = more urgent)
-    events.sort(key=lambda e: (e['priority'], e.get('id', 0)))
+    # Sort by priority only (lower = more urgent). 
+    # Sorting by secondary key would crash on mixed int/str ids.
+    events.sort(key=lambda e: e['priority'])
     
     return events
 
