@@ -7,6 +7,7 @@ class Conversation(models.Model):
         'accounts.User', on_delete=models.CASCADE, related_name='conversations'
     )
     title = models.CharField(max_length=300, blank=True, verbose_name='对话标题')
+    metadata = models.JSONField(default=dict, blank=True, verbose_name='元数据')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

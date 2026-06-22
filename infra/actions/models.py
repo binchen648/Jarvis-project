@@ -28,6 +28,12 @@ class RelationEdge(models.Model):
         db_table = 'actions_relation_edge'
         verbose_name = '关联边'
         verbose_name_plural = '关联边'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'source_type', 'source_id', 'target_type', 'target_id', 'relation_type'],
+                name='unique_relation_edge'
+            ),
+        ]
         indexes = [
             models.Index(fields=['user', 'source_type', 'source_id']),
             models.Index(fields=['user', 'target_type', 'target_id']),
