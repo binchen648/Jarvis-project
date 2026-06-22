@@ -26,6 +26,12 @@
                             <div class="flex items-center gap-3">
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A0A0B8]">Agent Status</span>
+                                {% if conversation.metadata.source_type %}
+                                <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg" style="background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.15);">
+                                    <i class="bi bi-link-45deg text-[10px]" style="color:var(--primary);"></i>
+                                    <span class="text-[10px] font-medium" style="color:var(--primary);">来源: {% firstof conversation.metadata.source_title conversation.metadata.source_type %}</span>
+                                </div>
+                                {% endif %}
                             </div>
                             <span class="text-[10px] text-[#686880] font-mono">v2.5 · active</span>
                         </div>
