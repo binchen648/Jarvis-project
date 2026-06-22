@@ -4,8 +4,8 @@
 {% block topbar_left %}<div class="flex flex-col ml-3"><h2 class="text-xs font-medium uppercase tracking-widest text-[#9191A8]">System Status</h2><p class="text-[10px] text-emerald-400">● Operational / Optimal</p></div>{% endblock %}
 {% block content %}
         <div class="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
-            <div class="space-y-10 pt-4">
-                <!-- Welcome -->
+            <!-- Welcome (fixed, not sortable) -->
+            <div class="pt-4">
                 <section>
                     <div class="flex justify-between items-end">
                         <div>
@@ -19,107 +19,159 @@
                         <span class="text-xs font-mono" style="color: #5C5C72;">{{ today|date:'M d, Y'|upper }}</span>
                     </div>
                 </section>
+            </div>
+            <!-- Sortable Widgets -->
+            <div id="dashboard-sortable" class="space-y-10 pt-4">
                 <!-- KPI -->
-                <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Today Focus</p>
-                        <p class="text-3xl font-bold mt-2">{{ focus_pct }}% <span class="text-[10px] text-emerald-400 ml-1 font-normal">▲ 5%</span></p>
-                    </div>
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Goal Health</p>
-                        <p class="text-3xl font-bold mt-2">{{ goal_health_normal }} <span class="text-sm font-normal text-emerald-400">正常</span></p>
-                    </div>
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Memory Growth</p>
-                        <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] ml-1 font-normal" style="color: #9191A8;">条</span></p>
-                    </div>
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">AI Confidence</p>
-                        <p class="text-3xl font-bold mt-2">{{ ai_confidence_pct }}%</p>
-                    </div>
-                </section>
-                <!-- Main Grid -->
-                <section class="grid grid-cols-12 gap-8">
-                    <!-- Today's Plan -->
-                    <div class="col-span-12 lg:col-span-8 space-y-4">
-                        <div class="flex justify-between items-center ml-2">
-                            <h3 class="text-lg font-semibold">Today's Plan</h3>
-                            {% if today_plan_items %}<span class="text-xs" style="color: #9191A8;">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>{% endif %}
+                <div data-widget-id="kpi">
+                    <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card p-6 rounded-[2rem]">
+                            <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Today Focus</p>
+                            <p class="text-3xl font-bold mt-2">{{ focus_pct }}% <span class="text-[10px] text-emerald-400 ml-1 font-normal">▲ 5%</span></p>
                         </div>
-                        <div class="glass-card rounded-[2.5rem] overflow-hidden">
-                            {% if today_plan_items %}
-                            {% for item in today_plan_items %}
-                            <a href="{{ item.link }}" class="p-8 flex items-center justify-between group {% if not forloop.last %}border-b border-white/5{% endif %} no-underline text-[inherit] transition hover:bg-white/[0.02] cursor-pointer">
-                                <div class="flex items-center gap-6">
-                                    {% if item.done %}
-                                    <div class="w-12 h-12 rounded-2xl bg-[var(--primary)] flex items-center justify-center text-white shadow-lg"><i class="bi bi-check-lg text-xl"></i></div>
-                                    {% else %}
-                                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
-                                    {% endif %}
-                                    <div>
-                                        <p class="font-bold {% if item.done %}line-through text-white/40{% endif %}">{{ item.title }}</p>
-                                        <p class="text-xs mt-0.5" style="color: #9191A8;">{{ item.desc }} &middot; {{ item.minutes }}min</p>
-                                    </div>
+                        <div class="glass-card p-6 rounded-[2rem]">
+                            <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Goal Health</p>
+                            <p class="text-3xl font-bold mt-2">{{ goal_health_normal }} <span class="text-sm font-normal text-emerald-400">正常</span></p>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2rem]">
+                            <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">Memory Growth</p>
+                            <p class="text-3xl font-bold mt-2">+{{ memory_growth_weekly }} <span class="text-[10px] ml-1 font-normal" style="color: #9191A8;">条</span></p>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2rem]">
+                            <p class="text-[10px] uppercase tracking-[0.2em]" style="color: #9191A8;">AI Confidence</p>
+                            <p class="text-3xl font-bold mt-2">{{ ai_confidence_pct }}%</p>
+                        </div>
+                    </section>
+                </div>
+                <!-- Today's Plan -->
+                <div data-widget-id="today_plan">
+                    <div class="flex justify-between items-center ml-2 mb-4">
+                        <h3 class="text-lg font-semibold drag-handle">⠿ Today's Plan</h3>
+                        {% if today_plan_items %}<span class="text-xs" style="color: #9191A8;">{{ today_plan_items|length }}/{{ today_plan_items|length }} tasks</span>{% endif %}
+                    </div>
+                    <div class="glass-card rounded-[2.5rem] overflow-hidden">
+                        {% if today_plan_items %}
+                        {% for item in today_plan_items %}
+                        <a href="{{ item.link }}" class="p-8 flex items-center justify-between group {% if not forloop.last %}border-b border-white/5{% endif %} no-underline text-[inherit] transition hover:bg-white/[0.02] cursor-pointer">
+                            <div class="flex items-center gap-6">
+                                {% if item.done %}
+                                <div class="w-12 h-12 rounded-2xl bg-[var(--primary)] flex items-center justify-center text-white shadow-lg"><i class="bi bi-check-lg text-xl"></i></div>
+                                {% else %}
+                                <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[var(--primary)] transition text-[var(--primary)] font-bold">{{ item.id }}</div>
+                                {% endif %}
+                                <div>
+                                    <p class="font-bold {% if item.done %}line-through text-white/40{% endif %}">{{ item.title }}</p>
+                                    <p class="text-xs mt-0.5" style="color: #9191A8;">{{ item.desc }} &middot; {{ item.minutes }}min</p>
                                 </div>
-                                {% if not item.done %}<i class="bi bi-chevron-right text-lg group-hover:translate-x-1 transition" style="color: var(--primary)"></i>{% endif %}
+                            </div>
+                            {% if not item.done %}<i class="bi bi-chevron-right text-lg group-hover:translate-x-1 transition" style="color: var(--primary)"></i>{% endif %}
+                        </a>
+                        {% endfor %}
+                        {% else %}
+                        <div class="text-center py-10" style="color: #9191A8;">
+                            <div class="text-3xl mb-3 opacity-40">🤖</div>
+                            <p class="text-sm">Jarvis 正在分析你的目标，稍后为你生成计划</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Goal Progress -->
+                <div data-widget-id="goal_progress">
+                    <div class="glass-card p-8 rounded-[2.5rem]">
+                        <h3 class="text-sm font-semibold mb-6 drag-handle">⠿ Goal Progress</h3>
+                        {% if goal_progress_list %}
+                        <div class="space-y-6">
+                            {% for item in goal_progress_list %}
+                            <div>
+                                <div class="flex justify-between text-xs mb-2"><span style="color: #9191A8;">{{ item.title }}</span><span>{{ item.pct }}%</span></div>
+                                <div class="h-1 w-full bg-white/5 rounded-full">
+                                    <div class="h-full rounded-full transition-all duration-1000" style="width: {{ item.pct }}%; background: {% if item.pct < 30 %}var(--color-error){% else %}var(--primary){% endif %};"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-6" style="color: #9191A8;"><p class="text-xs">还没有目标进度数据</p></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Memory Timeline -->
+                <div data-widget-id="memory_timeline">
+                    <div class="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 blur-3xl opacity-10 group-hover:opacity-20 transition" style="background: var(--accent);"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-semibold drag-handle">⠿ Memory Timeline</h3>
+                            <a href="/memory/timeline/" class="text-[10px] hover:underline" style="color: var(--accent);">查看全部 →</a>
+                        </div>
+                        {% if memory_recent_items %}
+                        <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
+                            {% for item in memory_recent_items %}
+                            <a href="/memory/timeline/" class="block relative no-underline text-[inherit]">
+                                <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full" style="background: var(--accent);"></div>
+                                <p class="text-xs">{{ item.title }}</p>
+                                <p class="text-[10px] mt-px" style="color: #9191A8;">{{ item.description|truncatechars:60 }}</p>
                             </a>
                             {% endfor %}
-                            {% else %}
-                            <div class="text-center py-10" style="color: #9191A8;">
-                                <div class="text-3xl mb-3 opacity-40">🤖</div>
-                                <p class="text-sm">Jarvis 正在分析你的目标，稍后为你生成计划</p>
-                            </div>
-                            {% endif %}
                         </div>
+                        {% else %}
+                        <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
+                            <div class="relative">
+                                <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-white/10"></div>
+                                <p class="text-xs" style="color: #9191A8;">还没有记忆轨迹</p>
+                                <p class="text-[10px]" style="color: #5C5C72;">开始学习后，Jarvis 会记录你的成长轨迹</p>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
-                    <!-- Progress & Timeline -->
-                    <div class="col-span-12 lg:col-span-4 space-y-8">
-                        <div class="glass-card p-8 rounded-[2.5rem]">
-                            <h3 class="text-sm font-semibold mb-6">Goal Progress</h3>
-                            {% if goal_progress_list %}
-                            <div class="space-y-6">
-                                {% for item in goal_progress_list %}
-                                <div>
-                                    <div class="flex justify-between text-xs mb-2"><span style="color: #9191A8;">{{ item.title }}</span><span>{{ item.pct }}%</span></div>
-                                    <div class="h-1 w-full bg-white/5 rounded-full">
-                                        <div class="h-full rounded-full transition-all duration-1000" style="width: {{ item.pct }}%; background: {% if item.pct < 30 %}var(--color-error){% else %}var(--primary){% endif %};"></div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% else %}
-                            <div class="text-center py-6" style="color: #9191A8;"><p class="text-xs">还没有目标进度数据</p></div>
-                            {% endif %}
-                        </div>
-                        <div class="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
-                            <div class="absolute -right-10 -top-10 w-32 h-32 blur-3xl opacity-10 group-hover:opacity-20 transition" style="background: var(--accent);"></div>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold">Memory Timeline</h3>
-                                <a href="/memory/timeline/" class="text-[10px] hover:underline" style="color: var(--accent);">查看全部 →</a>
-                            </div>
-                            {% if memory_recent_items %}
-                            <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
-                                {% for item in memory_recent_items %}
-                                <a href="/memory/timeline/" class="block relative no-underline text-[inherit]">
-                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full" style="background: var(--accent);"></div>
-                                    <p class="text-xs">{{ item.title }}</p>
-                                    <p class="text-[10px] mt-px" style="color: #9191A8;">{{ item.description|truncatechars:60 }}</p>
-                                </a>
-                                {% endfor %}
-                            </div>
-                            {% else %}
-                            <div class="space-y-4 border-l border-white/10 ml-2 pl-4">
-                                <div class="relative">
-                                    <div class="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-white/10"></div>
-                                    <p class="text-xs" style="color: #9191A8;">还没有记忆轨迹</p>
-                                    <p class="text-[10px]" style="color: #5C5C72;">开始学习后，Jarvis 会记录你的成长轨迹</p>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
         </div>
+        <!-- SortableJS -->
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <script>
+        (function() {
+          // Load saved layout order
+          fetch('/api/dashboard/layout/')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              var config = data.layout_config || {};
+              var order = config.order;
+              if (!order || !order.length) return;
+              var container = document.getElementById('dashboard-sortable');
+              if (!container) return;
+              order.forEach(function(widgetId) {
+                var el = container.querySelector('[data-widget-id="' + widgetId + '"]');
+                if (el) container.appendChild(el);
+              });
+            })
+            .catch(function() {});
+
+          // Init SortableJS
+          var container = document.getElementById('dashboard-sortable');
+          if (container) {
+            Sortable.create(container, {
+              animation: 200,
+              handle: '.drag-handle',
+              ghostClass: 'sortable-ghost',
+              onEnd: function(evt) {
+                var order = [];
+                container.querySelectorAll('[data-widget-id]').forEach(function(el) {
+                  order.push(el.getAttribute('data-widget-id'));
+                });
+                fetch('/api/dashboard/layout/', {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({ layout_config: { order: order } })
+                }).catch(function() {});
+              }
+            });
+          }
+        })();
+        </script>
+        <style>
+        .sortable-ghost { opacity: 0.3; }
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+        </style>
         <!-- 悬浮球 -->
 {% endblock %}

@@ -359,3 +359,32 @@ def core_status(request):
             "last_activity": "",
             "next_surface": None,
         })
+
+
+@login_required
+def dashboard_layout(request):
+    """GET: return layout_config. POST: save layout_config."""
+    from apps.dashboard.models import DashboardLayout
+    from django.http import JsonResponse
+
+    if request.method == 'GET':
+        layout, _ = DashboardLayout.objects.get_or_create(user=request.user)
+        return JsonResponse({'layout_config': layout.layout_config})
+
+    elif request.method == 'POST':
+        import json
+        try:
+            data = json.loads(request.body)
+        except (json.JSONDecodeError, ValueError, TypeError):
+            return JsonResponse({'error': 'invalid JSON'}, status=400)
+
+        new_config = data.get('layout_config')
+        if new_config is None:
+            return JsonResponse({'error': 'layout_config required'}, status=400)
+
+        layout, _ = DashboardLayout.objects.get_or_create(user=request.user)
+        layout.layout_config = new_config
+        layout.save(update_fields=['layout_config'])
+        return JsonResponse({'ok': True, 'layout_config': layout.layout_config})
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
