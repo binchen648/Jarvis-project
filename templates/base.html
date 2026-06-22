@@ -66,7 +66,7 @@
 <div id="ai-surface-overlay" class="fixed bottom-28 right-8 z-50 hidden space-y-2" style="max-width: 360px;">
   <div id="surface-card-container"></div>
 </div>
-<div class="jarvis-orb w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative group" data-state="idle" style="background:var(--primary)">
+<div class="jarvis-orb w-14 h-14 rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-2xl relative group" data-state="idle" style="background:var(--primary)" onclick="toggleSurfaceOverlay()">
 <div class="absolute inset-0 rounded-full animate-ping opacity-20" style="background:var(--primary)"></div>
 <div class="absolute -inset-3 rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-500" style="background:radial-gradient(circle,var(--primary),transparent 70%);"></div>
 <i class="bi bi-stars text-xl relative z-10"></i>
@@ -155,6 +155,25 @@ function hideSurfaceOverlay() {
   if (overlay) overlay.classList.add('hidden');
 }
 
+function toggleSurfaceOverlay() {
+  var overlay = document.getElementById('ai-surface-overlay');
+  if (!overlay) return;
+  overlay.classList.toggle('hidden');
+  // If opening, trigger a fresh poll to get latest surfaces
+  if (!overlay.classList.contains('hidden')) {
+    pollCoreStatus(function(data) {
+      // If no surfaces after poll, show empty state
+      var container = document.getElementById('surface-card-container');
+      if (container && !data.next_surface) {
+        container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
+          '<p class="text-xs text-[#686880]">暂无待处理事件</p>' +
+          '<p class="text-[10px] text-[#555] mt-1">Jarvis 会在需要时通知你</p>' +
+          '</div>';
+      }
+    });
+  }
+}
+
 /* ── Dismiss ──────────────────────────────────────────────────────────── */
 
 function dismissSurface(btn) {
@@ -228,12 +247,15 @@ function updateCoreStatus(data) {
   }
 }
 
-function pollCoreStatus() {
+function pollCoreStatus(callback) {
   fetch('/api/core-status/', {
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
   })
   .then(function(r) { return r.json(); })
-  .then(function(data) { updateCoreStatus(data); })
+  .then(function(data) {
+    updateCoreStatus(data);
+    if (callback) callback(data);
+  })
   .catch(function() {});
 }
 

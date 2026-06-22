@@ -138,9 +138,9 @@ def timeline_view(request):
         event.mockup_label = MOCKUP_TYPE_LABEL.get(mockup_category, 'AI 笔记')
 
         # ── AI Annotations per mockup spec ──
+        import random
         if mockup_category == 'learning':
             # Learning: [AI: 相关度 XX% · 建议回顾XXX]
-            import random
             relevance = random.randint(70, 99)
             event.ai_annotation = f'AI: 相关度 {relevance}% · 建议回顾'
         elif mockup_category == 'goal':
