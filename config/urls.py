@@ -18,4 +18,5 @@ urlpatterns = [
     path('trajectory/', include('apps.trajectory.urls')),
     path('memory/', include('apps.memory.urls')),
     path('chat/', include('apps.chat.urls')),
+    path('api/actions/', include('infra.actions.urls')),
 ]

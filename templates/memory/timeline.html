@@ -122,6 +122,7 @@
             </div>
             <div class="w-px h-4 bg-white/10"></div>
             <button id="graph-reset" class="text-[10px] text-[#686880] hover:text-white transition"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+            <button id="graph-reset-layout" class="text-[10px] text-[#686880] hover:text-[var(--primary)] transition"><i class="bi bi-arrow-counterclockwise"></i> Reset Layout</button>
         </div>
         <!-- Cytoscape Container -->
         <div id="cy" class="w-full h-full" style="background: radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.05), transparent 70%);"></div>
@@ -188,10 +189,26 @@
                     }))
                 ];
 
-                cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: elements,
-                    style: [
+                    // Check for saved positions
+                    var POS_KEY = 'memory_graph_positions';
+                    var savedPos = null;
+                    try {
+                        savedPos = JSON.parse(localStorage.getItem(POS_KEY));
+                    } catch(e) {}
+                    
+                    // If saved positions exist, position nodes manually first
+                    if (savedPos) {
+                        elements.forEach(function(el) {
+                            if (el.group === 'nodes' && savedPos[el.data.id]) {
+                                el.position = savedPos[el.data.id];
+                            }
+                        });
+                    }
+
+                    cy = cytoscape({
+                        container: document.getElementById('cy'),
+                        elements: elements,
+                        style: [
                         {
                             selector: 'node',
                             style: {
@@ -288,10 +305,9 @@
                         }
                     ],
                     layout: {
-                        name: 'cose',
+                        name: savedPos ? 'preset' : 'cose',
                         animate: true,
-                        animationDuration: 500,
-                        refresh: 1,
+                        animationDuration: savedPos ? 200 : 500,
                         fit: true,
                         padding: 60,
                         nodeRepulsion: function() { return 8000; },
@@ -351,6 +367,29 @@
                 document.getElementById('graph-reset').addEventListener('click', () => {
                     cy.fit(60);
                     cy.center();
+                });
+
+                // Drag → save positions to localStorage
+                cy.on('dragfree', 'node', function(evt) {
+                    var positions = {};
+                    cy.nodes().forEach(function(n) {
+                        positions[n.id()] = { x: n.position('x'), y: n.position('y') };
+                    });
+                    try {
+                        localStorage.setItem(POS_KEY, JSON.stringify(positions));
+                    } catch(e) {}
+                });
+
+                // Reset layout → clear saved positions + re-run cose
+                document.getElementById('graph-reset-layout').addEventListener('click', function() {
+                    try { localStorage.removeItem(POS_KEY); } catch(e) {}
+                    cy.layout({
+                        name: 'cose',
+                        animate: true,
+                        animationDuration: 500,
+                        fit: true,
+                        padding: 60,
+                    }).run();
                 });
             })
             .catch(err => {

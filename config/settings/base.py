@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Infrastructure
     'channels',
     'infra.eventbus',
+    'infra.actions',
     'infra.llm',
     'apps.health',
 ]
