@@ -70,4 +70,9 @@ app.conf.beat_schedule = {
         'task': 'infra.surface.tasks.build_evening_summaries',
         'schedule': crontab(hour=21, minute=0),  # daily 21:00
     },
+    # Surface — all producers (goal, memory, wellness, agent)
+    'run-surface-producers': {
+        'task': 'infra.surface.tasks.run_all_producers',
+        'schedule': crontab(hour='*/6'),  # every 6 hours
+    },
 }

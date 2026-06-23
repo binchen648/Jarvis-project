@@ -33,10 +33,12 @@ def create_event(user, event_type, priority, title, description,
             user=user, event_key=event_key, defaults=defaults
         )
         if not created:
-            # Update existing event (refresh title/description)
+            # Update fields but preserve user-set status (read/acted/dismissed)
             for k, v in defaults.items():
+                if k == 'status' and event.status != 'pending':
+                    continue
                 setattr(event, k, v)
-            event.save(update_fields=list(defaults.keys()))
+            event.save(update_fields=[k for k in defaults.keys() if not (k == 'status' and event.status != 'pending')])
     else:
         event = SurfaceEvent.objects.create(user=user, **defaults)
         created = True
