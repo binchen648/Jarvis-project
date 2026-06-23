@@ -131,6 +131,7 @@ switch ($Command) {
             exit 1
         }
 
+        $env:DJANGO_SETTINGS_MODULE = $Settings
         $proc = Start-Process -WindowStyle Hidden -PassThru `
             -RedirectStandardOutput $StdoutLog `
             -RedirectStandardError $StderrLog `
@@ -279,6 +280,7 @@ switch ($Command) {
             exit 1
         }
 
+        $env:DJANGO_SETTINGS_MODULE = $Settings
         $proc = Start-Process -WindowStyle Hidden -PassThru `
             -RedirectStandardOutput $StdoutLog `
             -RedirectStandardError $StderrLog `
@@ -345,3 +347,6 @@ switch ($Command) {
         exit 0
     }
 }
+
+# Cleanup: remove settings env var to avoid leaking into parent shell
+$env:DJANGO_SETTINGS_MODULE = $null
