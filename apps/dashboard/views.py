@@ -393,6 +393,19 @@ def surface_list(request):
 
 
 @login_required
+def surface_analytics(request):
+    """GET /api/surface-analytics/ — return surface engagement analytics."""
+    from infra.surface.analytics import get_surface_stats
+    days = request.GET.get('days', 30)
+    try:
+        days = int(days)
+    except (TypeError, ValueError):
+        days = 30
+    stats = get_surface_stats(request.user, days=min(days, 90))
+    return JsonResponse(stats)
+
+
+@login_required
 def dashboard_layout(request):
     """GET: return layout_config. POST: save layout_config."""
     from apps.dashboard.models import DashboardLayout
