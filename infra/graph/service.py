@@ -35,7 +35,7 @@ class GraphService:
         return self._serialize(nodes, edges)
     
     def get_node_neighbors(self, node_id, depth=1):
-        """Get a node and its neighbors up to depth steps away."""
+        """Get a node and its neighbors up to depth steps away (BFS)."""
         from infra.graph.models import GraphNode
         from infra.actions.models import RelationEdge
         
@@ -47,22 +47,36 @@ class GraphService:
         node_set = {center.pk}
         nodes = [center]
         edges = []
+        frontier = [center.pk]
         
-        # Get direct neighbors (depth 1)
-        outgoing = RelationEdge.objects.filter(from_node_id=center.pk).select_related('to_node')
-        incoming = RelationEdge.objects.filter(to_node_id=center.pk).select_related('from_node')
-        
-        for e in outgoing:
-            if e.to_node and e.to_node.pk not in node_set:
-                node_set.add(e.to_node.pk)
-                nodes.append(e.to_node)
-            edges.append(e)
-        
-        for e in incoming:
-            if e.from_node and e.from_node.pk not in node_set:
-                node_set.add(e.from_node.pk)
-                nodes.append(e.from_node)
-            edges.append(e)
+        for d in range(depth):
+            if not frontier:
+                break
+            next_frontier = []
+            outgoing = RelationEdge.objects.filter(from_node_id__in=frontier).select_related('to_node')
+            incoming = RelationEdge.objects.filter(to_node_id__in=frontier).select_related('from_node')
+            
+            for e in outgoing:
+                if e.to_node and e.to_node.pk not in node_set:
+                    node_set.add(e.to_node.pk)
+                    nodes.append(e.to_node)
+                    next_frontier.append(e.to_node.pk)
+                if e.from_node_id in frontier and e.to_node_id in frontier:
+                    edges.append(e)
+                elif e.from_node_id in frontier:
+                    edges.append(e)
+            
+            for e in incoming:
+                if e.from_node and e.from_node.pk not in node_set:
+                    node_set.add(e.from_node.pk)
+                    nodes.append(e.from_node)
+                    next_frontier.append(e.from_node.pk)
+                if e.to_node_id in frontier and e.from_node_id not in node_set:
+                    pass  # already handled by outgoing
+                elif e.to_node_id in frontier and e.from_node_id not in frontier:
+                    edges.append(e)
+            
+            frontier = next_frontier
         
         return self._serialize(nodes, edges)
     

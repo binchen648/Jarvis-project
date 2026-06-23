@@ -83,10 +83,12 @@ function expandNode(nodeId) {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             var insp = document.getElementById('inspector-body');
-            if (data.neighbors && data.neighbors.length) {
+            if (data.nodes && data.nodes.length > 0) {
                 var html = '<div class="text-[10px] font-bold text-[#686880] mt-2 mb-1">邻居节点:</div>';
-                data.neighbors.forEach(function(n) {
-                    html += '<div class="text-xs text-white">' + n.title + ' <span class="text-[#686880]">(' + n.type + ')</span></div>';
+                data.nodes.forEach(function(n) {
+                    if (n.id != nodeId) {
+                        html += '<div class="text-xs text-white">' + n.title + ' <span class="text-[#686880]">(' + n.type + ')</span></div>';
+                    }
                 });
                 insp.innerHTML += html;
             } else {

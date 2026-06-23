@@ -55,9 +55,11 @@ def graph_link(request):
 
 
 @login_required
-@require_POST
 def graph_unlink(request, edge_id):
-    """DELETE /api/graph/link/<id> — remove relation."""
+    """DELETE /api/graph/link/<id> — remove relation. Accepts POST or DELETE."""
+    if request.method not in ('POST', 'DELETE'):
+        from django.http import HttpResponseNotAllowed
+        return HttpResponseNotAllowed(['POST', 'DELETE'])
     from infra.graph.service import GraphService
     svc = GraphService(request.user)
     deleted = svc.delete_relation(edge_id)
