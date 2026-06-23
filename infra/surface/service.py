@@ -18,6 +18,7 @@ def create_event(user, event_type, priority, title, description,
     from infra.llm.models import SurfaceEvent
     
     defaults = {
+        'event_type': event_type,
         'priority': priority,
         'title': title,
         'description': description,
@@ -37,7 +38,7 @@ def create_event(user, event_type, priority, title, description,
                 setattr(event, k, v)
             event.save(update_fields=list(defaults.keys()))
     else:
-        event = SurfaceEvent.objects.create(user=user, event_type=event_type, **defaults)
+        event = SurfaceEvent.objects.create(user=user, **defaults)
         created = True
     
     return event, created

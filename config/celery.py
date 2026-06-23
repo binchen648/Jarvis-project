@@ -65,4 +65,9 @@ app.conf.beat_schedule = {
         'schedule': 60.0,  # every 60 seconds
         'options': {'queue': 'default'},
     },
+    # Surface — evening summaries
+    'build-evening-summaries': {
+        'task': 'infra.surface.tasks.build_evening_summaries',
+        'schedule': crontab(hour=21, minute=0),  # daily 21:00
+    },
 }
