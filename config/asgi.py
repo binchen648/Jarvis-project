@@ -5,7 +5,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from django.urls import re_path
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings.demo'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
 
 from apps.chat.consumers import ChatConsumer
 

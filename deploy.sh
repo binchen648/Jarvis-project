@@ -5,10 +5,10 @@ set -euo pipefail
 echo "=== Jarvis Deployment ==="
 
 echo "Step 1: Running database migrations..."
-.venv/bin/python manage.py migrate --run-syncdb
+docker compose -f docker-compose.prod.yml run --rm web python manage.py migrate --run-syncdb
 
 echo "Step 2: Collecting static files..."
-.venv/bin/python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml run --rm web python manage.py collectstatic --noinput
 
 echo "Step 3: Building and starting services..."
 docker compose -f docker-compose.prod.yml up -d --build
