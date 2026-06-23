@@ -7,6 +7,9 @@ class RelationEdge(models.Model):
         ('prerequisite', '前置'),
         ('inspires', '启发'),
         ('contradicts', '矛盾'),
+        ('supports', 'Supports'),
+        ('blocks', 'Blocks'),
+        ('generates', 'Generates'),
         ('custom', '自定义'),
     ]
     
@@ -20,6 +23,14 @@ class RelationEdge(models.Model):
     target_id = models.IntegerField(verbose_name='目标ID')
     relation_type = models.CharField(
         max_length=20, choices=RELATION_TYPES, default='related', verbose_name='关系类型'
+    )
+    from_node = models.ForeignKey(
+        'graph.GraphNode', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='outgoing_edges'
+    )
+    to_node = models.ForeignKey(
+        'graph.GraphNode', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='incoming_edges'
     )
     note = models.TextField(blank=True, verbose_name='备注')
     created_at = models.DateTimeField(auto_now_add=True)

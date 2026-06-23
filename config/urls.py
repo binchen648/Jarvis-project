@@ -21,6 +21,7 @@ urlpatterns = [
     path('wellness/', include('apps.wellness.urls')),
     path('trajectory/', include('apps.trajectory.urls')),
     path('memory/', include('apps.memory.urls')),
+    path('graph/', include('apps.graph.urls')),
     path('chat/', include('apps.chat.urls')),
     path('api/actions/', include('infra.actions.urls')),
 ]

@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'apps.chat',
     'apps.dashboard',
     'apps.userprofile',
+    'apps.graph.apps.GraphConfig',
     # Infrastructure
     'channels',
     'infra.eventbus',
     'infra.actions',
+    'infra.graph',
     'infra.llm',
     'apps.health',
 ]

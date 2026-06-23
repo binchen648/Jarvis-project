@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Jarvis OS - Universal Graph{% endblock %}
+{% block content_class %}layout-full{% endblock %}
+{% block topbar_left %}<h2 class="text-xl font-bold text-white tracking-tight ml-3">Universal Graph</h2>{% endblock %}
+{% block content %}
+<div class="flex-1 relative overflow-hidden">
+    <div id="cy" class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.05), transparent 70%);"></div>
+    <div id="graph-inspector" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden px-6 py-4 rounded-2xl min-w-[320px] max-w-lg" style="background:rgba(8,8,13,0.92);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);">
+        <div class="flex items-center justify-between mb-2">
+            <span id="inspector-title" class="text-sm font-bold text-white"></span>
+            <button onclick="document.getElementById('graph-inspector').classList.add('hidden')" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div id="inspector-body" class="text-xs text-[#A0A0B8] space-y-1"></div>
+    </div>
+</div>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<script>
+(function() {
+    fetch('/graph/api/graph/')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var elements = [];
+            data.nodes.forEach(function(n) {
+                elements.push({group:'nodes', data:{id:'n'+n.id, label:n.title, type:n.type, desc:n.description}});
+            });
+            data.edges.forEach(function(e) {
+                elements.push({group:'edges', data:{id:'e'+e.id, source:'n'+e.source, target:'n'+e.target, relation:e.relation}});
+            });
+
+            var typeColors = {goal:'#8B5CF6', skill:'#06B6D4', interest:'#F59E0B', memory:'#22C55E'};
+            var typeShapes = {goal:'round-rectangle', skill:'round-rectangle', interest:'diamond', memory:'ellipse'};
+
+            var cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {selector:'node', style:{
+                        'background-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
+                        'label': 'data(label)', 'color': '#e0e0e0', 'font-size': '11px',
+                        'font-family': 'Inter, sans-serif', 'text-valign': 'bottom', 'text-halign': 'center',
+                        'text-margin-y': 8, 'width': 'label', 'padding': '10px',
+                        'background-opacity': 0.25,
+                        'border-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
+                        'border-width': 1.5, 'font-weight': '600',
+                        'shape': function(n) { return typeShapes[n.data('type')] || 'ellipse'; },
+                    }},
+                    {selector:'edge', style:{
+                        'width': 1.5, 'line-color': '#555', 'curve-style': 'bezier',
+                        'target-arrow-color': '#555', 'target-arrow-shape': 'triangle-backcurve',
+                        'arrow-scale': 0.7, 'opacity': 0.5,
+                        'label': 'data(relation)', 'font-size': '8px', 'color': '#686880',
+                        'text-rotation': 'autorotate',
+                    }},
+                    {selector:'node:selected', style:{
+                        'border-width': 3, 'border-color': '#fff',
+                        'shadow-blur': 20, 'shadow-color': '#8B5CF6', 'shadow-opacity': 0.6,
+                    }},
+                ],
+                layout: { name: 'cose', animate: true, animationDuration: 500, fit: true, padding: 60,
+                    nodeRepulsion: function(){return 8000;}, idealEdgeLength: function(){return 150;}, gravity: 0.25 },
+                minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
+            });
+
+            // Click node → show inspector
+            cy.on('tap', 'node', function(evt) {
+                var n = evt.target; var d = n.data();
+                document.getElementById('inspector-title').textContent = d.label;
+                document.getElementById('inspector-body').innerHTML =
+                    '<div>类型: ' + d.type + '</div>' +
+                    (d.desc ? '<div class="mt-1">' + d.desc + '</div>' : '') +
+                    '<div class="mt-2"><button onclick="expandNode(' + d.id + ')" class="text-[10px] px-2 py-1 rounded" style="background:var(--primary);color:white;">展开邻居</button></div>';
+                document.getElementById('graph-inspector').classList.remove('hidden');
+            });
+            cy.on('tap', function(evt) {
+                if (evt.target === cy) document.getElementById('graph-inspector').classList.add('hidden');
+            });
+        });
+})();
+
+function expandNode(nodeId) {
+    var numId = nodeId.replace('n', '');
+    fetch('/graph/api/graph/node/' + numId + '/')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var insp = document.getElementById('inspector-body');
+            if (data.neighbors && data.neighbors.length) {
+                var html = '<div class="text-[10px] font-bold text-[#686880] mt-2 mb-1">邻居节点:</div>';
+                data.neighbors.forEach(function(n) {
+                    html += '<div class="text-xs text-white">' + n.title + ' <span class="text-[#686880]">(' + n.type + ')</span></div>';
+                });
+                insp.innerHTML += html;
+            } else {
+                insp.innerHTML += '<div class="text-[10px] text-[#686880] mt-2">无更多邻居</div>';
+            }
+        });
+}
+</script>
+{% endblock %}
