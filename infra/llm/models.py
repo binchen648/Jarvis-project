@@ -132,20 +132,24 @@ class SurfaceEvent(models.Model):
         (5, 'P5 - Summary'),
     ]
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('shown', 'Shown'),
-        ('dismissed', 'Dismissed'),
-        ('expired', 'Expired'),
+        ('pending', '待处理'),
+        ('read', '已读'),
+        ('acted', '已操作'),
+        ('dismissed', '已忽略'),
+        ('archived', '已归档'),
     ]
 
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='surface_events')
     event_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=5)
     title = models.CharField(max_length=200)
-    body = models.TextField(blank=True)
+    description = models.TextField(blank=True, verbose_name='描述')
     action_url = models.CharField(max_length=500, blank=True)
     payload = models.JSONField(default=dict, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    event_key = models.CharField(max_length=200, blank=True, verbose_name='事件去重键')
+    source_type = models.CharField(max_length=50, blank=True, verbose_name='源类型')
+    source_id = models.IntegerField(null=True, blank=True, verbose_name='源ID')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -154,6 +158,10 @@ class SurfaceEvent(models.Model):
         indexes = [
             models.Index(fields=['user', 'status']),
             models.Index(fields=['user', 'event_type']),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'event_key'], name='unique_surface_event_key',
+                                    condition=models.Q(event_key__gt='')),
         ]
 
     def __str__(self):

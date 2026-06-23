@@ -246,28 +246,52 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 @login_required
+@require_POST
 def dismiss_surface(request, surface_id):
-    """API: POST /api/surface/<id>/dismiss/ — mark a SurfaceEvent as dismissed."""
+    """POST /api/surface/<id>/dismiss — soft dismiss."""
     from infra.llm.models import SurfaceEvent
-
-    if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=405)
-
+    from infra.surface.service import mark_dismissed
     try:
         event = SurfaceEvent.objects.get(id=surface_id, user=request.user)
+        mark_dismissed(event)
+        return JsonResponse({"ok": True, "dismissed_id": surface_id})
     except SurfaceEvent.DoesNotExist:
         return JsonResponse({"error": "Surface not found"}, status=404)
 
-    event.status = "dismissed"
-    event.save(update_fields=["status"])
 
-    return JsonResponse({"ok": True, "dismissed_id": surface_id})
+@login_required
+@require_POST
+def mark_surface_read(request, surface_id):
+    """POST /api/surfaces/<id>/read — mark surface as read."""
+    from infra.llm.models import SurfaceEvent
+    from infra.surface.service import mark_read
+    try:
+        event = SurfaceEvent.objects.get(pk=surface_id, user=request.user)
+        changed = mark_read(event)
+        return JsonResponse({'ok': True, 'changed': changed})
+    except SurfaceEvent.DoesNotExist:
+        return JsonResponse({'error': 'Surface not found'}, status=404)
+
+
+@login_required
+@require_POST
+def mark_surface_acted(request, surface_id):
+    """POST /api/surfaces/<id>/act — mark surface as acted (CTA clicked)."""
+    from infra.llm.models import SurfaceEvent
+    from infra.surface.service import mark_acted
+    try:
+        event = SurfaceEvent.objects.get(pk=surface_id, user=request.user)
+        mark_acted(event)
+        return JsonResponse({'ok': True})
+    except SurfaceEvent.DoesNotExist:
+        return JsonResponse({'error': 'Surface not found'}, status=404)
 
 
 @login_required
@@ -279,7 +303,6 @@ def core_status(request):
         from apps.goals.models import Goal
         from apps.trajectory.models import TrajectoryEvent
         from apps.chat.models import Message
-        from infra.actions.surface_service import get_pending_count, get_pending_events
         from django.utils.timesince import timesince
 
         user = request.user
@@ -305,9 +328,6 @@ def core_status(request):
                 active_tool = match.group(1)
                 break
 
-        # Pending count (from surface_service)
-        pending_count = get_pending_count(user)
-
         # Last activity: most recent TrajectoryEvent.happened_at
         last_traj = TrajectoryEvent.objects.filter(user=user).order_by("-happened_at").first()
         if last_traj:
@@ -315,20 +335,18 @@ def core_status(request):
         else:
             last_activity = ""
 
+        # Surface stats
+        from infra.surface.service import get_stats
+        surface_stats = get_stats(user)
+        pending_count = surface_stats['pending_count']
+        unread_count = surface_stats['unread_count']
+
         # ── Orb state priority ─────────────────────────────────────────────────
         state = "idle"
         if active_tool:
             state = "executing"
         elif pending_count > 0:
-            # Check if any are priority 1 (alerts)
-            events = get_pending_events(user)
-            highest_priority = min([e['priority'] for e in events]) if events else 99
-            if highest_priority <= 1:
-                state = "alert"
-            elif highest_priority <= 2:
-                state = "reminder"
-            else:
-                state = "idle"
+            state = "alert"
 
         return JsonResponse({
             "state": state,
@@ -337,6 +355,7 @@ def core_status(request):
             "active_tool": active_tool,
             "active_goals": active_goals,
             "pending_count": pending_count,
+            "unread_count": unread_count,
             "last_activity": last_activity,
         })
     except Exception as e:
@@ -348,16 +367,29 @@ def core_status(request):
             "active_tool": "",
             "active_goals": 0,
             "pending_count": 0,
+            "unread_count": 0,
             "last_activity": "",
         })
 
 
 @login_required
 def surface_list(request):
-    """GET /api/surfaces/ — return all pending surface events, sorted by priority."""
-    from infra.actions.surface_service import get_pending_events
-    events = get_pending_events(request.user)
-    return JsonResponse({'surfaces': events, 'count': len(events)})
+    """GET /api/surfaces/ — return pending + read surfaces."""
+    from infra.surface.service import get_pending_surfaces
+    events = get_pending_surfaces(request.user)
+    data = []
+    for se in events:
+        data.append({
+            'id': se.pk,
+            'type': se.event_type,
+            'priority': se.priority,
+            'title': se.title,
+            'description': se.description or '',
+            'status': se.status,
+            'source': {'type': se.source_type, 'id': se.source_id} if se.source_type else None,
+            'cta': se.payload.get('cta', {'action': 'discuss', 'label': '查看', 'icon': 'stars'}),
+        })
+    return JsonResponse({'surfaces': data, 'count': len(data)})
 
 
 @login_required

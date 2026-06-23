@@ -7,6 +7,8 @@ urlpatterns = [
     path('health/', include('apps.health.urls')),
     path('api/core-status/', dashboard_views.core_status, name='core_status'),
     path('api/surfaces/', dashboard_views.surface_list, name='surface_list'),
+    path('api/surfaces/<int:surface_id>/read/', dashboard_views.mark_surface_read, name='mark_surface_read'),
+    path('api/surfaces/<int:surface_id>/act/', dashboard_views.mark_surface_acted, name='mark_surface_acted'),
     path('api/surface/<int:surface_id>/dismiss/', dashboard_views.dismiss_surface, name='dismiss_surface'),
     path('api/dashboard/layout/', dashboard_views.dashboard_layout, name='dashboard_layout'),
     path('admin/', admin.site.urls),

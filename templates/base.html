@@ -124,6 +124,13 @@ function markDismissed(surfaceId) {
   } catch(e) {}
 }
 
+/* ── CSRF Helper ────────────────────────────────────────────────────── */
+
+function getCSRFToken() {
+  var el = document.querySelector('input[name=csrfmiddlewaretoken]');
+  return el ? el.value : '';
+}
+
 /* ── Toast Notification ──────────────────────────────────────────────── */
 
 function showToast(msg, type) {
@@ -211,6 +218,12 @@ function fetchAndRenderSurfaces() {
     var html = '';
     surfaces.forEach(function(s) { html += renderSurfaceCard(s); });
     container.innerHTML = html;
+
+    // Mark surfaces as read when displayed
+    var csrfToken = getCSRFToken();
+    surfaces.forEach(function(s) {
+      fetch('/api/surfaces/' + s.id + '/read/', { method: 'POST', headers: {'X-CSRFToken': csrfToken} }).catch(function(){});
+    });
   })
   .catch(function() {
     container.innerHTML = '<div class="surface-card" style="text-align:center;padding:1.5rem;">' +
@@ -276,6 +289,14 @@ function executeSurfaceAction(btn) {
   var sourceStr = btn.getAttribute('data-source');
   var source;
   try { source = JSON.parse(sourceStr); } catch(e) { source = {}; }
+
+  // Mark as acted
+  var card = btn.closest('.surface-card');
+  var surfaceId = card ? card.getAttribute('data-surface-id') : null;
+  if (surfaceId) {
+    var csrfToken = getCSRFToken();
+    fetch('/api/surfaces/' + surfaceId + '/act/', { method: 'POST', headers: {'X-CSRFToken': csrfToken} }).catch(function(){});
+  }
 
   // Disable button during request
   btn.disabled = true;

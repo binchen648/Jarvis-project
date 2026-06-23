@@ -29,7 +29,7 @@ def get_pending_events(user):
                 'type': se.event_type,
                 'priority': se.priority,
                 'title': se.title,
-                'description': se.body,
+                'description': se.description,
                 'source': {'type': se.event_type, 'id': se.pk},
                 'cta': se.payload.get('cta', {'action': 'discuss', 'label': 'Discuss', 'icon': 'stars'}),
             })
