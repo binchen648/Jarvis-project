@@ -600,6 +600,129 @@ register_tool(Tool(
 ))
 
 
+# ── 4f. query_graph ───────────────────────────────────────────
+
+def _execute_query_graph(user, **kwargs) -> dict:
+    """查询知识图谱，支持搜索节点、查找节点间路径、获取节点邻居子图。"""
+    action = kwargs.get("action", "")
+    from infra.graph.service import GraphService
+
+    svc = GraphService(user)
+
+    if action == "search":
+        return svc.search_nodes(kwargs.get("query", ""), kwargs.get("node_type", ""))
+    elif action == "paths":
+        return svc.find_paths(kwargs.get("from_node", 0), kwargs.get("to_node", 0))
+    elif action == "subgraph":
+        return svc.get_related_subgraph(kwargs.get("node_id", 0), kwargs.get("depth", 2))
+    elif action == "stats":
+        return svc.get_graph_statistics()
+    else:
+        return {"error": f"未知操作: {action}"}
+
+
+register_tool(Tool(
+    name="query_graph",
+    description="查询知识图谱，支持搜索节点、查找节点间路径、获取节点邻居子图。可用于回答「XXX和XXX有什么关系？」「和XXX相关的有哪些？」等问题",
+    parameters={
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "description": "操作类型: search（搜索节点）/ paths（查找路径）/ subgraph（获取子图）/ stats（图谱统计）",
+                "enum": ["search", "paths", "subgraph", "stats"],
+            },
+            "query": {
+                "type": "string",
+                "description": "搜索关键词（action=search时必填）",
+            },
+            "node_type": {
+                "type": "string",
+                "description": "按节点类型过滤: goal/skill/interest/memory（可选）",
+            },
+            "from_node": {
+                "type": "integer",
+                "description": "起点节点ID（action=paths时必填）",
+            },
+            "to_node": {
+                "type": "integer",
+                "description": "终点节点ID（action=paths时必填）",
+            },
+            "node_id": {
+                "type": "integer",
+                "description": "中心节点ID（action=subgraph时必填）",
+            },
+            "depth": {
+                "type": "integer",
+                "description": "子图展开深度（默认2，action=subgraph时可选）",
+            },
+        },
+        "required": ["action"],
+    },
+    execute=_execute_query_graph,
+    requires_user=True,
+))
+
+
+# ── 4g. save_to_graph ──────────────────────────────────────
+
+def _execute_save_to_graph(user, **kwargs) -> dict:
+    """Save an insight/knowledge point to the user's knowledge graph."""
+    title = kwargs.get("title", "").strip()
+    node_type = kwargs.get("type", "memory")
+    description = kwargs.get("description", "")
+
+    if not title:
+        return {"error": "标题不能为空"}
+
+    valid_types = {"memory", "skill", "interest"}
+    if node_type not in valid_types:
+        node_type = "memory"
+
+    from infra.graph.service import GraphService
+    svc = GraphService(user)
+    node = svc.create_node(
+        node_type=node_type,
+        title=title,
+        description=description,
+        importance=1.5,
+        source_type='agent_save',
+    )
+    return {
+        "ok": True,
+        "node_id": node.pk,
+        "title": title,
+        "type": node_type,
+    }
+
+
+register_tool(Tool(
+    name="save_to_graph",
+    description="将学到的知识点或洞察保存到知识图谱中。当用户在对话中表达了新的理解、学到了新概念、或者你识别出值得记录的知识点时使用。",
+    parameters={
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "知识点标题，简洁准确。例如：理解链表头插法、Python装饰器原理",
+            },
+            "type": {
+                "type": "string",
+                "enum": ["memory", "skill", "interest"],
+                "description": "节点类型：memory（记忆/理解）、skill（技能）、interest（兴趣）",
+            },
+            "description": {
+                "type": "string",
+                "description": "详细描述（可选）",
+            },
+        },
+        "required": ["title"],
+    },
+    execute=_execute_save_to_graph,
+    requires_user=True,
+))
+
+
 # ═══════════════════════════════════════════════════════════════
 # __all__ 导出
 # ═══════════════════════════════════════════════════════════════
