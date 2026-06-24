@@ -12,6 +12,8 @@ Fallback: No LLM available = rule-based summary from raw data.
 """
 
 import logging
+import re
+from collections import defaultdict
 from datetime import timedelta
 
 from django.db import models
@@ -80,6 +82,7 @@ def build_persona(user):
         defaults={
             'persona_summary': summary,
             'interests': raw_signals.get('interests', []),
+            'facts': raw_signals.get('facts', {}),
             'version': new_version,
             'last_signal_at': last_signal,
             'last_built_at': timezone.now(),
@@ -99,9 +102,9 @@ def build_persona(user):
         for interest in raw_signals.get('interests', []):
             store_memory(
                 user=user, level=2, memory_type='interest',
-                content=interest['tag'],
-                metadata={'weight': interest['weight']},
-                weight=interest['weight'],
+                content=interest['name'],
+                metadata={'score': interest['score']},
+                weight=interest['score'],
             )
         # L2: Goals
         for goal in raw_signals.get('recent_goals', []):
@@ -142,6 +145,7 @@ def _collect_signals(user):
         'recent_goals': [],
         'completed_skills': 0,
         'learning_skills': 0,
+        'facts': {},
     }
 
     # Goals Sessions (past 7 days)
@@ -168,13 +172,54 @@ def _collect_signals(user):
     except Exception:
         logger.warning("Could not collect WellnessRecord data for user %d", user.pk)
 
-    # Interests from Knowledge Graph
+    # L1: Multi-source Interest Scoring
+    interest_scores = defaultdict(float)
+
+    # Source 1: Goal tags (extract keywords from title, +3)
+    try:
+        from apps.goals.models import Goal
+        for g in Goal.objects.filter(user=user, status='active'):
+            for tag in re.findall(r'[a-zA-Z\u4e00-\u9fff]+', g.title):
+                if len(tag) > 1:
+                    interest_scores[tag.lower()] += 3.0
+    except Exception:
+        logger.warning("Could not collect Goal data for interest scoring, user %d", user.pk)
+
+    # Source 2: Skill tags (+2)
+    try:
+        from apps.trajectory.models import UserLearningProgress, SkillNode
+        for p in UserLearningProgress.objects.filter(user=user).select_related('skill'):
+            for tag in re.findall(r'[a-zA-Z\u4e00-\u9fff]+', p.skill.name):
+                if len(tag) > 1:
+                    interest_scores[tag.lower()] += 2.0
+    except Exception:
+        logger.warning("Could not collect Skill data for interest scoring, user %d", user.pk)
+
+    # Source 3: Content tags (+1)
+    try:
+        from apps.content.models import ProcessedContent
+        for c in ProcessedContent.objects.filter(tags__len__gt=0)[:50]:
+            for tag in c.tags:
+                if isinstance(tag, str) and len(tag) > 1:
+                    interest_scores[tag.lower()] += 1.0
+    except Exception:
+        logger.warning("Could not collect Content tags for interest scoring, user %d", user.pk)
+
+    # Source 4: UserInterest weight
     try:
         from apps.trajectory.models import UserInterest
-        interests = UserInterest.objects.filter(user=user, weight__gte=0.5)[:10]
-        signals['interests'] = [{'tag': i.tag, 'weight': i.weight} for i in interests]
+        for i in UserInterest.objects.filter(user=user, weight__gte=0.5):
+            interest_scores[i.tag.lower()] += float(i.weight)
     except Exception:
         logger.warning("Could not collect UserInterest data for user %d", user.pk)
+
+    # Top 5 sorted
+    top_interests = sorted(
+        [{"name": name, "score": round(score, 1)} for name, score in interest_scores.items()],
+        key=lambda x: -x['score']
+    )[:5]
+
+    signals['interests'] = top_interests
 
     # Skills
     try:
@@ -192,6 +237,40 @@ def _collect_signals(user):
         signals['recent_goals'] = [g.title for g in goals]
     except Exception:
         logger.warning("Could not collect Goal data for user %d", user.pk)
+
+    # L0: Rule Facts — structured JSON, not natural language
+    facts = {"goals": [], "skills": [], "interests": [], "wellness": {}}
+
+    # Goals: Top 5 active
+    try:
+        from apps.goals.models import Goal
+        active_goals = Goal.objects.filter(user=user, status='active').order_by('-updated_at')[:5]
+        for g in active_goals:
+            facts["goals"].append({"id": g.pk, "title": g.title, "status": g.status})
+    except Exception:
+        pass
+
+    # Skills: Top 5 completed
+    try:
+        from apps.trajectory.models import UserLearningProgress, SkillNode
+        completed = UserLearningProgress.objects.filter(user=user, status='completed').select_related('skill')[:5]
+        for s in completed:
+            facts["skills"].append({"id": s.skill_id, "title": s.skill.name, "status": "completed"})
+    except Exception:
+        pass
+
+    # Wellness: 7-day average mood
+    try:
+        from apps.wellness.models import WellnessRecord
+        from django.db.models import Avg
+        cutoff = timezone.now() - timedelta(days=7)
+        avg = WellnessRecord.objects.filter(user=user, record_date__gte=cutoff).aggregate(Avg('mood_score'))
+        if avg['mood_score__avg']:
+            facts["wellness"] = {"avg_mood": round(float(avg['mood_score__avg']), 1), "period_days": 7}
+    except Exception:
+        pass
+
+    signals['facts'] = facts
 
     return signals
 
@@ -222,7 +301,7 @@ def _generate_summary(signals):
 
     # Interests
     if signals['interests']:
-        top = [i['tag'] for i in signals['interests'][:5]]
+        top = [i['name'] for i in signals['interests'][:5]]
         parts.append(f"兴趣领域: {', '.join(top)}")
 
     # Mood/Wellness
