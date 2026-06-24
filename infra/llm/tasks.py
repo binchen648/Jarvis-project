@@ -2,6 +2,7 @@
 import logging
 
 from celery import shared_task
+from django.db.models import F
 
 logger = logging.getLogger(__name__)
 
@@ -41,3 +42,29 @@ def build_user_persona(user_id):
     user = get_user_model().objects.get(pk=user_id)
     build_persona(user)
     return f'Built persona for user {user_id}'
+
+
+@shared_task(time_limit=300, soft_time_limit=240, max_retries=2)
+def build_dirty_personas():
+    """Rebuild personas where last_signal_at > last_built_at.
+
+    Runs every 30 minutes. Only rebuilds personas with recent changes,
+    avoiding full scan of all active users.
+    """
+    from infra.llm.models import UserPersona
+    from infra.memory.persona_builder import build_persona
+
+    dirty = UserPersona.objects.filter(
+        last_signal_at__gt=F('last_built_at')
+    ) | UserPersona.objects.filter(last_built_at__isnull=True)
+
+    count = 0
+    for persona in dirty.iterator():
+        try:
+            build_persona(persona.user)
+            count += 1
+        except Exception as e:
+            logger.error("Dirty persona build failed for user %d: %s", persona.user_id, e)
+
+    logger.info("Built %d dirty personas", count)
+    return f"Built {count} dirty personas"

@@ -153,3 +153,30 @@ def invalidate_snapshot_on_message(sender, instance, created, **kwargs):
 @receiver(post_save, sender='goals.GoalProgress')
 def invalidate_snapshot_on_progress(sender, instance, **kwargs):
     _invalidate_insight_snapshot(instance.goal.user_id)
+
+
+# ── Persona dirty marking ───────────────────────────────────
+# Mark persona as needing rebuild when relevant data changes.
+
+
+def _mark_persona_dirty(user_id):
+    """Update last_signal_at so build_persona detects a change."""
+    if not user_id:
+        return
+    try:
+        from infra.llm.models import UserPersona
+        from django.utils import timezone
+        UserPersona.objects.filter(user_id=user_id).update(last_signal_at=timezone.now())
+    except Exception:
+        logger.debug("Failed to mark persona dirty for user %d", user_id)
+
+
+@receiver(post_save, sender='goals.GoalSession')
+def mark_persona_dirty_on_session(sender, instance, **kwargs):
+    _mark_persona_dirty(instance.user_id)
+
+
+@receiver(post_save, sender='goals.Goal')
+def mark_persona_dirty_on_goal(sender, instance, created, **kwargs):
+    if created:
+        _mark_persona_dirty(instance.user_id)

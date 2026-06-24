@@ -59,6 +59,11 @@ app.conf.beat_schedule = {
         'task': 'infra.llm.tasks.build_all_personas',
         'schedule': crontab(hour='*/6'),  # every 6 hours
     },
+    # Phase 4 — persona dirty rebuild
+    'rebuild-dirty-personas': {
+        'task': 'infra.llm.tasks.build_dirty_personas',
+        'schedule': crontab(minute='*/30'),  # every 30 minutes
+    },
     # Phase 4 — Insight layer
     'rebuild-daily-snapshots': {
         'task': 'infra.insight.tasks.refresh_all_snapshots',
