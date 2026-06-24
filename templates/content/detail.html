@@ -8,5 +8,47 @@
 <h1 class="text-2xl font-bold mb-4">{{ content.title }}</h1>
 {% if content.tags %}<div class="flex gap-2 mb-4 flex-wrap">{% for tag in content.tags %}<span class="text-[10px] px-2 py-1 rounded-full" style="background:color-mix(in srgb,var(--primary)10%,transparent);color:var(--primary)">{{ tag }}</span>{% endfor %}</div>{% endif %}
 <p class="text-sm leading-relaxed" style="color:#9191A8;">{{ content.description }}</p>
-{% if content.url %}<div class="mt-8 pt-6 border-t border-white/5 flex gap-3"><a href="{{ content.url }}" target="_blank" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold shadow-lg hover:scale-105 transition items-center gap-2" style="background:var(--primary);color:white;"><i class="bi bi-box-arrow-up-right"></i> 查看原文</a><form method="POST" action="/chat/discuss/{{ content.id }}/">{% csrf_token %}<button type="submit" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:var(--accent);border:1px solid rgba(255,255,255,0.06);"><i class="bi bi-stars"></i> Discuss with Agent</button></form></div>{% else %}<div class="mt-8 pt-6 border-t border-white/5"><form method="POST" action="/chat/discuss/{{ content.id }}/">{% csrf_token %}<button type="submit" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:var(--accent);border:1px solid rgba(255,255,255,0.06);"><i class="bi bi-stars"></i> Discuss with Agent</button></form></div>{% endif %}
+{% if content.url %}<div class="mt-8 pt-6 border-t border-white/5 flex gap-3"><a href="{{ content.url }}" target="_blank" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold shadow-lg hover:scale-105 transition items-center gap-2" style="background:var(--primary);color:white;"><i class="bi bi-box-arrow-up-right"></i> 查看原文</a><form method="POST" action="/chat/discuss/{{ content.id }}/">{% csrf_token %}<button type="submit" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:var(--accent);border:1px solid rgba(255,255,255,0.06);"><i class="bi bi-stars"></i> Discuss with Agent</button></form><button onclick="addContentToGraph({{ content.id }}, '{{ content.title|escapejs }}')" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:#22C55E;border:1px solid rgba(34,197,94,0.2);"><i class="bi bi-diagram-3"></i> Add to Graph</button></div>{% else %}<div class="mt-8 pt-6 border-t border-white/5 flex items-center gap-3"><form method="POST" action="/chat/discuss/{{ content.id }}/">{% csrf_token %}<button type="submit" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:var(--accent);border:1px solid rgba(255,255,255,0.06);"><i class="bi bi-stars"></i> Discuss with Agent</button></form><button onclick="addContentToGraph({{ content.id }}, '{{ content.title|escapejs }}')" class="inline-flex text-xs px-4 py-2 rounded-lg font-bold hover:bg-white/5 transition items-center gap-2 cursor-pointer" style="color:#22C55E;border:1px solid rgba(34,197,94,0.2);"><i class="bi bi-diagram-3"></i> Add to Graph</button></div>{% endif %}
+<script>
+function addContentToGraph(id, title) {
+    var btn = event.target.closest('button');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+    
+    fetch('/graph/api/graph/node/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            title: title,
+            description: 'Content #' + id,
+            type: 'interest',
+            source_type: 'content',
+            source_id: id,
+        }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok && data.node && data.node.id) {
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Saved ✓';
+            btn.style.borderColor = 'rgba(34,197,94,0.5)';
+            setTimeout(function() {
+                btn.innerHTML = '<i class="bi bi-diagram-3"></i> Add to Graph';
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            btn.innerHTML = '<i class="bi bi-diagram-3"></i> Add to Graph';
+            btn.disabled = false;
+            alert('Save failed');
+        }
+    })
+    .catch(function() {
+        btn.innerHTML = '<i class="bi bi-diagram-3"></i> Add to Graph';
+        btn.disabled = false;
+        alert('Network error');
+    });
+}
+</script>
 {% endblock %}

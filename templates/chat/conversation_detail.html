@@ -129,6 +129,11 @@
                                            style="color:var(--primary);" title="Create Goal from this">
                                             <i class="bi bi-target text-xs"></i> Goal
                                         </a>
+                                        <button onclick="openSaveToGraph('{{ msg.content|escapejs }}')"
+                                           class="text-[10px] opacity-0 group-hover:opacity-100 transition flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/5"
+                                           style="color:#22C55E;" title="Save to Knowledge Graph">
+                                            <i class="bi bi-diagram-3 text-xs"></i> Graph
+                                        </button>
                                     </div>
                                     <p class="text-sm leading-relaxed text-white/90">{{ msg.content|linebreaksbr }}</p>
                                 </div>
@@ -267,4 +272,157 @@
 
             </aside>
         </div>
+
+<!-- ════ Save to Knowledge Graph Modal ════ -->
+<div id="s2g-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);">
+    <div style="background:rgba(8,8,13,0.95);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:1.5rem;padding:2rem;max-width:28rem;width:90%;">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="bi bi-diagram-3" style="color:#22C55E;"></i> Save to Knowledge Graph
+            </h3>
+            <button onclick="closeSaveToGraph()" class="text-[#808098] hover:text-white transition text-lg leading-none">&times;</button>
+        </div>
+
+        <!-- Title -->
+        <label class="block mb-3">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#686880] mb-1.5 block">Title</span>
+            <input type="text" id="s2g-title" placeholder="标题..."
+                   class="w-full px-4 py-2.5 rounded-xl text-sm text-white outline-none transition"
+                   style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"
+                   onfocus="this.style.borderColor='rgba(34,197,94,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+        </label>
+
+        <!-- Description -->
+        <label class="block mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#686880] mb-1.5 block">Description</span>
+            <textarea id="s2g-desc" rows="4" placeholder="描述内容..."
+                      class="w-full px-4 py-2.5 rounded-xl text-sm text-white outline-none resize-none transition"
+                      style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"
+                      onfocus="this.style.borderColor='rgba(34,197,94,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"></textarea>
+        </label>
+
+        <!-- Type selector -->
+        <div class="mb-6">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#686880] mb-2 block">Type</span>
+            <div class="flex gap-2">
+                <label class="s2g-type-pill cursor-pointer">
+                    <input type="radio" name="s2g-type" value="memory" checked class="hidden">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition"
+                          style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#808098;">
+                        <i class="bi bi-brain"></i> Memory
+                    </span>
+                </label>
+                <label class="s2g-type-pill cursor-pointer">
+                    <input type="radio" name="s2g-type" value="skill" class="hidden">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition"
+                          style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#808098;">
+                        <i class="bi bi-gear"></i> Skill
+                    </span>
+                </label>
+                <label class="s2g-type-pill cursor-pointer">
+                    <input type="radio" name="s2g-type" value="interest" class="hidden">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition"
+                          style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#808098;">
+                        <i class="bi bi-heart"></i> Interest
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3">
+            <button onclick="closeSaveToGraph()" class="px-5 py-2.5 rounded-xl text-sm font-medium transition" style="color:#808098;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#808098'">Cancel</button>
+            <button id="s2g-save-btn" onclick="submitSaveToGraph()" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition" style="background:rgba(34,197,94,1);" onmouseover="this.style.background='rgba(22,163,74,1)'" onmouseout="this.style.background='rgba(34,197,94,1)'">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ════ Save to Graph JS ════ -->
+<script>
+(function() {
+    // Type pill active state
+    document.querySelectorAll('.s2g-type-pill input[type="radio"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.s2g-type-pill span').forEach(function(s) {
+                s.style.background = 'rgba(255,255,255,0.05)';
+                s.style.borderColor = 'rgba(255,255,255,0.08)';
+                s.style.color = '#808098';
+            });
+            if (radio.checked) {
+                var pill = radio.nextElementSibling;
+                pill.style.background = 'rgba(34,197,94,0.15)';
+                pill.style.borderColor = 'rgba(34,197,94,0.3)';
+                pill.style.color = '#22C55E';
+            }
+        });
+    });
+    // Init default selection
+    var def = document.querySelector('.s2g-type-pill input[value="memory"]');
+    if (def && def.nextElementSibling) {
+        def.nextElementSibling.style.background = 'rgba(34,197,94,0.15)';
+        def.nextElementSibling.style.borderColor = 'rgba(34,197,94,0.3)';
+        def.nextElementSibling.style.color = '#22C55E';
+    }
+
+    window.openSaveToGraph = function(content) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = content;
+        var text = tmp.textContent || tmp.innerText || '';
+        text = text.trim();
+        var title = text.substring(0, 60);
+        if (text.length >= 60) title += '...';
+        document.getElementById('s2g-title').value = title;
+        document.getElementById('s2g-desc').value = text.substring(0, 500);
+        document.getElementById('s2g-modal').classList.remove('hidden');
+    };
+
+    window.closeSaveToGraph = function() {
+        document.getElementById('s2g-modal').classList.add('hidden');
+    };
+
+    window.submitSaveToGraph = function() {
+        var title = document.getElementById('s2g-title').value.trim();
+        var desc = document.getElementById('s2g-desc').value.trim();
+        var typeEl = document.querySelector('input[name="s2g-type"]:checked');
+        var type = typeEl ? typeEl.value : 'memory';
+
+        if (!title) { alert('请输入标题'); return; }
+
+        var btn = document.getElementById('s2g-save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch('/graph/api/graph/node/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken()},
+            body: JSON.stringify({title: title, description: desc, type: type}),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.id) {
+                showToast('Saved to Graph ✓', 'success');
+                closeSaveToGraph();
+            } else {
+                showToast('Error: ' + (data.error || 'unknown'), 'error');
+            }
+        })
+        .catch(function() { showToast('Network error', 'error'); })
+        .finally(function() {
+            btn.disabled = false;
+            btn.textContent = 'Save';
+        });
+    };
+
+    window.showToast = function(msg, type) {
+        var t = document.createElement('div');
+        t.className = 'fixed top-6 right-6 z-[60] px-6 py-3 rounded-2xl text-sm font-medium text-white shadow-2xl transition-all duration-300';
+        t.style.background = type === 'success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)';
+        t.style.backdropFilter = 'blur(12px)';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(function() { t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 300); }, 2500);
+    };
+})();
+</script>
+
 {% endblock %}
