@@ -5,80 +5,970 @@
 {% block content %}
 <div class="flex-1 relative overflow-hidden">
     <div id="cy" class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.05), transparent 70%);"></div>
-    <div id="graph-inspector" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden px-6 py-4 rounded-2xl min-w-[320px] max-w-lg" style="background:rgba(8,8,13,0.92);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);">
-        <div class="flex items-center justify-between mb-2">
-            <span id="inspector-title" class="text-sm font-bold text-white"></span>
-            <button onclick="document.getElementById('graph-inspector').classList.add('hidden')" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+
+    <!-- Search / Filter Bar -->
+    <div id="search-bar" class="absolute top-0 left-0 right-0 z-20 flex items-center gap-2.5 px-4 py-2.5" style="background:rgba(8,8,13,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div class="relative flex-1 max-w-xs">
+            <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#686880] text-[11px]"></i>
+            <input id="search-input" type="text" placeholder="搜索节点…" autocomplete="off" class="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs text-white outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-shadow" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
         </div>
-        <div id="inspector-body" class="text-xs text-[#A0A0B8] space-y-1"></div>
+        <select id="type-filter" class="px-3 py-1.5 rounded-lg text-xs text-[#A0A0B8] outline-none cursor-pointer" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
+            <option value="">全部</option>
+            <option value="goal">目标</option>
+            <option value="skill">技能</option>
+            <option value="interest">兴趣</option>
+            <option value="memory">记忆</option>
+        </select>
+        <div class="flex-1"></div>
+        <button onclick="exportPNG()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] text-[#A0A0B8] hover:text-white hover:bg-white/5 transition-colors" title="导出 PNG">
+            <i class="bi bi-camera"></i><span>导出</span>
+        </button>
+        <button onclick="toggleLegend()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] text-[#A0A0B8] hover:text-white hover:bg-white/5 transition-colors" title="图例">
+            <i class="bi bi-palette"></i><span>图例</span>
+        </button>
     </div>
+
+    <!-- Legend Overlay -->
+    <div id="legend-overlay" class="hidden absolute z-20 px-4 py-3 rounded-xl" style="top:52px;right:16px;background:rgba(8,8,13,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+        <div class="text-[10px] font-bold text-[#686880] uppercase tracking-wider mb-2">图例</div>
+        <div class="flex flex-col gap-1.5">
+            <div class="flex items-center gap-2 text-xs"><span class="w-2.5 h-2.5 rounded-sm" style="background:#8B5CF6;"></span><span class="text-[#A0A0B8]">目标</span></div>
+            <div class="flex items-center gap-2 text-xs"><span class="w-2.5 h-2.5 rounded-sm" style="background:#06B6D4;"></span><span class="text-[#A0A0B8]">技能</span></div>
+            <div class="flex items-center gap-2 text-xs"><span class="w-2.5 h-2.5 rounded-sm" style="background:#F59E0B;"></span><span class="text-[#A0A0B8]">兴趣</span></div>
+            <div class="flex items-center gap-2 text-xs"><span class="w-2.5 h-2.5 rounded-sm" style="background:#22C55E;"></span><span class="text-[#A0A0B8]">记忆</span></div>
+        </div>
+    </div>
+
+    <!-- Linking mode indicator -->
+    <div id="linking-bar" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-xl text-xs text-white flex items-center gap-3" style="background:rgba(139,92,246,0.25);border:1px solid rgba(139,92,246,0.5);backdrop-filter:blur(12px);">
+        <span id="linking-bar-text">🔗 连线模式 — 点击目标节点</span>
+        <button onclick="cancelLinking()" class="text-[#A0A0B8] hover:text-white ml-2"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <!-- Node/Edge Inspector -->
+    <div id="graph-inspector" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden px-6 py-4 rounded-2xl min-w-[320px] max-w-lg" style="background:rgba(8,8,13,0.92);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);">
+        <!-- Node inspector content -->
+        <div id="inspector-node-view">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <span id="inspector-pin-badge" class="hidden text-[10px] px-1.5 py-0.5 rounded" style="background:rgba(139,92,246,0.2);color:#8B5CF6;">📌 已固定</span>
+                    <span id="inspector-title" class="text-sm font-bold text-white"></span>
+                </div>
+                <button onclick="document.getElementById('graph-inspector').classList.add('hidden')" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="inspector-type-badge" class="inline-block text-[10px] px-2 py-0.5 rounded-full mb-2 font-medium"></div>
+            <div id="inspector-body" class="text-xs text-[#A0A0B8] space-y-1.5"></div>
+            <div id="inspector-note" class="hidden mt-2 px-3 py-2 rounded-lg text-[11px] text-[#A0A0B8] leading-relaxed" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+            <div id="inspector-actions" class="flex items-center gap-2 mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+                <button onclick="inspectorLinkTo()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-colors" style="color:#8B5CF6;"><i class="bi bi-link-45deg mr-1"></i>连线</button>
+                <button onclick="inspectorAddNote()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-colors text-[#A0A0B8]"><i class="bi bi-sticky mr-1"></i>备注</button>
+                <button onclick="inspectorPinToggle()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-colors text-[#A0A0B8]"><i class="bi bi-pin mr-1"></i><span id="inspector-pin-label">固定</span></button>
+                <div class="flex-1"></div>
+                <button onclick="inspectorDelete()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 transition-colors text-red-400"><i class="bi bi-trash3 mr-1"></i>删除</button>
+            </div>
+            <!-- Auto-suggest links -->
+            <div id="inspector-suggestions" class="hidden mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+                <div class="text-[10px] font-bold text-[#686880] uppercase tracking-wider mb-2"><i class="bi bi-lightbulb mr-1" style="color:#F59E0B;"></i>建议关联</div>
+                <div id="inspector-suggestion-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+        </div>
+        <!-- Edge inspector content -->
+        <div id="inspector-edge-view" class="hidden">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-arrow-left-right text-[11px]" style="color:#686880;"></i>
+                    <span id="inspector-edge-title" class="text-sm font-bold text-white"></span>
+                </div>
+                <button onclick="document.getElementById('graph-inspector').classList.add('hidden')" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="inspector-edge-relation" class="inline-block text-[10px] px-2 py-0.5 rounded-full mb-2 font-medium" style="background:rgba(139,92,246,0.15);color:#8B5CF6;"></div>
+            <div id="inspector-edge-note" class="hidden mt-2 px-3 py-2 rounded-lg text-[11px] text-[#A0A0B8] leading-relaxed" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+            <div class="flex items-center gap-2 mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+                <button onclick="inspectorEdgeEditNote()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-colors" style="color:#8B5CF6;"><i class="bi bi-sticky mr-1"></i>编辑备注</button>
+                <div class="flex-1"></div>
+                <button onclick="inspectorEdgeDelete()" class="text-[10px] px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 transition-colors text-red-400"><i class="bi bi-trash3 mr-1"></i>删除关联</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="context-menu" class="hidden fixed z-50 rounded-xl py-1.5 min-w-[160px]" style="background:rgba(8,8,13,0.95);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+        <button onclick="ctxPinToggle()" id="ctx-pin-btn" class="w-full text-left px-4 py-2 text-xs text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2.5">
+            <i class="bi bi-pin text-[11px] w-4 text-center"></i><span id="ctx-pin-text">固定节点</span>
+        </button>
+        <button onclick="ctxAddNote()" class="w-full text-left px-4 py-2 text-xs text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2.5">
+            <i class="bi bi-sticky text-[11px] w-4 text-center"></i>添加备注
+        </button>
+        <button onclick="ctxLinkTo()" class="w-full text-left px-4 py-2 text-xs text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2.5">
+            <i class="bi bi-link-45deg text-[11px] w-4 text-center"></i>连线到…
+        </button>
+        <div class="mx-3 my-1" style="border-top:1px solid rgba(255,255,255,0.06);"></div>
+        <button onclick="ctxGroupNodes()" id="ctx-group-btn" class="w-full text-left px-4 py-2 text-xs text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2.5">
+            <i class="bi bi-box-arrow-in-up text-[11px] w-4 text-center"></i>组合选中节点
+        </button>
+        <button onclick="ctxUngroupNode()" id="ctx-ungroup-btn" class="hidden w-full text-left px-4 py-2 text-xs text-[#A0A0B8] hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2.5">
+            <i class="bi bi-box-arrow-down text-[11px] w-4 text-center"></i>取消组合
+        </button>
+        <div class="mx-3 my-1" style="border-top:1px solid rgba(255,255,255,0.06);"></div>
+        <button onclick="ctxDelete()" class="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2.5">
+            <i class="bi bi-trash3 text-[11px] w-4 text-center"></i>删除节点
+        </button>
+    </div>
+
+    <!-- Create Node Modal -->
+    <div id="create-node-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);">
+        <div class="w-full max-w-sm rounded-2xl p-6" style="background:rgba(12,12,20,0.97);border:1px solid rgba(255,255,255,0.08);box-shadow:0 24px 64px rgba(0,0,0,0.5);">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-sm font-bold text-white">创建新节点</h3>
+                <button onclick="closeCreateModal()" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">标题 <span class="text-red-400">*</span></label>
+                    <input id="create-title" type="text" placeholder="输入节点标题…" class="w-full px-3 py-2 rounded-lg text-xs text-white outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-shadow" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);" autocomplete="off">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">类型</label>
+                    <div id="create-type-selector" class="flex gap-1.5 flex-wrap">
+                        <button data-type="goal" class="create-type-btn active px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all" style="background:rgba(139,92,246,0.2);color:#8B5CF6;border:1px solid rgba(139,92,246,0.4);">目标</button>
+                        <button data-type="skill" class="create-type-btn px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all" style="background:rgba(6,182,212,0.1);color:#06B6D4;border:1px solid rgba(6,182,212,0.2);">技能</button>
+                        <button data-type="interest" class="create-type-btn px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all" style="background:rgba(245,158,11,0.1);color:#F59E0B;border:1px solid rgba(245,158,11,0.2);">兴趣</button>
+                        <button data-type="memory" class="create-type-btn px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all" style="background:rgba(34,197,94,0.1);color:#22C55E;border:1px solid rgba(34,197,94,0.2);">记忆</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">描述</label>
+                    <textarea id="create-desc" rows="2" placeholder="可选描述…" class="w-full px-3 py-2 rounded-lg text-xs text-white outline-none resize-none focus:ring-1 focus:ring-[#8B5CF6] transition-shadow" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-5">
+                <button onclick="closeCreateModal()" class="px-4 py-2 rounded-lg text-xs text-[#686880] hover:text-white transition-colors">取消</button>
+                <button id="create-submit-btn" onclick="submitCreateNode()" class="px-4 py-2 rounded-lg text-xs font-medium text-white transition-all" style="background:#8B5CF6;">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Modal -->
+    <div id="link-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);">
+        <div class="w-full max-w-sm rounded-2xl p-6" style="background:rgba(12,12,20,0.97);border:1px solid rgba(255,255,255,0.08);box-shadow:0 24px 64px rgba(0,0,0,0.5);">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-sm font-bold text-white">建立关联</h3>
+                <button onclick="closeLinkModal()" class="text-[#686880] hover:text-white text-xs"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="link-modal-nodes" class="text-xs text-[#A0A0B8] mb-4"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">关系类型</label>
+                    <select id="link-relation" class="w-full px-3 py-2 rounded-lg text-xs text-white outline-none" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
+                        <option value="related">相关</option>
+                        <option value="prerequisite">前置</option>
+                        <option value="inspires">启发</option>
+                        <option value="contradicts">矛盾</option>
+                        <option value="supports">支持</option>
+                        <option value="blocks">阻碍</option>
+                        <option value="generates">生成</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">备注</label>
+                    <input id="link-note" type="text" placeholder="可选备注…" class="w-full px-3 py-2 rounded-lg text-xs text-white outline-none" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);" autocomplete="off">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-5">
+                <button onclick="closeLinkModal()" class="px-4 py-2 rounded-lg text-xs text-[#686880] hover:text-white transition-colors">取消</button>
+                <button id="link-submit-btn" onclick="submitLink()" class="px-4 py-2 rounded-lg text-xs font-medium text-white transition-all" style="background:#8B5CF6;">创建关联</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Input Popup -->
+    <div id="note-popup" class="hidden fixed z-50" style="background:rgba(8,8,13,0.95);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;box-shadow:0 12px 36px rgba(0,0,0,0.5);">
+        <label class="block text-[10px] font-medium text-[#686880] uppercase tracking-wider mb-1.5">备注内容</label>
+        <textarea id="note-input" rows="3" placeholder="输入备注…" class="w-full px-3 py-2 rounded-lg text-xs text-white outline-none resize-none focus:ring-1 focus:ring-[#8B5CF6] transition-shadow" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);min-width:220px;"></textarea>
+        <div class="flex justify-end gap-2 mt-2">
+            <button onclick="closeNotePopup()" class="px-3 py-1 rounded-lg text-[10px] text-[#686880] hover:text-white transition-colors">取消</button>
+            <button onclick="submitNote()" class="px-3 py-1 rounded-lg text-[10px] font-medium text-white" style="background:#8B5CF6;">保存</button>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirm-dialog" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);">
+        <div class="w-full max-w-xs rounded-2xl p-5 text-center" style="background:rgba(12,12,20,0.97);border:1px solid rgba(255,255,255,0.08);box-shadow:0 24px 64px rgba(0,0,0,0.5);">
+            <div class="text-2xl mb-3">⚠️</div>
+            <p id="confirm-msg" class="text-xs text-[#A0A0B8] mb-4"></p>
+            <div class="flex justify-center gap-2">
+                <button onclick="confirmResolve(false)" class="px-4 py-2 rounded-lg text-xs text-[#686880] hover:text-white transition-colors">取消</button>
+                <button onclick="confirmResolve(true)" class="px-4 py-2 rounded-lg text-xs font-medium text-white bg-red-500 hover:bg-red-600 transition-colors">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
 </div>
 <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
 <script>
-(function() {
-    fetch('/graph/api/graph/')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var elements = [];
-            data.nodes.forEach(function(n) {
-                elements.push({group:'nodes', data:{id:'n'+n.id, label:n.title, type:n.type, desc:n.description}});
-            });
-            data.edges.forEach(function(e) {
-                elements.push({group:'edges', data:{id:'e'+e.id, source:'n'+e.source, target:'n'+e.target, relation:e.relation}});
-            });
+/* ============================
+   STATE
+   ============================ */
+var CY = null;
+var NODE_DATA_MAP = {};   // 'n123' → {id, type, title, desc, pinned, note, importance}
+var EDGE_DATA_MAP = {};   // 'e123' → {id, relation, note, source, target}
+var CTX_NODE = null;       // currently right-clicked cy node
+var CREATING_POSITION = null; // position for new node
+var LINKING_SOURCE = null;  // node being linked from
+var NOTE_TARGET = null;     // node being noted
+var CONFIRM_RESOLVE = null;
+var INSPECTED_EDGE = null;  // currently inspected edge (cy edge)
+var GROUP_COUNTER = 0;      // group node counter
+var SEARCH_DEBOUNCE = null;
+var ACTIVE_TYPE_FILTER = '';
 
-            var typeColors = {goal:'#8B5CF6', skill:'#06B6D4', interest:'#F59E0B', memory:'#22C55E'};
-            var typeShapes = {goal:'round-rectangle', skill:'round-rectangle', interest:'diamond', memory:'ellipse'};
+var TYPE_COLORS = {goal:'#8B5CF6', skill:'#06B6D4', interest:'#F59E0B', memory:'#22C55E'};
+var TYPE_LABELS = {goal:'目标', skill:'技能', interest:'兴趣', memory:'记忆', custom:'自定义'};
 
-            var cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: elements,
-                style: [
-                    {selector:'node', style:{
-                        'background-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
-                        'label': 'data(label)', 'color': '#e0e0e0', 'font-size': '11px',
-                        'font-family': 'Inter, sans-serif', 'text-valign': 'bottom', 'text-halign': 'center',
-                        'text-margin-y': 8, 'width': 'label', 'padding': '10px',
-                        'background-opacity': 0.25,
-                        'border-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
-                        'border-width': 1.5, 'font-weight': '600',
-                        'shape': function(n) { return typeShapes[n.data('type')] || 'ellipse'; },
-                    }},
-                    {selector:'edge', style:{
-                        'width': 1.5, 'line-color': '#555', 'curve-style': 'bezier',
-                        'target-arrow-color': '#555', 'target-arrow-shape': 'triangle-backcurve',
-                        'arrow-scale': 0.7, 'opacity': 0.5,
-                        'label': 'data(relation)', 'font-size': '8px', 'color': '#686880',
-                        'text-rotation': 'autorotate',
-                    }},
-                    {selector:'node:selected', style:{
-                        'border-width': 3, 'border-color': '#fff',
-                        'shadow-blur': 20, 'shadow-color': '#8B5CF6', 'shadow-opacity': 0.6,
-                    }},
-                ],
-                layout: { name: 'cose', animate: true, animationDuration: 500, fit: true, padding: 60,
-                    nodeRepulsion: function(){return 8000;}, idealEdgeLength: function(){return 150;}, gravity: 0.25 },
-                minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
-            });
+/* ============================
+   TOAST SYSTEM
+   ============================ */
+function showToast(msg, type) {
+    type = type || 'info';
+    var c = document.getElementById('toast-container');
+    var colors = {success:'#22C55E', error:'#EF4444', info:'#8B5CF6', warn:'#F59E0B'};
+    var icons = {success:'bi-check-circle-fill', error:'bi-x-circle-fill', info:'bi-info-circle-fill', warn:'bi-exclamation-triangle-fill'};
+    var t = document.createElement('div');
+    t.className = 'pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs text-white';
+    t.style.cssText = 'background:rgba(8,8,13,0.95);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn .25s ease-out;';
+    t.innerHTML = '<i class="bi ' + (icons[type]||icons.info) + '" style="color:' + (colors[type]||colors.info) + '"></i><span>' + msg + '</span>';
+    c.appendChild(t);
+    setTimeout(function() {
+        t.style.transition = 'opacity .3s, transform .3s';
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(16px)';
+        setTimeout(function() { t.remove(); }, 300);
+    }, 3000);
+}
 
-            // Click node → show inspector
-            cy.on('tap', 'node', function(evt) {
-                var n = evt.target; var d = n.data();
-                document.getElementById('inspector-title').textContent = d.label;
-                document.getElementById('inspector-body').innerHTML =
-                    '<div>类型: ' + d.type + '</div>' +
-                    (d.desc ? '<div class="mt-1">' + d.desc + '</div>' : '') +
-                    '<div class="mt-2"><button onclick="expandNode(' + d.id + ')" class="text-[10px] px-2 py-1 rounded" style="background:var(--primary);color:white;">展开邻居</button></div>';
-                document.getElementById('graph-inspector').classList.remove('hidden');
-            });
-            cy.on('tap', function(evt) {
-                if (evt.target === cy) document.getElementById('graph-inspector').classList.add('hidden');
+/* ============================
+   CONFIRM DIALOG
+   ============================ */
+function showConfirm(msg) {
+    return new Promise(function(resolve) {
+        document.getElementById('confirm-msg').textContent = msg;
+        document.getElementById('confirm-dialog').classList.remove('hidden');
+        CONFIRM_RESOLVE = resolve;
+    });
+}
+function confirmResolve(val) {
+    document.getElementById('confirm-dialog').classList.add('hidden');
+    if (CONFIRM_RESOLVE) { CONFIRM_RESOLVE(val); CONFIRM_RESOLVE = null; }
+}
+
+/* ============================
+   API HELPERS
+   ============================ */
+function csrfHeader() {
+    var t = getCSRFToken();
+    return t ? {'Content-Type':'application/json', 'X-CSRFToken': t} : {'Content-Type':'application/json'};
+}
+function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function apiPatch(nodeId, body) {
+    return fetch('/graph/api/graph/node/' + nodeId + '/', {
+        method: 'PATCH', headers: csrfHeader(), body: JSON.stringify(body)
+    }).then(function(r) { return r.json(); });
+}
+function apiDelete(nodeId) {
+    return fetch('/graph/api/graph/node/' + nodeId + '/', { method: 'DELETE', headers: csrfHeader() })
+        .then(function(r) { return r.json(); });
+}
+function apiCreateNode(title, type, desc) {
+    return fetch('/graph/api/graph/node/', {
+        method: 'POST', headers: csrfHeader(),
+        body: JSON.stringify({title: title, type: type, description: desc || ''})
+    }).then(function(r) { return r.json(); });
+}
+function apiCreateLink(fromId, toId, relation) {
+    return fetch('/graph/api/graph/link/', {
+        method: 'POST', headers: csrfHeader(),
+        body: JSON.stringify({from_node: fromId, to_node: toId, relation: relation})
+    }).then(function(r) { return r.json(); });
+}
+function apiUpdateLinkNote(edgeId, note) {
+    return fetch('/graph/api/graph/link/' + edgeId + '/note/', {
+        method: 'POST', headers: csrfHeader(),
+        body: JSON.stringify({note: note})
+    }).then(function(r) { return r.json(); });
+}
+function apiDeleteLink(edgeId) {
+    return fetch('/graph/api/graph/link/' + edgeId + '/delete/', { method: 'DELETE', headers: csrfHeader() })
+        .then(function(r) { return r.json(); });
+}
+function apiSearchNodes(q, nodeType) {
+    var url = '/graph/api/graph/search/?q=' + encodeURIComponent(q);
+    if (nodeType) url += '&type=' + encodeURIComponent(nodeType);
+    return fetch(url).then(function(r) { return r.json(); });
+}
+function apiGetSuggestions(nodeId) {
+    return fetch('/graph/api/graph/node/' + nodeId + '/suggestions/').then(function(r) { return r.json(); });
+}
+
+/* ============================
+   NODE DATA SYNC
+   ============================ */
+function updateNodeData(cyNode, patch) {
+    var d = NODE_DATA_MAP[cyNode.id()];
+    if (d) Object.assign(d, patch);
+    // Update pinned visual
+    if ('pinned' in patch) {
+        cyNode.locked(patch.pinned);
+        if (patch.pinned) {
+            cyNode.style('border-style', 'double').style('border-width', 4);
+        } else {
+            cyNode.style('border-style', 'solid').style('border-width', 1.5);
+        }
+    }
+}
+
+/* ============================
+   CONTEXT MENU
+   ============================ */
+function showContextMenu(x, y, node) {
+    CTX_NODE = node;
+    var d = NODE_DATA_MAP[node.id()];
+    var menu = document.getElementById('context-menu');
+    var pinText = document.getElementById('ctx-pin-text');
+    var pinIcon = document.querySelector('#ctx-pin-btn i');
+    if (d && d.pinned) {
+        pinText.textContent = '取消固定';
+        pinIcon.className = 'bi bi-pin-fill text-[11px] w-4 text-center';
+    } else {
+        pinText.textContent = '固定节点';
+        pinIcon.className = 'bi bi-pin text-[11px] w-4 text-center';
+    }
+    // Show group/ungroup based on context
+    var groupBtn = document.getElementById('ctx-group-btn');
+    var ungroupBtn = document.getElementById('ctx-ungroup-btn');
+    var selectedCount = CY.nodes(':selected').filter(function(n) { return !n.isParent() && !n.data('group'); }).length;
+    if (selectedCount >= 2) {
+        groupBtn.classList.remove('hidden');
+    } else {
+        groupBtn.classList.add('hidden');
+    }
+    if (node.isParent()) {
+        ungroupBtn.classList.remove('hidden');
+    } else {
+        ungroupBtn.classList.add('hidden');
+    }
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+    menu.classList.remove('hidden');
+    // Prevent overflow off-screen
+    var rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) menu.style.left = (x - rect.width) + 'px';
+    if (rect.bottom > window.innerHeight) menu.style.top = (y - rect.height) + 'px';
+}
+function hideContextMenu() {
+    document.getElementById('context-menu').classList.add('hidden');
+    CTX_NODE = null;
+}
+
+function ctxPinToggle() {
+    if (!CTX_NODE) return;
+    var d = NODE_DATA_MAP[CTX_NODE.id()];
+    var newVal = !(d && d.pinned);
+    apiPatch(CTX_NODE.id().replace('n',''), {pinned: newVal}).then(function(r) {
+        if (r.ok) {
+            updateNodeData(CTX_NODE, {pinned: newVal});
+            showToast(newVal ? '节点已固定' : '已取消固定', 'success');
+        } else {
+            showToast('操作失败', 'error');
+        }
+    }).catch(function() { showToast('网络错误', 'error'); });
+    hideContextMenu();
+}
+
+function ctxAddNote() {
+    if (!CTX_NODE) return;
+    NOTE_TARGET = CTX_NODE;
+    var d = NODE_DATA_MAP[CTX_NODE.id()];
+    var popup = document.getElementById('note-popup');
+    document.getElementById('note-input').value = (d && d.note) || '';
+    // Position near context menu
+    var menu = document.getElementById('context-menu');
+    popup.style.left = menu.style.left;
+    popup.style.top = menu.style.top;
+    popup.classList.remove('hidden');
+    document.getElementById('note-input').focus();
+    hideContextMenu();
+}
+function closeNotePopup() {
+    document.getElementById('note-popup').classList.add('hidden');
+    NOTE_TARGET = null;
+}
+function submitNote() {
+    var popup = document.getElementById('note-popup');
+    var text = document.getElementById('note-input').value.trim();
+    if (popup.dataset.mode === 'edge') {
+        // Edge note
+        if (!INSPECTED_EDGE) { closeNotePopup(); return; }
+        var eData = EDGE_DATA_MAP[INSPECTED_EDGE.id()];
+        apiUpdateLinkNote(eData.id, text).then(function(r) {
+            if (r.ok) {
+                eData.note = text;
+                refreshEdgeInspector();
+                showToast(text ? '备注已保存' : '备注已清除', 'success');
+            } else {
+                showToast('保存失败', 'error');
+            }
+        }).catch(function() { showToast('网络错误', 'error'); });
+        popup.dataset.mode = '';
+        closeNotePopup();
+        return;
+    }
+    // Node note
+    if (!NOTE_TARGET) return;
+    var nodeId = NOTE_TARGET.id().replace('n','');
+    apiPatch(nodeId, {note: text}).then(function(r) {
+        if (r.ok) {
+            updateNodeData(NOTE_TARGET, {note: text});
+            // Update inspector if showing this node
+            var inspTitle = document.getElementById('inspector-title');
+            if (inspTitle.textContent === (NODE_DATA_MAP[NOTE_TARGET.id()]||{}).title) {
+                refreshInspector(NOTE_TARGET);
+            }
+            showToast(text ? '备注已保存' : '备注已清除', 'success');
+        } else {
+            showToast('保存失败', 'error');
+        }
+    }).catch(function() { showToast('网络错误', 'error'); });
+    closeNotePopup();
+}
+
+function refreshEdgeInspector() {
+    if (!INSPECTED_EDGE) return;
+    var eData = EDGE_DATA_MAP[INSPECTED_EDGE.id()];
+    var noteEl = document.getElementById('inspector-edge-note');
+    if (eData.note) {
+        noteEl.textContent = '📝 ' + eData.note;
+        noteEl.classList.remove('hidden');
+    } else {
+        noteEl.classList.add('hidden');
+    }
+}
+
+function ctxLinkTo() {
+    if (!CTX_NODE) return;
+    LINKING_SOURCE = CTX_NODE;
+    var bar = document.getElementById('linking-bar');
+    var d = NODE_DATA_MAP[CTX_NODE.id()];
+    document.getElementById('linking-bar-text').textContent = '🔗 连线模式 — 从「' + (d?d.title:'') + '」点击目标节点';
+    bar.classList.remove('hidden');
+    hideContextMenu();
+    // Highlight source
+    CTX_NODE.style('border-width', 4).style('border-color', '#8B5CF6');
+}
+function cancelLinking() {
+    if (LINKING_SOURCE) {
+        var d = NODE_DATA_MAP[LINKING_SOURCE.id()];
+        LINKING_SOURCE.style('border-width', (d && d.pinned) ? 4 : 1.5)
+            .style('border-color', (d && d.pinned) ? '#8B5CF6' : (TYPE_COLORS[d&&d.type]||'#686880'));
+    }
+    LINKING_SOURCE = null;
+    document.getElementById('linking-bar').classList.add('hidden');
+}
+
+function ctxDelete() {
+    if (!CTX_NODE) return;
+    var d = NODE_DATA_MAP[CTX_NODE.id()];
+    var title = d ? d.title : '';
+    hideContextMenu();
+    showConfirm('确认删除节点「' + title + '」？此操作不可撤销。').then(function(yes) {
+        if (!yes) return;
+        var numId = CTX_NODE.id().replace('n','');
+        apiDelete(numId).then(function(r) {
+            if (r.ok) {
+                CY.remove(CTX_NODE);
+                delete NODE_DATA_MAP[CTX_NODE.id()];
+                document.getElementById('graph-inspector').classList.add('hidden');
+                showToast('节点已删除', 'success');
+            } else {
+                showToast('删除失败', 'error');
+            }
+        }).catch(function() { showToast('网络错误', 'error'); });
+    });
+}
+
+/* ============================
+   SEARCH / FILTER
+   ============================ */
+function handleSearch() {
+    clearTimeout(SEARCH_DEBOUNCE);
+    var q = document.getElementById('search-input').value.trim();
+    var typeFilter = document.getElementById('type-filter').value;
+    SEARCH_DEBOUNCE = setTimeout(function() {
+        applyFilter(q, typeFilter);
+    }, 300);
+}
+
+function handleTypeFilter() {
+    var q = document.getElementById('search-input').value.trim();
+    var typeFilter = document.getElementById('type-filter').value;
+    ACTIVE_TYPE_FILTER = typeFilter;
+    applyFilter(q, typeFilter);
+}
+
+function applyFilter(query, typeFilter) {
+    if (!CY) return;
+    var allNodes = CY.nodes('[!group]');
+    if (!query && !typeFilter) {
+        // Reset: show all
+        allNodes.removeClass('search-dimmed search-highlighted');
+        return;
+    }
+    if (query) {
+        // Search via API
+        apiSearchNodes(query, typeFilter).then(function(data) {
+            var matchIds = {};
+            (data.nodes || []).forEach(function(n) { matchIds['n' + n.id] = true; });
+            allNodes.forEach(function(node) {
+                if (matchIds[node.id()]) {
+                    node.removeClass('search-dimmed');
+                    node.addClass('search-highlighted');
+                } else {
+                    node.removeClass('search-highlighted');
+                    node.addClass('search-dimmed');
+                }
             });
         });
-})();
+    } else if (typeFilter) {
+        // Type filter only (no search text)
+        allNodes.forEach(function(node) {
+            var d = NODE_DATA_MAP[node.id()];
+            if (d && d.type === typeFilter) {
+                node.removeClass('search-dimmed');
+                node.addClass('search-highlighted');
+            } else {
+                node.removeClass('search-highlighted');
+                node.addClass('search-dimmed');
+            }
+        });
+    }
+}
 
+/* ============================
+   EXPORT PNG
+   ============================ */
+function exportPNG() {
+    if (!CY) return;
+    showToast('正在导出…', 'info');
+    CY.png({
+        output: 'blob',
+        full: true,
+        bg: '#0a0a0f',
+        scale: 2
+    }).then(function(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'graph-' + new Date().toISOString().slice(0,10) + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('导出成功', 'success');
+    }).catch(function() {
+        showToast('导出失败', 'error');
+    });
+}
+
+/* ============================
+   LEGEND TOGGLE
+   ============================ */
+function toggleLegend() {
+    var el = document.getElementById('legend-overlay');
+    el.classList.toggle('hidden');
+}
+
+/* ============================
+   GROUP / UNGROUP
+   ============================ */
+function ctxGroupNodes() {
+    hideContextMenu();
+    var selected = CY.nodes(':selected').filter(function(n) { return !n.isParent() && !n.data('group'); });
+    if (selected.length < 2) {
+        showToast('请至少选择 2 个节点进行组合', 'warn');
+        return;
+    }
+    GROUP_COUNTER++;
+    var groupId = 'group_' + GROUP_COUNTER;
+    // Calculate center position
+    var avgX = 0, avgY = 0;
+    selected.forEach(function(n) { avgX += n.position('x'); avgY += n.position('y'); });
+    avgX /= selected.length;
+    avgY /= selected.length;
+
+    CY.add({
+        group: 'nodes',
+        data: { id: groupId, label: '分组 ' + GROUP_COUNTER },
+        position: { x: avgX, y: avgY }
+    });
+
+    // Make selected nodes children of the group
+    selected.forEach(function(n) {
+        n.move({ parent: groupId });
+    });
+
+    // Style the group node
+    var groupNode = CY.getElementById(groupId);
+    groupNode.style({
+        'background-color': 'rgba(6,182,212,0.08)',
+        'border-color': '#06B6D4',
+        'border-width': 2,
+        'border-style': 'dashed',
+        'shape': 'round-rectangle',
+        'label': 'data(label)',
+        'color': '#06B6D4',
+        'font-size': '10px',
+        'text-valign': 'top',
+        'text-margin-y': -8,
+        'padding': '20px',
+    });
+
+    showToast('已组合 ' + selected.length + ' 个节点', 'success');
+}
+
+function ctxUngroupNode() {
+    hideContextMenu();
+    if (!CTX_NODE || !CTX_NODE.isParent()) return;
+    var groupId = CTX_NODE.id();
+    // Move children out of group
+    var children = CTX_NODE.children();
+    children.forEach(function(child) {
+        child.move({ parent: null });
+    });
+    // Remove group node
+    CY.remove(CTX_NODE);
+    showToast('已取消组合', 'success');
+}
+
+/* ============================
+   EDGE INSPECTOR
+   ============================ */
+function showEdgeInspector(cyEdge) {
+    INSPECTED_EDGE = cyEdge;
+    var eData = EDGE_DATA_MAP[cyEdge.id()];
+    var srcNode = CY.getElementById(cyEdge.data('source'));
+    var tgtNode = CY.getElementById(cyEdge.data('target'));
+    var srcData = NODE_DATA_MAP[srcNode.id()] || {};
+    var tgtData = NODE_DATA_MAP[tgtNode.id()] || {};
+
+    document.getElementById('inspector-node-view').classList.add('hidden');
+    document.getElementById('inspector-edge-view').classList.remove('hidden');
+
+    document.getElementById('inspector-edge-title').innerHTML =
+        '<span style="color:' + (TYPE_COLORS[srcData.type]||'#686880') + '">' + escapeHtml(srcData.title||'?') + '</span>' +
+        ' <i class="bi bi-arrow-right mx-1 text-[#686880]"></i> ' +
+        '<span style="color:' + (TYPE_COLORS[tgtData.type]||'#686880') + '">' + escapeHtml(tgtData.title||'?') + '</span>';
+
+    var relLabel = TYPE_LABELS[eData.relation] || eData.relation;
+    var relBadge = document.getElementById('inspector-edge-relation');
+    relBadge.textContent = relLabel;
+
+    var noteEl = document.getElementById('inspector-edge-note');
+    if (eData.note) {
+        noteEl.textContent = '📝 ' + eData.note;
+        noteEl.classList.remove('hidden');
+    } else {
+        noteEl.classList.add('hidden');
+    }
+
+    document.getElementById('graph-inspector').classList.remove('hidden');
+}
+
+function inspectorEdgeEditNote() {
+    if (!INSPECTED_EDGE) return;
+    var eData = EDGE_DATA_MAP[INSPECTED_EDGE.id()];
+    NOTE_TARGET = null; // clear node note target
+    var popup = document.getElementById('note-popup');
+    document.getElementById('note-input').value = (eData && eData.note) || '';
+    // Position near inspector
+    var insp = document.getElementById('graph-inspector');
+    var rect = insp.getBoundingClientRect();
+    popup.style.left = rect.left + 'px';
+    popup.style.top = (rect.top - 100) + 'px';
+    popup.classList.remove('hidden');
+    document.getElementById('note-input').focus();
+    // Override submit to update edge note
+    popup.dataset.mode = 'edge';
+}
+
+function inspectorEdgeDelete() {
+    if (!INSPECTED_EDGE) return;
+    var eData = EDGE_DATA_MAP[INSPECTED_EDGE.id()];
+    var srcData = NODE_DATA_MAP[CY.getElementById(INSPECTED_EDGE.data('source')).id()] || {};
+    var tgtData = NODE_DATA_MAP[CY.getElementById(INSPECTED_EDGE.data('target')).id()] || {};
+    var label = (srcData.title||'') + ' → ' + (tgtData.title||'');
+    showConfirm('确认删除关联「' + label + '」？').then(function(yes) {
+        if (!yes) return;
+        apiDeleteLink(eData.id).then(function(r) {
+            if (r.ok) {
+                CY.remove(INSPECTED_EDGE);
+                delete EDGE_DATA_MAP[INSPECTED_EDGE.id()];
+                document.getElementById('graph-inspector').classList.add('hidden');
+                showToast('关联已删除', 'success');
+            } else {
+                showToast('删除失败', 'error');
+            }
+        }).catch(function() { showToast('网络错误', 'error'); });
+    });
+}
+
+/* ============================
+   AUTO-SUGGEST LINKS
+   ============================ */
+function loadSuggestions(nodeId) {
+    var sugEl = document.getElementById('inspector-suggestions');
+    var listEl = document.getElementById('inspector-suggestion-list');
+    apiGetSuggestions(nodeId).then(function(data) {
+        var sugs = data.suggestions || [];
+        if (sugs.length === 0) {
+            sugEl.classList.add('hidden');
+            return;
+        }
+        listEl.innerHTML = '';
+        sugs.forEach(function(s) {
+            var tc = TYPE_COLORS[s.type] || '#686880';
+            var btn = document.createElement('button');
+            btn.className = 'suggestion-chip';
+            btn.innerHTML = '<span style="color:' + tc + '">' + escapeHtml(s.title) + '</span> <span class="text-[#686880]">(' + s.score.toFixed(2) + ')</span>';
+            btn.onclick = function() {
+                var numId = nodeId.replace('n','');
+                apiCreateLink(numId, String(s.id), 'related').then(function(r) {
+                    if (r.ok) {
+                        CY.add({group:'edges', data:{
+                            id:'e'+r.edge_id, source:nodeId, target:'n'+s.id, relation:'related'
+                        }});
+                        EDGE_DATA_MAP['e'+r.edge_id] = {id:r.edge_id, relation:'related', note:'', source:numId, target:String(s.id)};
+                        showToast('已创建关联: ' + s.title, 'success');
+                        btn.remove();
+                    } else {
+                        showToast(r.error || '创建失败', 'error');
+                    }
+                });
+            };
+            listEl.appendChild(btn);
+        });
+        sugEl.classList.remove('hidden');
+    }).catch(function() {
+        sugEl.classList.add('hidden');
+    });
+}
+
+/* ============================
+   INSPECTOR
+   ============================ */
+function showInspector(cyNode) {
+    INSPECTED_EDGE = null;
+    document.getElementById('inspector-node-view').classList.remove('hidden');
+    document.getElementById('inspector-edge-view').classList.add('hidden');
+    refreshInspector(cyNode);
+    document.getElementById('graph-inspector').classList.remove('hidden');
+    // Load auto-suggest
+    loadSuggestions(cyNode.id());
+}
+function refreshInspector(cyNode) {
+    if (!cyNode || cyNode.length === 0) return;
+    var d = NODE_DATA_MAP[cyNode.id()];
+    if (!d) return;
+    // Title
+    document.getElementById('inspector-title').textContent = d.title;
+    // Pin badge
+    var pinBadge = document.getElementById('inspector-pin-badge');
+    if (d.pinned) { pinBadge.classList.remove('hidden'); } else { pinBadge.classList.add('hidden'); }
+    // Type badge
+    var typeBadge = document.getElementById('inspector-type-badge');
+    var tc = TYPE_COLORS[d.type] || '#686880';
+    typeBadge.textContent = TYPE_LABELS[d.type] || d.type;
+    typeBadge.style.background = tc + '20';
+    typeBadge.style.color = tc;
+    // Body: description
+    var body = document.getElementById('inspector-body');
+    var html = '';
+    if (d.desc) html += '<div class="leading-relaxed">' + escapeHtml(d.desc) + '</div>';
+    html += '<div class="mt-2"><button onclick="expandNode(\'' + d.id + '\')" class="text-[10px] px-2.5 py-1 rounded-lg transition-colors" style="background:rgba(139,92,246,0.15);color:#8B5CF6;">展开邻居</button></div>';
+    body.innerHTML = html;
+    // Note
+    var noteEl = document.getElementById('inspector-note');
+    if (d.note) {
+        noteEl.textContent = '📝 ' + d.note;
+        noteEl.classList.remove('hidden');
+    } else {
+        noteEl.classList.add('hidden');
+    }
+    // Pin label
+    document.getElementById('inspector-pin-label').textContent = d.pinned ? '取消固定' : '固定';
+    // Store ref
+    cyNode._inspectorRef = cyNode;
+}
+
+/* ============================
+   INSPECTOR ACTIONS
+   ============================ */
+function inspectorLinkTo() {
+    // Find the currently inspected node
+    var nodes = CY.nodes(':selected');
+    if (nodes.length === 0) {
+        showToast('请先选择一个节点', 'warn');
+        return;
+    }
+    CTX_NODE = nodes[0];
+    ctxLinkTo();
+}
+function inspectorAddNote() {
+    var nodes = CY.nodes(':selected');
+    if (nodes.length === 0) return;
+    CTX_NODE = nodes[0];
+    ctxAddNote();
+}
+function inspectorPinToggle() {
+    var nodes = CY.nodes(':selected');
+    if (nodes.length === 0) return;
+    CTX_NODE = nodes[0];
+    ctxPinToggle();
+}
+function inspectorDelete() {
+    var nodes = CY.nodes(':selected');
+    if (nodes.length === 0) return;
+    CTX_NODE = nodes[0];
+    ctxDelete();
+}
+
+/* ============================
+   LINK MODAL
+   ============================ */
+function openLinkModal(sourceNode, targetNode) {
+    var src = NODE_DATA_MAP[sourceNode.id()];
+    var tgt = NODE_DATA_MAP[targetNode.id()];
+    document.getElementById('link-modal-nodes').innerHTML =
+        '<span style="color:' + (TYPE_COLORS[src&&src.type]||'#686880') + '">' + escapeHtml(src?src.title:'') + '</span>' +
+        ' <i class="bi bi-arrow-right mx-1"></i> ' +
+        '<span style="color:' + (TYPE_COLORS[tgt&&tgt.type]||'#686880') + '">' + escapeHtml(tgt?tgt.title:'') + '</span>';
+    document.getElementById('link-modal').classList.remove('hidden');
+    document.getElementById('link-relation').value = 'related';
+    document.getElementById('link-note').value = '';
+    // Store refs for submit
+    document.getElementById('link-modal').dataset.sourceId = sourceNode.id().replace('n','');
+    document.getElementById('link-modal').dataset.targetId = targetNode.id().replace('n','');
+}
+function closeLinkModal() {
+    document.getElementById('link-modal').classList.add('hidden');
+}
+function submitLink() {
+    var modal = document.getElementById('link-modal');
+    var srcId = modal.dataset.sourceId;
+    var tgtId = modal.dataset.targetId;
+    var relation = document.getElementById('link-relation').value;
+    var note = document.getElementById('link-note').value.trim();
+    var btn = document.getElementById('link-submit-btn');
+    btn.textContent = '创建中…';
+    btn.disabled = true;
+    apiCreateLink(srcId, tgtId, relation).then(function(r) {
+        btn.textContent = '创建关联';
+        btn.disabled = false;
+        if (r.ok) {
+            // Add edge to graph
+            EDGE_DATA_MAP['e'+r.edge_id] = {id:r.edge_id, relation:relation, note:note, source:srcId, target:tgtId};
+            CY.add({group:'edges', data:{
+                id:'e'+r.edge_id, source:'n'+srcId, target:'n'+tgtId, relation:relation
+            }});
+            closeLinkModal();
+            showToast('关联已创建', 'success');
+            // Reset linking
+            cancelLinking();
+        } else {
+            showToast(r.error || '创建失败', 'error');
+        }
+    }).catch(function() {
+        btn.textContent = '创建关联';
+        btn.disabled = false;
+        showToast('网络错误', 'error');
+    });
+}
+
+/* ============================
+   CREATE NODE MODAL
+   ============================ */
+function openCreateModal(position) {
+    CREATING_POSITION = position;
+    document.getElementById('create-title').value = '';
+    document.getElementById('create-desc').value = '';
+    // Reset type selector
+    document.querySelectorAll('.create-type-btn').forEach(function(b) {
+        if (b.dataset.type === 'goal') {
+            b.classList.add('active');
+            b.style.background = 'rgba(139,92,246,0.2)';
+            b.style.borderColor = 'rgba(139,92,246,0.4)';
+        } else {
+            b.classList.remove('active');
+            var tc = TYPE_COLORS[b.dataset.type] || '#686880';
+            b.style.background = tc + '10';
+            b.style.borderColor = tc + '30';
+        }
+    });
+    document.getElementById('create-node-modal').classList.remove('hidden');
+    setTimeout(function() { document.getElementById('create-title').focus(); }, 50);
+}
+function closeCreateModal() {
+    document.getElementById('create-node-modal').classList.add('hidden');
+    CREATING_POSITION = null;
+}
+function getSelectedCreateType() {
+    var active = document.querySelector('.create-type-btn.active');
+    return active ? active.dataset.type : 'goal';
+}
+function submitCreateNode() {
+    var title = document.getElementById('create-title').value.trim();
+    if (!title) { showToast('请输入标题', 'warn'); return; }
+    var type = getSelectedCreateType();
+    var desc = document.getElementById('create-desc').value.trim();
+    var btn = document.getElementById('create-submit-btn');
+    btn.textContent = '创建中…';
+    btn.disabled = true;
+    apiCreateNode(title, type, desc).then(function(r) {
+        btn.textContent = '创建';
+        btn.disabled = false;
+        if (r.ok) {
+            var n = r.node;
+            var nodeData = {
+                id:'n'+n.id, label:n.title, type:n.type, desc:n.description,
+                pinned:n.pinned||false, note:n.note||'', importance:n.importance
+            };
+            NODE_DATA_MAP['n'+n.id] = {id:n.id, type:n.type, title:n.title, desc:n.description, pinned:n.pinned||false, note:n.note||'', importance:n.importance};
+            // Add to graph at clicked position
+            var pos = CREATING_POSITION || {x:0, y:0};
+            CY.add({group:'nodes', data:nodeData, position:pos});
+            closeCreateModal();
+            showToast('节点已创建', 'success');
+        } else {
+            showToast(r.error || '创建失败', 'error');
+        }
+    }).catch(function() {
+        btn.textContent = '创建';
+        btn.disabled = false;
+        showToast('网络错误', 'error');
+    });
+}
+
+/* ============================
+   EXPAND NODE (original)
+   ============================ */
 function expandNode(nodeId) {
-    var numId = nodeId.replace('n', '');
+    var numId = String(nodeId).replace('n', '');
     fetch('/graph/api/graph/node/' + numId + '/')
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -86,8 +976,8 @@ function expandNode(nodeId) {
             if (data.nodes && data.nodes.length > 0) {
                 var html = '<div class="text-[10px] font-bold text-[#686880] mt-2 mb-1">邻居节点:</div>';
                 data.nodes.forEach(function(n) {
-                    if (n.id != nodeId) {
-                        html += '<div class="text-xs text-white">' + n.title + ' <span class="text-[#686880]">(' + n.type + ')</span></div>';
+                    if (String(n.id) !== String(numId)) {
+                        html += '<div class="text-xs text-white">' + escapeHtml(n.title) + ' <span class="text-[#686880]">(' + escapeHtml(TYPE_LABELS[n.type]||n.type) + ')</span></div>';
                     }
                 });
                 insp.innerHTML += html;
@@ -96,5 +986,244 @@ function expandNode(nodeId) {
             }
         });
 }
+
+/* ============================
+   INIT
+   ============================ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Type selector clicks
+    document.querySelectorAll('.create-type-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.create-type-btn').forEach(function(b) {
+                b.classList.remove('active');
+                var tc = TYPE_COLORS[b.dataset.type] || '#686880';
+                b.style.background = tc + '10';
+                b.style.borderColor = tc + '30';
+            });
+            btn.classList.add('active');
+            var tc = TYPE_COLORS[btn.dataset.type] || '#686880';
+            btn.style.background = tc + '20';
+            btn.style.borderColor = tc + '60';
+        });
+    });
+
+    // Keyboard: Enter in create modal
+    document.getElementById('create-title').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitCreateNode();
+        if (e.key === 'Escape') closeCreateModal();
+    });
+    // Keyboard: Escape in note popup
+    document.getElementById('note-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeNotePopup();
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitNote(); }
+    });
+
+    // Search input debounce
+    document.getElementById('search-input').addEventListener('input', handleSearch);
+    // Type filter
+    document.getElementById('type-filter').addEventListener('change', handleTypeFilter);
+
+    // Fetch graph
+    fetch('/graph/api/graph/').then(function(r) { return r.json(); }).then(function(data) {
+        var elements = [];
+        data.nodes.forEach(function(n) {
+            NODE_DATA_MAP['n'+n.id] = {
+                id:n.id, type:n.type, title:n.title, desc:n.description,
+                pinned:n.pinned||false, note:n.note||'', importance:n.importance
+            };
+            elements.push({group:'nodes', data:{
+                id:'n'+n.id, label:n.title, type:n.type, desc:n.description,
+                pinned:n.pinned||false, note:n.note||''
+            }});
+        });
+        data.edges.forEach(function(e) {
+            EDGE_DATA_MAP['e'+e.id] = {id:e.id, relation:e.relation, note:e.note||'', source:e.source, target:e.target};
+            elements.push({group:'edges', data:{id:'e'+e.id, source:'n'+e.source, target:'n'+e.target, relation:e.relation}});
+        });
+
+        var typeColors = {goal:'#8B5CF6', skill:'#06B6D4', interest:'#F59E0B', memory:'#22C55E'};
+        var typeShapes = {goal:'round-rectangle', skill:'round-rectangle', interest:'diamond', memory:'ellipse'};
+
+        CY = cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: [
+                {selector:'node', style:{
+                    'background-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
+                    'label': 'data(label)', 'color': '#e0e0e0', 'font-size': '11px',
+                    'font-family': 'Inter, sans-serif', 'text-valign': 'bottom', 'text-halign': 'center',
+                    'text-margin-y': 8, 'width': 'label', 'padding': '10px',
+                    'background-opacity': 0.25,
+                    'border-color': function(n) { return typeColors[n.data('type')] || '#686880'; },
+                    'border-width': 1.5, 'font-weight': '600',
+                    'shape': function(n) { return typeShapes[n.data('type')] || 'ellipse'; },
+                }},
+                {selector:'node[pinned=true]', style:{
+                    'border-style': 'double', 'border-width': 4,
+                }},
+                {selector:'edge', style:{
+                    'width': 1.5, 'line-color': '#555', 'curve-style': 'bezier',
+                    'target-arrow-color': '#555', 'target-arrow-shape': 'triangle-backcurve',
+                    'arrow-scale': 0.7, 'opacity': 0.5,
+                    'label': 'data(relation)', 'font-size': '8px', 'color': '#686880',
+                    'text-rotation': 'autorotate',
+                }},
+                {selector:'node:selected', style:{
+                    'border-width': 3, 'border-color': '#fff',
+                    'shadow-blur': 20, 'shadow-color': '#8B5CF6', 'shadow-opacity': 0.6,
+                }},
+            ],
+            layout: { name: 'cose', animate: true, animationDuration: 500, fit: true, padding: 60,
+                nodeRepulsion: function(){return 8000;}, idealEdgeLength: function(){return 150;}, gravity: 0.25 },
+            minZoom: 0.3, maxZoom: 3, wheelSensitivity: 0.3,
+            // Disable browser context menu
+            boxSelectionEnabled: true,
+        });
+
+        // Apply initial locked state for pinned nodes
+        data.nodes.forEach(function(n) {
+            if (n.pinned) {
+                var cyNode = CY.getElementById('n'+n.id);
+                if (cyNode.length) cyNode.locked(true);
+            }
+        });
+
+        // Right-click context menu on nodes
+        CY.on('cxttap', 'node', function(evt) {
+            evt.originalEvent.preventDefault();
+            showContextMenu(evt.originalEvent.clientX, evt.originalEvent.clientY, evt.target);
+        });
+
+        // Right-click on background: create node
+        CY.on('cxttap', function(evt) {
+            if (evt.target === CY) {
+                evt.originalEvent.preventDefault();
+                var pos = evt.position || evt.cyPosition;
+                openCreateModal({x: pos.x, y: pos.y});
+            }
+        });
+
+        // Double-click background: create node
+        CY.on('dbltap', function(evt) {
+            if (evt.target === CY) {
+                var pos = evt.position || evt.cyPosition;
+                openCreateModal({x: pos.x, y: pos.y});
+            }
+        });
+
+        // Click node → show inspector (original, enhanced)
+        CY.on('tap', 'node', function(evt) {
+            // If in linking mode, handle link target
+            if (LINKING_SOURCE) {
+                var target = evt.target;
+                if (target.id() !== LINKING_SOURCE.id()) {
+                    // Unhighlight source
+                    var sd = NODE_DATA_MAP[LINKING_SOURCE.id()];
+                    LINKING_SOURCE.style('border-width', (sd&&sd.pinned)?4:1.5)
+                        .style('border-color', (sd&&sd.pinned)?'#8B5CF6':(TYPE_COLORS[sd&&sd.type]||'#686880'));
+                    openLinkModal(LINKING_SOURCE, target);
+                    return;
+                }
+                // Clicked same node — cancel
+                cancelLinking();
+                return;
+            }
+            showInspector(evt.target);
+        });
+
+        // Click edge → show edge inspector
+        CY.on('tap', 'edge', function(evt) {
+            if (LINKING_SOURCE) return; // don't inspect while linking
+            showEdgeInspector(evt.target);
+        });
+
+        // Click background → hide inspector
+        CY.on('tap', function(evt) {
+            if (evt.target === CY) {
+                document.getElementById('graph-inspector').classList.add('hidden');
+            }
+        });
+
+        // Disable browser right-click on graph container
+        document.getElementById('cy').addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    });
+});
+
+// Dismiss context menu / note popup on click outside
+document.addEventListener('click', function(e) {
+    var menu = document.getElementById('context-menu');
+    if (!menu.classList.contains('hidden') && !menu.contains(e.target)) {
+        hideContextMenu();
+    }
+    var notePop = document.getElementById('note-popup');
+    if (!notePop.classList.contains('hidden') && !notePop.contains(e.target) && e.target.id !== 'ctx-add-note') {
+        closeNotePopup();
+    }
+});
+
+// Dismiss on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideContextMenu();
+        closeNotePopup();
+        closeCreateModal();
+        closeLinkModal();
+        cancelLinking();
+        confirmResolve(false);
+    }
+});
 </script>
+<style>
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(16px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+/* Type selector button base */
+.create-type-btn { cursor: pointer; }
+.create-type-btn:hover { filter: brightness(1.3); }
+
+/* Search highlight / dim */
+.search-highlighted {
+    opacity: 1 !important;
+    border-width: 3px !important;
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 0 16px rgba(139,92,246,0.4);
+}
+.search-dimmed {
+    opacity: 0.15 !important;
+}
+
+/* Suggestion chip */
+.suggestion-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: rgba(34,197,94,0.08);
+    border: 1px dashed rgba(34,197,94,0.3);
+    color: #A0A0B8;
+}
+.suggestion-chip:hover {
+    background: rgba(34,197,94,0.15);
+    border-color: rgba(34,197,94,0.6);
+    color: #fff;
+}
+
+/* Search bar input placeholder */
+#search-input::placeholder {
+    color: #686880;
+}
+
+/* Type filter select */
+#type-filter option {
+    background: #0c0c14;
+    color: #A0A0B8;
+}
+</style>
 {% endblock %}
