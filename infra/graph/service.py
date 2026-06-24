@@ -155,6 +155,44 @@ class GraphService:
         count, _ = RelationEdge.objects.filter(pk=edge_id, user=self.user).delete()
         return count > 0
 
+    def retrieve_context(self, query: str = "", limit: int = 5) -> list[dict]:
+        """Graph RAG: match nodes by keyword against user query.
+        
+        Extracts keywords from query, scores nodes by keyword overlap × importance.
+        Returns top N nodes for system prompt injection.
+        """
+        import re
+        from infra.graph.models import GraphNode
+        
+        if not query or not query.strip():
+            return []
+        
+        keywords = set(re.findall(r'[a-zA-Z\u4e00-\u9fff]+', query.lower()))
+        keywords = {k for k in keywords if len(k) > 1}  # filter single chars
+        
+        if not keywords:
+            return []
+        
+        # DB-side pre-filter: only fetch nodes matching any keyword
+        from infra.graph.models import GraphNode
+        q = django_db.models.Q(user=self.user)
+        for kw in keywords:
+            q |= django_db.models.Q(title__icontains=kw) | django_db.models.Q(description__icontains=kw)
+
+        scored = []
+        for n in GraphNode.objects.filter(q).only('pk', 'title', 'description', 'node_type', 'importance'):
+            text = (n.title + ' ' + (n.description or '')).lower()
+            matches = sum(1 for kw in keywords if kw in text)
+            if matches > 0:
+                score = (matches / len(keywords)) * min(n.importance or 1.0, 3.0)
+                scored.append({
+                    'id': n.pk, 'title': n.title, 'type': n.node_type,
+                    'score': round(score, 2),
+                })
+        
+        scored.sort(key=lambda x: -x['score'])
+        return scored[:limit]
+
     def search_nodes(self, query: str, node_type: str = "", limit: int = 10) -> dict:
         """Keyword search on node titles and descriptions."""
         from infra.graph.models import GraphNode

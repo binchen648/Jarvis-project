@@ -49,7 +49,7 @@ def _build_persona_section(context: dict) -> str:
         parts.append(f"【用户概况】{_truncate(summary, 300)}")
 
     if context.get('interests'):
-        tags = [i['tag'] if isinstance(i, dict) else i for i in context['interests'][:6]]
+        tags = [i.get('name') or i.get('tag', str(i)) if isinstance(i, dict) else str(i) for i in context['interests'][:6]]
         parts.append(f"【兴趣领域】{'、'.join(tags)}")
 
     return "\n".join(parts)
@@ -77,6 +77,19 @@ def _build_context_section(context: dict) -> str:
             parts.append(f"【关于用户】{'；'.join(safe_facts)}")
 
     return "\n".join(parts)
+
+
+# ── Layer 3.5: 知识图谱 (动态注入) ─────────────────────────
+
+def _build_graph_section(context: dict) -> str:
+    """Build graph context section from retrieved nodes."""
+    nodes = context.get('graph_context', [])
+    if not nodes:
+        return ""
+    lines = ["【知识图谱】"]
+    for n in nodes[:5]:
+        lines.append(f"- {n['title']}")
+    return "\n".join(lines)
 
 
 # ── Layer 4: 工具描述 (动态注入) ───────────────────────────
@@ -195,6 +208,11 @@ def assemble_system_prompt(memory_context: dict, tools_metadata: list[dict] | No
         "",
         _build_context_section(memory_context),
     ]
+
+    # Layer 3.5: Graph context
+    graph_section = _build_graph_section(memory_context)
+    if graph_section:
+        sections.extend(["", graph_section])
 
     # Layer 4: Available tools (only when tools_metadata is provided)
     if tools_metadata:

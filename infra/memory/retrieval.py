@@ -13,7 +13,7 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-def retrieve_chat_context(user, page="", conversation_history=None):
+def retrieve_chat_context(user, page="", conversation_history=None, query=""):
     """Main entry point. Returns compact context dict for system prompt injection.
 
     Args:
@@ -54,7 +54,17 @@ def retrieve_chat_context(user, page="", conversation_history=None):
             from infra.llm.models import UserPersona
             persona = UserPersona.objects.get(user=user)
             context['persona_summary'] = persona.persona_summary
-            context['facts'] = persona.facts[:8]
+            facts = persona.facts
+            if isinstance(facts, dict):
+                # New format: structured dict → flatten to list
+                flat = []
+                for section in ('goals', 'skills', 'interests'):
+                    for item in facts.get(section, [])[:3]:
+                        if isinstance(item, dict):
+                            flat.append(item.get('title') or item.get('name', ''))
+                context['facts'] = flat[:8]
+            else:
+                context['facts'] = list(facts)[:8]
             context['interests'] = persona.interests[:6]
         except UserPersona.DoesNotExist:
             pass
@@ -68,6 +78,16 @@ def retrieve_chat_context(user, page="", conversation_history=None):
 
     # 3. Get page-specific relevance hints
     context['relevance_hints'] = _get_page_hints(page)
+
+    # 4. Graph RAG context (if query provided)
+    context['graph_context'] = []
+    if query:
+        try:
+            from infra.graph.service import GraphService
+            svc = GraphService(user)
+            context['graph_context'] = svc.retrieve_context(query=query)
+        except Exception as e:
+            logger.debug("Graph RAG failed: %s", e)
 
     return context
 
