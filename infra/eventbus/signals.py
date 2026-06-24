@@ -1,5 +1,11 @@
+import logging
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from django.core.cache import cache
+
+logger = logging.getLogger(__name__)
 
 from .emit import emit_event
 from .event_types import (
@@ -111,3 +117,39 @@ def emit_memory_created(sender, instance, created, **kwargs):
             'title': instance.title,
         },
     )
+
+
+# ── Insight Snapshot cache invalidation ─────────────────────────────────
+# Invalidate the cached insight snapshot when relevant data changes.
+# Cache key pattern: insight:snapshot:{user_id}
+
+
+def _invalidate_insight_snapshot(user_id):
+    """Clear the InsightSnapshot cache for a given user."""
+    if not user_id:
+        return
+    try:
+        cache.delete(f"insight:snapshot:{user_id}")
+    except Exception:
+        logger.debug("Failed to invalidate insight cache for user %d", user_id)
+
+
+@receiver(post_save, sender='goals.GoalSession')
+def invalidate_snapshot_on_session(sender, instance, **kwargs):
+    _invalidate_insight_snapshot(instance.user_id)
+
+
+@receiver(post_save, sender='goals.Goal')
+def invalidate_snapshot_on_goal(sender, instance, **kwargs):
+    _invalidate_insight_snapshot(instance.user_id)
+
+
+@receiver(post_save, sender='chat.Message')
+def invalidate_snapshot_on_message(sender, instance, created, **kwargs):
+    if created and instance.role == 'user':
+        _invalidate_insight_snapshot(instance.conversation.user_id)
+
+
+@receiver(post_save, sender='goals.GoalProgress')
+def invalidate_snapshot_on_progress(sender, instance, **kwargs):
+    _invalidate_insight_snapshot(instance.goal.user_id)

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'infra.actions',
     'infra.graph',
     'infra.llm',
+    'infra.insight',
     'apps.health',
 ]
 

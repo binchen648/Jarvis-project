@@ -59,6 +59,15 @@ app.conf.beat_schedule = {
         'task': 'infra.llm.tasks.build_all_personas',
         'schedule': crontab(hour='*/6'),  # every 6 hours
     },
+    # Phase 4 — Insight layer
+    'rebuild-daily-snapshots': {
+        'task': 'infra.insight.tasks.refresh_all_snapshots',
+        'schedule': crontab(hour=6, minute=0),  # daily 06:00
+    },
+    'generate-weekly-reports': {
+        'task': 'infra.insight.tasks.generate_weekly_reports',
+        'schedule': crontab(hour=7, minute=0, day_of_week='sunday'),  # weekly Sun 07:00
+    },
     # Event bus — advance pending events
     'process_events': {
         'task': 'infra.eventbus.tasks.process_pending_events',
